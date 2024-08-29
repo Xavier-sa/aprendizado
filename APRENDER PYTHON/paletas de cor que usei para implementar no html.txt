@@ -1,0 +1,12 @@
+APRENDER PYTHON
+
+paletas de cores:
+title:
+000000
+585A80
+DC3131
+
+home:
+20111F
+
+
