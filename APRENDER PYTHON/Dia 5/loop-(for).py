@@ -6,3 +6,19 @@ habilidades = ['Voo', 'Telecinese', 'Força Bruta', 'Imortalidade']
 
 for habilidade in habilidades:
     print(habilidade)
+
+
+for i in range(10):
+    print(i)
+
+
+
+
+numeros = [1, 2, 3, 4, 5]
+
+soma = 0
+
+for numero in numeros:
+    soma += numero
+
+print("A soma é:", soma)
