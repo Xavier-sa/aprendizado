@@ -1,0 +1,2 @@
+Olá, este é um arquivo de entrada.
+Vamos aprender a ler e escrever arquivos em Python.
