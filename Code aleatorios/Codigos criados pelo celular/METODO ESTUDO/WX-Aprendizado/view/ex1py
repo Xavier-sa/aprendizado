@@ -1,0 +1,22 @@
+def exibir1_p1():
+    print("1-Exercícios Básicos")
+    print("Imprima todos os números de 0 a 9.")
+    #?print("Imprima todos os números pares de 0 a 20.")
+    #?print("Imprima todos os números ímpares de 1 a 19.")
+    
+def exibir1_p2():
+    print("1-Exercícios Básicos")
+    #?print("Imprima todos os números de 0 a 9.")
+    print("Imprima todos os números pares de 0 a 20.")
+    #?print("Imprima todos os números ímpares de 1 a 19.")
+    
+    
+def exibir1_p3():
+    print("1-Exercícios Básicos")
+    #?print("Imprima todos os números de 0 a 9.")
+    #?print("Imprima todos os números pares de 0 a 20.")
+    print("Imprima todos os números ímpares de 1 a 19.")
+    
+exibir1_p1()
+exibir1_p2()
+exibir1_p3()
