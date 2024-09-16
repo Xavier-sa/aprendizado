@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figura de X - Animação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(#fff, #7D47EF);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrapper {
+            height: 400px;
+            width: 400px;
+            position: relative; /* Para permitir o posicionamento absoluto dos filhos */
+        }
+
+        .line {
+            position: absolute;
+            background: #07080B;
+        }
+
+        .line1, .line2 {
+            width: 400px;
+            height: 15px;
+            background: #7D47EF;
+            animation: animateX 3s infinite alternate;
+        }
+
+        .line1 {
+            top: 50%;
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: center;
+        }
+
+        .line2 {
+            top: 50%;
+            left: 0;
+            transform: rotate(-45deg);
+            transform-origin: center;
+        }
+
+        @keyframes animateX {
+            0% {
+                width: 150px;
+                top: 50%;
+            }
+            100% {
+                width: 400px;
+                top: 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="line line1"></div>
+        <div class="line line2"></div>
+    </div>
+</body>
+
+</html>

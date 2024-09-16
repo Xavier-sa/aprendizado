@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Plantão</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Plantão</h1>
+        <form id="calculator">
+            <label for="lastWorkDate">Data do Último Plantão:</label>
+            <input type="date" id="lastWorkDate" name="lastWorkDate">
+            <br>
+            <label for="checkDate">Data a Verificar:</label>
+            <input type="date" id="checkDate" name="checkDate">
+            <br>
+            <button type="button" onclick="checkPlantao()">Verificar Plantão</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function checkPlantao() {
+            const lastWorkDate = new Date(document.getElementById('lastWorkDate').value);
+            const checkDate = new Date(document.getElementById('checkDate').value);
+
+            if (isNaN(lastWorkDate.getTime()) || isNaN(checkDate.getTime())) {
+                document.getElementById('result').innerText = 'Por favor, insira datas válidas.';
+                return;
+            }
+            
+            // Padrão 12x36
+            const workPeriod = 12 * 60 * 60 * 1000; // 12 horas em milissegundos
+            const restPeriod = 36 * 60 * 60 * 1000; // 36 horas em milissegundos
+
+            const timeDifference = checkDate.getTime() - lastWorkDate.getTime();
+            
+            // Verificar se a data a verificar está dentro do período de plantão
+            if (timeDifference % (workPeriod + restPeriod) < workPeriod) {
+                document.getElementById('result').innerText = 'Você está de plantão.';
+            } else {
+                document.getElementById('result').innerText = 'Você não está de plantão.';
+            }
+        }
+    </script>
+</body>
+</html>
