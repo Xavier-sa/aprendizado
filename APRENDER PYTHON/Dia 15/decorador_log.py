@@ -20,3 +20,4 @@ def saudacao(nome, saudacao='Olá'):
 # Chamadas de teste
 soma(5, 3)
 saudacao('Goku', saudacao='Oi')
+saudacao('Freeza',saudacao='Lixo')
