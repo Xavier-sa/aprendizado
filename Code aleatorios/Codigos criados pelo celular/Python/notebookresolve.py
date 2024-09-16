@@ -18,13 +18,13 @@ alunos = {
     '33997': 'Miqueias Gabriel Salvaterra Lopes',
     '33979': 'Rodrigo Ramos dos Santos',
     '33977': 'Sambegara Barero Cristaldo',
-    '33988': 'Wellington Aparecido Santos Xavier'
+    '33988': 'Wellington Aparecido Santos Xavier',
+    '33998':'Wellington Aparecido Santos Xavier'
 }
 
 notebooks_sem_nome = [
     '33983',
     '33978',
-    '33998',
     '33993'
 ]
 
