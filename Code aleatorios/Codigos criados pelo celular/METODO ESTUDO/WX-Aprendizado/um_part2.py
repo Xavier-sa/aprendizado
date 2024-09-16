@@ -6,13 +6,14 @@
    
    
    
-   #!part 2
-print(f"Hello, World!")
-print(f"Exercicio (1):Segundo pedido:")
-print(f"Imprimindo todos os números 'PARES' de 0 a 20")
-print("Atenção aos detalhes")
+def um_part2():   #!part 2
+    print(f"Hello, World!")
+    print(f"Exercicio (1):Segundo pedido:")
+    print(f"Imprimindo todos os números 'PARES' de 0 a 20")
+    print("Atenção aos detalhes")
 
-for i in range(0,20,2):
-    print(f"{'-'*10}({i}){'-'*10}")
-print(f"{'*'*23}")    
+    for i in range(0,21,2):
+        print(f"{'-'*10}({i}){'-'*10}")
+    print(f"{'*'*23}")    
 
+um_part2()
