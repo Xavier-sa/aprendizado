@@ -1,7 +1,7 @@
-"""1. **Exercícios Básicos**:
+print("""1. **Exercícios Básicos**:
    - Imprima todos os números de 0 a 9.Ok
    - Imprima todos os números pares de 0 a 20.OK
-   - Imprima todos os números ímpares de 1 a 19.OK"""
+   - Imprima todos os números ímpares de 1 a 19.OK""")
    
    
    
