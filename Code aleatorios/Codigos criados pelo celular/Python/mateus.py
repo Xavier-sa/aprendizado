@@ -7,7 +7,7 @@ if nome == "xavier":
     print("Ele foi promovido!")
     
 else:
-    print("Tente novamente!")
+    print("Tente novamente!replay")
     
 funcao = input("informe sua função:").lower()
 
