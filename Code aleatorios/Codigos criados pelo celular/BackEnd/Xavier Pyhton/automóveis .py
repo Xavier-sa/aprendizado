@@ -1,5 +1,5 @@
 class Automoveis:
-    def descricao(self,tipo,modelo, cor, motor):
+    def _init_(self,tipo,modelo, cor, motor):
         self.tipo= tipo 
         self.modelo =modelo 
         self.cor= cor
