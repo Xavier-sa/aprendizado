@@ -63,5 +63,4 @@ def resolucao():
     print("Resolução de exercícios será implementada aqui.")
     menu()
 
-# Inicia o menu principal
-menu()
+
