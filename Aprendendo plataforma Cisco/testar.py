@@ -22,10 +22,70 @@
 # print("y =", y)
 
 
-hour = int(input("Hora de início (horas): "))
-mins = int(input("Hora de início (minutos): "))
-dura = int(input("Duração do evento (minutos): "))
+# hour = int(input("Hora de início (horas): "))
+# mins = int(input("Hora de início (minutos): "))
+# dura = int(input("Duração do evento (minutos): "))
 
-# Escreva seu código aqui.
+# # Escreva seu código aqui.
 
 
+# x = input("Digite um número: ") # O usuário digita 2
+# print(type(x))
+ 
+# a = 1 // 2 * 3
+# print(a)
+
+# x = 1
+# y = 2
+# z = x
+# x = y
+# y = z
+# print(x, y)
+ 
+# x =2
+# y = 4
+# print(x + y)
+ 
+# x = int(input())
+# y = int(input())
+ 
+# x = x // y
+# y = y // x
+ 
+# print(y)
+ 
+# x = int(input())
+# y = int(input())
+ 
+# x = x / y
+# y = y / x
+ 
+# print(y)
+ 
+ 
+# x = int(input())
+# y = int(input())
+ 
+# x = x % y
+# x = x % y
+# y = y % x
+ 
+# print(y)
+ 
+
+# x = 1 / 2 + 3 // 3 + 4 ** 2
+# print(x)
+ 
+# y = 2 + 3 * 5.
+# print(Y)
+ 
+
+
+# z = y = x = 1
+# print(x, y, z, sep='*')
+ 
+x = input()
+y = int(input())
+ 
+print(x * y)
+ 
