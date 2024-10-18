@@ -1,0 +1,9 @@
+int i, j, k;
+float x, y, z;
+
+i = 10; 
+j = 12;
+k = i * j;
+x = 1.25; 
+y = 0.5;
+z = x * y;

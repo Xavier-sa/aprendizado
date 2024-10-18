@@ -1,0 +1,14 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+int main()
+{
+  int secondIn3Hours=3*60*60;
+  int _3MinutesInSeconds=3*60;
+  int _5Minutes=5*60;// some programmer left a comment about 6 minutes - find her/him
+  float valuePi=3.141526;
+  
+  std::cout << "result:  " << secondIn3Hours <<  std::endl;
+  return 0;
+}
