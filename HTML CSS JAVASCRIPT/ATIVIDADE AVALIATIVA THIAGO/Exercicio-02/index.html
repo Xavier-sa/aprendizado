@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Exercicio 02</title>
+</head>
+<body>
+
+    <h1>Raiz Quadrada ou Quadrado</h1>
+
+    <label for="numero">Número:</label>
+
+    <input type="number" id="numero"><br><br>
+    
+    <button onclick="calcular()">Calcular</button>
+    
+    <h2 id="resultado"></h2>
+
+    <script>
+
+        function calcular() {
+
+            const num = parseFloat(document.getElementById('numero').value);
+
+            let resultado;
+
+            if (num >= 0) {
+                
+                resultado = Math.sqrt(num); // Raiz quadrada
+
+            } else {
+
+                resultado = num * num; // Quadrado
+            }
+
+            document.getElementById('resultado').innerText = `Resultado: ${resultado}`;
+        }
+    </script>
+</body>
+</html>

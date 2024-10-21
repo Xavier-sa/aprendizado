@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercicio 01</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+        <form class="form" action="">
+
+            <div class="form-header">
+            
+            </div>
+        </form>
+
+        <div class="calculadora">
+
+            <p>Tentativa de Resolução exercicio 01</p>
+            <div>
+                <label for="">A</label>
+
+                <input type="number" name="A">
+            </div>
+            <div>
+                <label for="">B</label>
+
+                <input type="number" name="B">
+            </div>
+           
+            <div class="form-action">
+
+                <button type="button" onclick="calcular()">Calcular</button>
+
+                <button type="button" onclick="limparForm()">Limpar</button>
+             
+                 
+            </div>
+        </div>
+
+        <table id="resultado-table">
+            <thead>
+                <tr>
+                    <th>Operação</th>
+                    
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody id="vamola"></tbody>
+        </table>
+    </main>
+
+    <script>
+
+        function calcular() {
+
+            const a = Number(document.querySelector('[name="A"]').value);
+
+            const b = Number(document.querySelector('[name="B"]').value);
+
+            const resultado = {
+
+                soma: a + b,
+
+                subtracao: a - b,
+
+                multiplicacao: a * b,
+
+                divisao: b !== 0 ? (a / b).toFixed(2) : 'Indefinido'
+            };
+
+            //document.querySelector('[name="R"]').value = resultado.soma;
+
+            exibirResultados(resultado);
+        }
+
+        function exibirResultados(resultado) {
+
+            const tbody = document.getElementById('vamola');
+
+            tbody.innerHTML = ''; // aqui to usando aspa pra limpa
+
+            for (const operacao in resultado) {
+
+                const tr = document.createElement('tr');
+
+                const tdOperacao = document.createElement('td');
+
+                const tdResultado = document.createElement('td');
+
+                tdOperacao.textContent = operacao.charAt(0).toUpperCase() + operacao.slice(1);
+
+                tdResultado.textContent = resultado[operacao];
+
+                tr.appendChild(tdOperacao);
+
+                tr.appendChild(tdResultado);
+
+                tbody.appendChild(tr);
+            }
+        }
+
+        function limparForm() {
+
+            document.querySelector('[name="A"]').value = '';
+
+            document.querySelector('[name="B"]').value = '';
+
+            document.querySelector('[name="R"]').value = '';
+
+            document.getElementById('vamola').innerHTML = ''; // Limpa a tabela
+        }
+
+        
+    </script>
+</body>
+
+</html>

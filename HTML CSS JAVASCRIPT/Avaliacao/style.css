@@ -1,0 +1,24 @@
+body {
+    background: linear-gradient(to bottom, #ffcc00, #ff6600); /* Fundo em gradiente amarelo e laranja */
+    color: #fff; /* Texto branco */
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h2 {
+    color: #333;
+}
+.exercicio {
+    margin-bottom: 40px;
+}
+input, button {
+    margin-top: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+button {
+    cursor: pointer;
+}

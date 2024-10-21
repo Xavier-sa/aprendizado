@@ -1,0 +1,27 @@
+import static org.mockito.Mockito.*;
+
+public class ExemploMockito {
+    public static void main(String[] args) {
+        // Criação do mock
+        MeuObjeto mock = mock(MeuObjeto.class);
+        
+        // Configuração do comportamento: retorna "Resposta" para qualquer String passada para o método x()
+        when(mock.x(anyString())).thenReturn("Resposta");
+        
+        // Chamadas ao método com diferentes strings
+        System.out.println(mock.x("Teste 1")); // Imprime "Resposta"
+        System.out.println(mock.x("Teste 2")); // Imprime "Resposta"
+        System.out.println(mock.x("Teste 3")); // Imprime "Resposta"
+        
+        // Verifica se o método foi chamado
+        verify(mock, times(3)).x(anyString());
+    }
+}
+
+// Exemplo da classe que estamos mockando
+class MeuObjeto {
+    public String x(String input) {
+        // Implementação real aqui
+        return null;
+    }
+}

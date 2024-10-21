@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Nome Completo</title>
+</head>
+<body>
+
+    <h1>Primeiro e Último Nome</h1>
+
+    <label for="nomeCompleto">Nome Completo:</label>
+
+    <input type="text" id="nomeCompleto"><br><br>
+    
+    <button onclick="extrairNomes()">Extrair Nomes</button>
+    
+    <h2 id="resultado"></h2>
+
+    <script>
+
+        function extrairNomes() {
+
+            const nomeCompleto = document.getElementById('nomeCompleto').value.trim();
+
+            const nomes = nomeCompleto.split(' ');
+
+            const primeiroNome = nomes[0];
+
+            const ultimoNome = nomes[nomes.length - 1];
+
+            document.getElementById('resultado').innerText = `Primeiro Nome: ${primeiroNome}\nÚltimo Nome: ${ultimoNome}`;
+
+        }
+    </script>
+</body>
+</html>
