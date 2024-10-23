@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Pichau/aprendizado/aprender C+ cisco",
-      "program": "c:/Users/Pichau/aprendizado/aprender C+ cisco/build/Debug/outDebug",
+      "cwd": "c:/Users/WellingtonXavier/aprendizado/aprender C+ cisco/Dia 2",
+      "program": "c:/Users/WellingtonXavier/aprendizado/aprender C+ cisco/Dia 2/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
