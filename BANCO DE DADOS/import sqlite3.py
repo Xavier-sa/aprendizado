@@ -38,6 +38,8 @@ def inserir_guerreiro(nome, poder, especie, transformacoes):
 # Exemplo de inserção
 inserir_guerreiro('Goku', 9000, 'Saiyajin', 'Super Saiyajin')
 inserir_guerreiro('Vegeta', 8500, 'Saiyajin', 'Super Saiyajin')
+inserir_guerreiro('Broly',1400,'Saiyajin','Saiyajin Bersek')
+
 
 def listar_guerreiros():
     conn = sqlite3.connect('guerreiros_z.db')
