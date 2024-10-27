@@ -1,7 +1,0 @@
-#include <iostream>
-
-using namespace std;
-int main(void) {
-  cout << "It's me, your first program. Este é meu, primeiro programa. Funciona";
-  return 0;
-}
