@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Tabelas de Gastos e Renda</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            margin: 10px 0;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Gerador de Tabelas de Gastos e Renda</h1>
+
+<button onclick="addRow()">Adicionar Linha</button>
+<button onclick="downloadPDF()">Baixar PDF</button>
+
+<table id="dynamicTable">
+    <thead>
+        <tr id="headerRow">
+            <th>Descrição (Renda)</th>
+            <th>Valor (Renda)</th>
+            <th>Descrição (Despesas)</th>
+            <th>Valor (Despesas)</th>
+            <th>Descrição (Cartões)</th>
+            <th>Valor (Cartões)</th>
+            <th>Descrição (Empréstimos)</th>
+            <th>Valor (Empréstimos)</th>
+            <th>Saldo Mensal</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><input type="text" placeholder="Descrição..."></td>
+            <td><input type="number" placeholder="Valor..." oninput="calculateBalance()" min="0"></td>
+            <td><input type="text" placeholder="Descrição..."></td>
+            <td><input type="number" placeholder="Valor..." oninput="calculateBalance()" min="0"></td>
+            <td><input type="text" placeholder="Descrição..."></td>
+            <td><input type="number" placeholder="Valor..." oninput="calculateBalance()" min="0"></td>
+            <td><input type="text" placeholder="Descrição..."></td>
+            <td><input type="number" placeholder="Valor..." oninput="calculateBalance()" min="0"></td>
+            <td class="balance"></td>
+        </tr>
+    </tbody>
+</table>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    function addRow() {
+        const newRow = document.createElement('tr');
+
+        for (let i = 0; i < 8; i++) {
+            const td = document.createElement('td');
+            td.innerHTML = '<input type="text" placeholder="Descrição..."><br><input type="number" placeholder="Valor..." oninput="calculateBalance()" min="0">';
+            newRow.appendChild(td);
+        }
+
+        newRow.appendChild(document.createElement('td')); // Coluna para o saldo
+        document.querySelector('#dynamicTable tbody').appendChild(newRow);
+    }
+
+    function calculateBalance() {
+        const rows = document.querySelectorAll('#dynamicTable tbody tr');
+        rows.forEach(row => {
+            const income = parseFloat(row.cells[1].querySelector('input').value) || 0;
+            const expenses = parseFloat(row.cells[3].querySelector('input').value) || 0;
+            const credit = parseFloat(row.cells[5].querySelector('input').value) || 0;
+            const loan = parseFloat(row.cells[7].querySelector('input').value) || 0;
+
+            const balance = income - (expenses + credit + loan);
+            row.querySelector('.balance').innerText = balance >= 0 ? R$ ${balance.toFixed(2)} : - R$ ${Math.abs(balance).toFixed(2)};
+        });
+    }
+
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Adicionar título
+        doc.text("Planilha de Gastos e Renda", 14, 10);
+        doc.autoTable({ html: '#dynamicTable' });
+
+        doc.save('planilha_gastos_renda.pdf');
+    }
+</script>
+
+</body>
+</html>
