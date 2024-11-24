@@ -1,0 +1,81 @@
+
+        @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+        body {
+            font-family: "Poppins", sans-serif;
+            font-size: 14px
+
+        }
+
+        .container {
+            width: 80%;
+            margin:0 auto;
+        }
+
+        .acao{
+            width: 100%;
+            display: flex;
+            justify-content:end;
+            gap: 6px;
+
+            a{
+                text-decoration: unset;
+                color:unset;
+            }
+            button{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+        }
+        .table {
+
+            width: 100%;
+            border-color: #cdd0f3b2;
+            border-collapse: collapse;
+
+
+            thead,th,tbody,tr,td{
+                border-color: inherit;
+                border-style:solid ;
+                border-width: 0;
+            }    
+
+            th,td{
+                border: 1px solid;
+            }
+            tbody{
+                tr{
+                    &:hover{
+                        background-color: #cdd0f3b2;
+                    }
+
+                }
+
+
+
+                /* seleciona toda a linha da tabela que for : even = par / odd =impar*/
+                &:nth-child(even){
+                    background-color:rgb(221, 240, 201) ;
+
+                }
+            }
+        }
+
+        .notificacao {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            padding: 16px;
+
+            &.sucesso {
+                background-color: #4caf50;
+            }
+
+            &.erro {
+                background-color: #ff4d4d;
+            }
+        }
