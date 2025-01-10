@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Define o estilo de centralização usando flexbox */
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center; /* Alinha horizontalmente */
+            align-items: center; /* Alinha verticalmente */
+            text-align: center; /* Alinha o conteúdo textual */
+            font-family: Arial, sans-serif; /* Fonte para o conteúdo */
+        }
+
+        .content {
+            text-align: center; /* Centraliza o texto dentro do div */
+        }
+
+        img {
+            width: 300px; /* Define o tamanho da imagem */
+        }
+
+        button {
+            margin-top: 10px; /* Dá um pequeno espaçamento entre os botões */
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <h2>What Can JavaScript Do?</h2>
+    <p>JavaScript can change HTML attribute values.</p>
+    <p>In this case JavaScript changes the value of the src (source) attribute of an image.</p>
+
+    <button onclick="document.getElementById('myImage').src='pic_bulbon.gif'">Turn on the light</button>
+
+    <img id="myImage" src="pic_bulboff.gif" alt="Lightbulb" class="image">
+
+    <button onclick="document.getElementById('myImage').src='pic_bulboff.gif'">Turn off the light</button>
+</div>
+
+</body>
+</html>
