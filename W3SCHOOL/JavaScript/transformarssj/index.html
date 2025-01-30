@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Define o estilo de centralização usando flexbox */
+        body, html {
+            height: 100%; /* Define a altura do corpo e html para 100% da tela */
+            margin: 0; /* Remove as margens padrão da página */
+            display: flex; /* Usando o modelo flexbox para centralizar o conteúdo */
+            justify-content: center; /* Alinha o conteúdo horizontalmente no centro */
+            align-items: center; /* Alinha o conteúdo verticalmente no centro */
+            text-align: center; /* Centraliza o texto dentro dos elementos */
+            font-family: Arial, sans-serif; /* Define a fonte usada na página */
+            background-color: #f0f0f0; /* Define uma cor de fundo clara para a página */
+        }
+
+        /* Define o estilo do fundo da página */
+        .fundo {
+            position: absolute; /* Posiciona o fundo de maneira absoluta */
+            top: 0; /* Posiciona o fundo no topo da página */
+            left: 0; /* Posiciona o fundo no lado esquerdo da página */
+            width: 100%; /* Faz a largura do fundo cobrir toda a tela */
+            height: 100%; /* Faz a altura do fundo cobrir toda a tela */
+            background-image: url('fundo.jpg'); /* Define a imagem de fundo (substitua com seu caminho) */
+            background-size: cover; /* Faz a imagem de fundo cobrir toda a área da tela */
+            background-position: center; /* Centraliza a imagem de fundo */
+            opacity: 0.3; /* Define a opacidade da imagem de fundo (quanto menor, mais transparente) */
+            z-index: -1; /* Coloca o fundo atrás de todo o conteúdo da página */
+        }
+
+        .content {
+            text-align: center; /* Centraliza o texto dentro do div */
+            z-index: 1; /* Garante que o conteúdo esteja na frente do fundo */
+            position: relative; /* Necessário para a sobreposição do conteúdo sobre o fundo */
+        }
+
+        img {
+            width: 300px; /* Define o tamanho da imagem */
+            margin-top: 20px; /* Adiciona um espaçamento acima da imagem */
+        }
+
+        button {
+            margin-top: 10px; /* Dá um pequeno espaçamento entre os botões */
+            padding: 10px; /* Adiciona preenchimento dentro do botão */
+            font-size: 16px; /* Define o tamanho da fonte nos botões */
+            cursor: pointer; /* Muda o cursor para pointer ao passar sobre o botão */
+            background-color: #4CAF50; /* Cor de fundo verde para o botão */
+            color: rgb(255, 255, 255); /* Cor do texto dentro do botão */
+            border: none; /* Remove a borda do botão */
+            border-radius: 50px; /* Adiciona bordas arredondadas ao botão */
+        }
+
+        button:hover {
+            background-color: #45a049; /* Muda a cor do botão quando o mouse passa sobre ele */
+        }
+    </style>
+</head>
+<body>
+
+<div class="fundo"> <!-- Esta é a div do fundo -->
+    <div class="content"> <!-- Esta é a div que contém o conteúdo -->
+        <!-- Título atualizado para algo relacionado a Dragon Ball Z -->
+        <h2>Transforme-se em Super Saiyajin!</h2>
+
+        <!-- Primeira frase contextualizada com DBZ -->
+        <strong><p>Desbloqueie o poder oculto dentro de você e ative as formas mais poderosas, como o Super Saiyajin!</p>
+
+        <!-- Segunda frase contextualizada com DBZ -->
+        <p>A energia de luta de Goku e seus amigos pode ser usada para ativar diferentes formas e habilidades especiais.</p></strong>
+
+        <!-- Botão que muda a imagem para "Forma Base" de Goku -->
+        <button onclick="document.getElementById('myImage').src='formabase.png'">Forma Base de Goku</button>
+
+        <!-- Imagem inicial (pode ser alterada ao clicar nos botões) -->
+        <img id="myImage" src="formabase.png" alt="Lightbulb" class="image">
+
+        <!-- Botão que muda a imagem para "Super Sayajin" -->
+        <button onclick="document.getElementById('myImage').src='formabasessj.png'">Super Sayajin</button>
+    </div>
+</div>
+
+</body>
+</html>
