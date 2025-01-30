@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Site TESTE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <style>
+        body, h1, h5 {
+            font-family: "Raleway", sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+        }
+
+        .bgimg {
+            background-image: url('https://www.w3schools.com/w3images/onepage_restaurant.jpg');
+            min-height: 100%;
+            background-position: center;
+            background-size: cover;
+        }
+    </style>
+    <script>
+        const precos = {
+            "Vodka": 10.50,
+            "Skol Palito": 3.25,
+            "Vinho": 15.00,
+            "Fanta": 8.50,
+            "Coca Lata": 5.50,
+            "Coca-Cola Litro": 4.00,
+            "Coca-Cola 2L": 10.50,
+            "Amendoim": 2.50,
+            "Paçoca": 2.00,
+            "Chocolate": 4.00,
+            "Doce de Leite": 5.50
+        };
+
+        function vender() {
+            const produto = document.getElementById("produto").value;
+            const quantidade = document.getElementById("quantidade").value;
+
+            if (produto && quantidade > 0) {
+                const precoTotal = (precos[produto] * quantidade).toFixed(2);
+                alert(`Venda realizada!\nProduto: ${produto}\nQuantidade: ${quantidade}\nTotal: $${precoTotal}`);
+            } else {
+                alert("Por favor, selecione um produto e insira uma quantidade válida.");
+            }
+        }
+    </script>
+</head>
+<body>
+
+<div class="bgimg w3-display-container w3-text-white">
+    <div class="w3-display-middle w3-jumbo">
+        <p>BRAZMIX</p>
+    </div>
+    <div class="w3-display-topleft w3-container w3-xlarge">
+        <p><button onclick="document.getElementById('menu').style.display='block'" class="w3-button w3-black">Menu</button></p>
+        <p><button onclick="document.getElementById('contact').style.display='block'" class="w3-button w3-black">Contato</button></p>
+    </div>
+    <div class="w3-display-bottomleft w3-container">
+        <p class="w3-xlarge">Segunda - Sexta  08-22h | Sábado 09-22h</p>
+        <p class="w3-large"> Rua Carangola 00, São Conrado</p>
+        <p>Criado por<a href="https://xavierdev.pages.dev" target="_blank"> -- >XavierDev< --</a></p>
+    </div>
+</div>
+
+<!-- Modal Menu -->
+<div id="menu" class="w3-modal">
+    <div class="w3-modal-content w3-animate-zoom">
+        <div class="w3-container w3-black w3-display-container">
+            <span onclick="document.getElementById('menu').style.display='none'" class="w3-button w3-display-topright w3-large">x</span>
+            <h1>Menu</h1>
+        </div>
+        <div class="w3-container">
+            <h5>Bebidas</h5>
+            <ul>
+                <li>Vodka - $10.50</li>
+                <li>Skol Palito - $3.25</li>
+                <li>Vinho - $15.00</li>
+            </ul>
+            <h5>Refrigerantes</h5>
+            <ul>
+                <li>Fanta - $8.50</li>
+                <li>Coca Lata - $5.50</li>
+                <li>Coca-Cola Litro - $4.00</li>
+                <li>Coca-Cola 2L - $10.50</li>
+            </ul>
+            <h5>Doces e Salgados</h5>
+            <ul>
+                <li>Amendoim - $2.50</li>
+                <li>Paçoca - $2.00</li>
+                <li>Chocolate - $4.00</li>
+                <li>Doce de Leite - $5.50</li>
+            </ul>
+        </div>
+        <div class="w3-container">
+            <h1>Vender Produto</h1>
+            <form onsubmit="event.preventDefault(); vender();">
+                <p>
+                    <label for="produto">Produto:</label>
+                    <select id="produto" class="w3-select" name="produto">
+                        <option value="" disabled selected>Escolha um produto</option>
+                        <option value="Vodka">Vodka</option>
+                        <option value="Skol Palito">Skol Palito</option>
+                        <option value="Vinho">Vinho</option>
+                        <option value="Fanta">Fanta</option>
+                        <option value="Coca Lata">Coca Lata</option>
+                        <option value="Coca-Cola Litro">Coca-Cola Litro</option>
+                        <option value="Coca-Cola 2L">Coca-Cola 2L</option>
+                        <option value="Amendoim">Amendoim</option>
+                        <option value="Paçoca">Paçoca</option>
+                        <option value="Chocolate">Chocolate</option>
+                        <option value="Doce de Leite">Doce de Leite</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="quantidade">Quantidade:</label>
+                    <input id="quantidade" type="number" class="w3-input" min="1" required>
+                </p>
+                <p>
+                    <button type="submit" class="w3-button w3-green">Vender</button>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Contato -->
+<div id="contact" class="w3-modal">
+    <div class="w3-modal-content w3-animate-zoom">
+        <div class="w3-container w3-black">
+            <span onclick="document.getElementById('contact').style.display='none'" class="w3-button w3-display-topright w3-large">x</span>
+            <h1>Contato</h1>
+        </div>
+        <div class="w3-container">
+            <p>Reserve uma mesa, pergunte sobre o prato do dia ou envie uma mensagem:</p>
+            <form action="/action_page.php" target="_blank">
+                <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Nome" required name="Nome"></p>
+                <p><input class="w3-input w3-padding-16 w3-border" type="number" placeholder="Número de pessoas" required name="Pessoas"></p>
+                <p><input class="w3-input w3-padding-16 w3-border" type="datetime-local" placeholder="Data e hora" required name="data" value="2020-11-16T20:00"></p>
+                <p><input class="w3-input w3-padding-16 w3-border" type="text" placeholder="Mensagem / Requisitos especiais" required name="Mensagem"></p>
+                <p><button class="w3-button" type="submit">ENVIAR MENSAGEM</button></p>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
