@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma de Estudos - Wellington Xavier</title>
+    <style>
+        :root {
+            --segunda: #e74c3c;
+            --terca: #3498db;
+            --quarta: #2ecc71;
+            --quinta: #f39c12;
+            --sexta: #9b59b6;
+            --sabado: #1abc9c;
+            --domingo: #e67e22;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--segunda), var(--terca), var(--quarta), var(--quinta), var(--sexta), var(--sabado), var(--domingo));
+            border-radius: 2px;
+        }
+        
+        .cronograma {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .dia {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dia:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .dia::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+        
+        .segunda::before { background-color: var(--segunda); }
+        .terca::before { background-color: var(--terca); }
+        .quarta::before { background-color: var(--quarta); }
+        .quinta::before { background-color: var(--quinta); }
+        .sexta::before { background-color: var(--sexta); }
+        .sabado::before { background-color: var(--sabado); }
+        .domingo::before { background-color: var(--domingo); }
+        
+        .dia h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+        
+        .tema {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .segunda .tema { background-color: rgba(231, 76, 60, 0.2); color: var(--segunda); }
+        .terca .tema { background-color: rgba(52, 152, 219, 0.2); color: var(--terca); }
+        .quarta .tema { background-color: rgba(46, 204, 113, 0.2); color: var(--quarta); }
+        .quinta .tema { background-color: rgba(243, 156, 18, 0.2); color: var(--quinta); }
+        .sexta .tema { background-color: rgba(155, 89, 182, 0.2); color: var(--sexta); }
+        .sabado .tema { background-color: rgba(26, 188, 156, 0.2); color: var(--sabado); }
+        .domingo .tema { background-color: rgba(230, 126, 34, 0.2); color: var(--domingo); }
+        
+        .dia ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .dia li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .dia li::before {
+            content: "•";
+            color: inherit;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .segunda li::before { color: var(--segunda); }
+        .terca li::before { color: var(--terca); }
+        .quarta li::before { color: var(--quarta); }
+        .quinta li::before { color: var(--quinta); }
+        .sexta li::before { color: var(--sexta); }
+        .sabado li::before { color: var(--sabado); }
+        .domingo li::before { color: var(--domingo); }
+        
+        .quiz-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .quiz-btn:hover {
+            background-color: #1a252f;
+        }
+        
+        .quiz-container {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2c3e50;
+        }
+        
+        .quiz-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .quiz-options {
+            margin-bottom: 15px;
+        }
+        
+        .quiz-options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .quiz-options label:hover {
+            background-color: #ecf0f1;
+        }
+        
+        .quiz-submit {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .quiz-submit:hover {
+            background-color: #219653;
+        }
+        
+        .quiz-result {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        @media (max-width: 768px) {
+            .cronograma {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Cronograma de Estudos - Wellington Xavier</h1>
+    <div class="cronograma" id="cronograma"></div>
+    
+    <div class="footer">
+        Atualizado automaticamente para o ano <span id="ano"></span>
+    </div>
+    
+    <script>
+        const cronograma = [
+            {
+                dia: "Segunda-feira",
+                tema: "HTML & CSS",
+                tarefas: [
+                    "Estudar semântica e boas práticas",
+                    "Melhorar páginas HTML/CSS do portfólio"
+                ],
+                quiz: {
+                    question: "Qual elemento HTML é mais semântico para um cabeçalho principal?",
+                    options: [
+                        "<div class='header'>",
+                        "<h1>",
+                        "<header>",
+                        "<p class='title'>"
+                    ],
+                    answer: 1 // Resposta correta é <h1>
+                }
+            },
+            {
+                dia: "Terça-feira",
+                tema: "JavaScript Básico",
+                tarefas: [
+                    "Funções, arrays, objetos",
+                    "Criar scripts simples como contador ou validador"
+                ],
+                quiz: {
+                    question: "Qual método adiciona um item ao final de um array?",
+                    options: [
+                        "array.push()",
+                        "array.pop()",
+                        "array.shift()",
+                        "array.unshift()"
+                    ],
+                    answer: 0 // Resposta correta é array.push()
+                }
+            },
+            {
+                dia: "Quarta-feira",
+                tema: "Banco de Dados (MySQL)",
+                tarefas: [
+                    "Praticar SELECT, INSERT, UPDATE, DELETE",
+                    "Exercícios com tabelas relacionadas"
+                ],
+                quiz: {
+                    question: "Qual comando SQL recupera dados de uma tabela?",
+                    options: [
+                        "INSERT",
+                        "SELECT",
+                        "UPDATE",
+                        "DELETE"
+                    ],
+                    answer: 1 // Resposta correta é SELECT
+                }
+            },
+            {
+                dia: "Quinta-feira",
+                tema: "JavaScript DOM + APIs",
+                tarefas: [
+                    "Manipular DOM com eventos",
+                    "Consumir APIs públicas"
+                ],
+                quiz: {
+                    question: "Qual método seleciona um elemento por ID?",
+                    options: [
+                        "document.querySelector()",
+                        "document.getElementById()",
+                        "document.getElementsByClassName()",
+                        "document.querySelectorAll()"
+                    ],
+                    answer: 1 // Resposta correta é document.getElementById()
+                }
+            },
+            {
+                dia: "Sexta-feira",
+                tema: "Git e GitHub",
+                tarefas: [
+                    "Revisar comandos Git",
+                    "Fazer commits e atualizar portfólio"
+                ],
+                quiz: {
+                    question: "Qual comando envia commits para o repositório remoto?",
+                    options: [
+                        "git add",
+                        "git commit",
+                        "git push",
+                        "git pull"
+                    ],
+                    answer: 2 // Resposta correta é git push
+                }
+            },
+            {
+                dia: "Sábado",
+                tema: "Projeto Prático",
+                tarefas: [
+                    "Desenvolver um sistema real",
+                    "Melhorar projeto já existente"
+                ],
+                quiz: {
+                    question: "Qual etapa vem primeiro no desenvolvimento?",
+                    options: [
+                        "Codificação",
+                        "Testes",
+                        "Planejamento",
+                        "Implantação"
+                    ],
+                    answer: 2 // Resposta correta é Planejamento
+                }
+            },
+            {
+                dia: "Domingo",
+                tema: "Revisão + Portfólio",
+                tarefas: [
+                    "Revisar estudos da semana",
+                    "Atualizar portfólio e GitHub"
+                ],
+                quiz: {
+                    question: "Por que é importante atualizar o portfólio?",
+                    options: [
+                        "Para mostrar evolução",
+                        "Para impressionar recrutadores",
+                        "Para documentar aprendizado",
+                        "Todas as anteriores"
+                    ],
+                    answer: 3 // Resposta correta é Todas as anteriores
+                }
+            }
+        ];
+
+        // Cria os elementos do cronograma
+        const container = document.getElementById("cronograma");
+        
+        cronograma.forEach((dia, index) => {
+            const div = document.createElement("div");
+            div.className = `dia ${dia.dia.toLowerCase().split('-')[0]}`;
+            
+            div.innerHTML = `
+                <h2>${dia.dia}</h2>
+                <div class="tema">${dia.tema}</div>
+                <ul>${dia.tarefas.map(t => `<li>${t}</li>`).join('')}</ul>
+                
+                <button class="quiz-btn">Testar Conhecimento (Quiz)</button>
+                <div class="quiz-container" id="quiz-${index}">
+                    <div class="quiz-question">${dia.quiz.question}</div>
+                    <div class="quiz-options">
+                        ${dia.quiz.options.map((opt, i) => `
+                            <label>
+                                <input type="radio" name="quiz-${index}" value="${i}">
+                                ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="quiz-submit">Enviar Resposta</button>
+                    <div class="quiz-result"></div>
+                </div>
+            `;
+            
+            container.appendChild(div);
+            
+            // Adiciona eventos para o quiz
+            const quizBtn = div.querySelector('.quiz-btn');
+            const quizContainer = div.querySelector('.quiz-container');
+            const submitBtn = div.querySelector('.quiz-submit');
+            const resultDiv = div.querySelector('.quiz-result');
+            
+            quizBtn.addEventListener('click', () => {
+                quizContainer.style.display = quizContainer.style.display === 'block' ? 'none' : 'block';
+                quizBtn.textContent = quizContainer.style.display === 'block' ? 
+                    'Ocultar Quiz' : 'Testar Conhecimento (Quiz)';
+            });
+            
+            submitBtn.addEventListener('click', () => {
+            const selectedOption = div.querySelector(`input[name="quiz-${index}"]:checked`);
+            
+            if (!selectedOption) {
+                resultDiv.textContent = "Por favor, selecione uma opção!";
+                resultDiv.style.color = "#e74c3c";
+                resultDiv.style.display = "block";
+                return;
+            }
+            
+            // Correção garantida: converter para número e comparar corretamente
+            const userAnswer = parseInt(selectedOption.value);
+            const correctAnswer = dia.quiz.answer;
+            
+            console.log("Resposta selecionada:", userAnswer, "Resposta correta:", correctAnswer);
+            
+            if (userAnswer === correctAnswer) {
+                resultDiv.textContent = "✅ Correto! <h1> é o elemento mais semântico para cabeçalhos principais!";
+                resultDiv.style.color = "#27ae60";
+            } else {
+                resultDiv.textContent = `❌ Incorreto. A resposta correta é: ${dia.quiz.options[correctAnswer]} (para títulos principais)`;
+                resultDiv.style.color = "#e74c3c";
+            }
+            
+            resultDiv.style.display = "block";
+        });
+        });
+        
+        // Atualiza o ano automaticamente
+        document.getElementById("ano").textContent = new Date().getFullYear();
+        
+        // Notificação ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const day = now.getDay(); // 0 (Domingo) a 6 (Sábado)
+            
+            if (day >= 1 && day <= 5) { // Dias úteis
+                setTimeout(() => {
+                    alert(`⚡️ Bom dia, Xavier! Hoje é ${cronograma[day-1].dia} - Hora de estudar ${cronograma[day-1].tema}!`);
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
