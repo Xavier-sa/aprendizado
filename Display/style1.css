@@ -24,12 +24,11 @@ a{
 
 .menu {
 
-    margin-left: 10px;
+    display: flex;
     
 }
 
-.menu li a {
-    
+.menu li a{
     display: block;
     padding: 10px ;
     background: tomato;
