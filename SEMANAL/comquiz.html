@@ -237,14 +237,19 @@
                     "Melhorar páginas HTML/CSS do portfólio"
                 ],
                 quiz: {
+
                     question: "Qual elemento HTML é mais semântico para um cabeçalho principal?",
                     options: [
-                        "<div class='header'>",
-                        "<h1>",
-                        "<header>",
-                        "<p class='title'>"
+                        "&lt;div class='header'&gt;",
+                        "&lt;h1&gt;",
+                        "&lt;header&gt;",
+                        "&lt;p class='title'&gt;"
                     ],
-                    answer: 1 // Resposta correta é <h1>
+                    answer: 1,
+                    explanation: "O elemento &lt;h1&gt; é o mais semântico para cabeçalhos principais, seguido por &lt;header&gt; para áreas de cabeçalho."
+
+
+                    
                 }
             },
             {
@@ -262,7 +267,8 @@
                         "array.shift()",
                         "array.unshift()"
                     ],
-                    answer: 0 // Resposta correta é array.push()
+                    answer: 0,
+                    explanation: "O método push() adiciona um ou mais elementos ao final de um array e retorna o novo comprimento."
                 }
             },
             {
@@ -280,7 +286,8 @@
                         "UPDATE",
                         "DELETE"
                     ],
-                    answer: 1 // Resposta correta é SELECT
+                    answer: 1,
+                    explanation: "O comando SELECT é usado para consultar e recuperar dados de um banco de dados."
                 }
             },
             {
@@ -298,7 +305,8 @@
                         "document.getElementsByClassName()",
                         "document.querySelectorAll()"
                     ],
-                    answer: 1 // Resposta correta é document.getElementById()
+                    answer: 1,
+                    explanation: "getElementById() é o método mais eficiente para selecionar elementos por ID."
                 }
             },
             {
@@ -316,7 +324,8 @@
                         "git push",
                         "git pull"
                     ],
-                    answer: 2 // Resposta correta é git push
+                    answer: 2,
+                    explanation: "git push é usado para enviar commits locais para um repositório remoto."
                 }
             },
             {
@@ -334,7 +343,8 @@
                         "Planejamento",
                         "Implantação"
                     ],
-                    answer: 2 // Resposta correta é Planejamento
+                    answer: 2,
+                    explanation: "O planejamento é a etapa inicial crucial antes de qualquer desenvolvimento."
                 }
             },
             {
@@ -352,7 +362,8 @@
                         "Para documentar aprendizado",
                         "Todas as anteriores"
                     ],
-                    answer: 3 // Resposta correta é Todas as anteriores
+                    answer: 3,
+                    explanation: "Um portfólio atualizado serve para todos esses propósitos e mais."
                 }
             }
         ];
@@ -400,31 +411,31 @@
             });
             
             submitBtn.addEventListener('click', () => {
-            const selectedOption = div.querySelector(`input[name="quiz-${index}"]:checked`);
-            
-            if (!selectedOption) {
-                resultDiv.textContent = "Por favor, selecione uma opção!";
-                resultDiv.style.color = "#e74c3c";
+                const selectedOption = div.querySelector(`input[name="quiz-${index}"]:checked`);
+                
+                if (!selectedOption) {
+                    resultDiv.textContent = "Por favor, selecione uma opção!";
+                    resultDiv.style.color = "#e74c3c";
+                    resultDiv.style.backgroundColor = "#fde8e8";
+                    resultDiv.style.display = "block";
+                    return;
+                }
+                
+                const userAnswer = parseInt(selectedOption.value);
+                const correctAnswer = dia.quiz.answer;
+                
+                if (userAnswer === correctAnswer) {
+                    resultDiv.innerHTML = `✅ Correto! ${dia.quiz.explanation}`;
+                    resultDiv.style.color = "#27ae60";
+                    resultDiv.style.backgroundColor = "#e8f8f0";
+                } else {
+                    resultDiv.innerHTML = `❌ Incorreto. A resposta correta é: <strong>${dia.quiz.options[correctAnswer]}</strong><br><br>${dia.quiz.explanation}`;
+                    resultDiv.style.color = "#e74c3c";
+                    resultDiv.style.backgroundColor = "#fde8e8";
+                }
+                
                 resultDiv.style.display = "block";
-                return;
-            }
-            
-            // Correção garantida: converter para número e comparar corretamente
-            const userAnswer = parseInt(selectedOption.value);
-            const correctAnswer = dia.quiz.answer;
-            
-            console.log("Resposta selecionada:", userAnswer, "Resposta correta:", correctAnswer);
-            
-            if (userAnswer === correctAnswer) {
-                resultDiv.textContent = "✅ Correto! <h1> é o elemento mais semântico para cabeçalhos principais!";
-                resultDiv.style.color = "#27ae60";
-            } else {
-                resultDiv.textContent = `❌ Incorreto. A resposta correta é: ${dia.quiz.options[correctAnswer]} (para títulos principais)`;
-                resultDiv.style.color = "#e74c3c";
-            }
-            
-            resultDiv.style.display = "block";
-        });
+            });
         });
         
         // Atualiza o ano automaticamente
