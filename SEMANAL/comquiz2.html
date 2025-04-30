@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronograma de Estudos - Wellington Xavier</title>
+    <style>
+        :root {
+            --segunda: #e74c3c;
+            --terca: #3498db;
+            --quarta: #2ecc71;
+            --quinta: #f39c12;
+            --sexta: #9b59b6;
+            --sabado: #1abc9c;
+            --domingo: #e67e22;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--segunda), var(--terca), var(--quarta), var(--quinta), var(--sexta), var(--sabado), var(--domingo));
+            border-radius: 2px;
+        }
+        
+        .cronograma {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .dia {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dia:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        
+        .dia::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+        }
+        
+        .segunda::before { background-color: var(--segunda); }
+        .terca::before { background-color: var(--terca); }
+        .quarta::before { background-color: var(--quarta); }
+        .quinta::before { background-color: var(--quinta); }
+        .sexta::before { background-color: var(--sexta); }
+        .sabado::before { background-color: var(--sabado); }
+        .domingo::before { background-color: var(--domingo); }
+        
+        .dia h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+        
+        .tema {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .segunda .tema { background-color: rgba(231, 76, 60, 0.2); color: var(--segunda); }
+        .terca .tema { background-color: rgba(52, 152, 219, 0.2); color: var(--terca); }
+        .quarta .tema { background-color: rgba(46, 204, 113, 0.2); color: var(--quarta); }
+        .quinta .tema { background-color: rgba(243, 156, 18, 0.2); color: var(--quinta); }
+        .sexta .tema { background-color: rgba(155, 89, 182, 0.2); color: var(--sexta); }
+        .sabado .tema { background-color: rgba(26, 188, 156, 0.2); color: var(--sabado); }
+        .domingo .tema { background-color: rgba(230, 126, 34, 0.2); color: var(--domingo); }
+        
+        .dia ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .dia li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .dia li::before {
+            content: "•";
+            color: inherit;
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .segunda li::before { color: var(--segunda); }
+        .terca li::before { color: var(--terca); }
+        .quarta li::before { color: var(--quarta); }
+        .quinta li::before { color: var(--quinta); }
+        .sexta li::before { color: var(--sexta); }
+        .sabado li::before { color: var(--sabado); }
+        .domingo li::before { color: var(--domingo); }
+        
+        .quiz-btn {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .quiz-btn:hover {
+            background-color: #1a252f;
+        }
+        
+        .quiz-container {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2c3e50;
+        }
+        
+        .quiz-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .quiz-options {
+            margin-bottom: 15px;
+        }
+        
+        .quiz-options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        
+        .quiz-options label:hover {
+            background-color: #ecf0f1;
+        }
+        
+        .quiz-submit {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .quiz-submit:hover {
+            background-color: #219653;
+        }
+        
+        .quiz-result {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .quiz-navigation button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+        
+        @media (max-width: 768px) {
+            .cronograma {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Cronograma de Estudos - Wellington Xavier</h1>
+    <div class="cronograma" id="cronograma"></div>
+    
+    <div class="footer">
+        Atualizado automaticamente para o ano <span id="ano"></span>
+    </div>
+    
+    <script>
+        const cronograma = [
+            {
+                dia: "Segunda-feira",
+                tema: "HTML & CSS",
+                tarefas: [
+                    "Estudar semântica e boas práticas",
+                    "Melhorar páginas HTML/CSS do portfólio"
+                ],
+                quizzes: [
+                    {
+                        question: "Qual elemento HTML é mais semântico para um cabeçalho principal?",
+                        options: [
+                            "&lt;div class='header'&gt;",
+                            "&lt;h1&gt;",
+                            "&lt;header&gt;",
+                            "&lt;p class='title'&gt;"
+                        ],
+                        answer: 1,
+                        explanation: "O elemento &lt;h1&gt; é o mais semântico para cabeçalhos principais, seguido por &lt;header&gt; para áreas de cabeçalho."
+                    }
+                ]
+            },
+            {
+                dia: "Terça-feira",
+                tema: "JavaScript Básico",
+                tarefas: [
+                    "Funções, arrays, objetos",
+                    "Criar scripts simples como contador ou validador"
+                ],
+                quizzes: [
+                    {
+                        question: "Qual método adiciona um item ao final de um array?",
+                        options: [
+                            "array.push()",
+                            "array.pop()",
+                            "array.shift()",
+                            "array.unshift()"
+                        ],
+                        answer: 0,
+                        explanation: "O método push() adiciona um ou mais elementos ao final de um array e retorna o novo comprimento."
+                    }
+                ]
+            },
+            {
+                dia: "Quarta-feira",
+                tema: "Banco de Dados (MySQL)",
+                tarefas: [
+                    "Praticar SELECT, INSERT, UPDATE, DELETE",
+                    "Exercícios com tabelas relacionadas"
+                ],
+                quizzes: [
+                    {
+                        question: "Qual comando SQL recupera dados de uma tabela?",
+                        options: [
+                            "INSERT",
+                            "SELECT",
+                            "UPDATE",
+                            "DELETE"
+                        ],
+                        answer: 1,
+                        explanation: "O comando SELECT é usado para consultar e recuperar dados de um banco de dados."
+                    },
+                    {
+                        question: "Qual cláusula SQL é usada para ordenar os resultados?",
+                        options: ["ORDER BY", "GROUP BY", "SORT", "ARRANGE"],
+                        answer: 0,
+                        explanation: "ORDER BY é usado para classificar os resultados de uma consulta com base em uma ou mais colunas."
+                    },
+                    {
+                        question: "Qual comando SQL cria um novo banco de dados?",
+                        options: ["CREATE DATABASE", "NEW DATABASE", "ADD DATABASE", "MAKE DATABASE"],
+                        answer: 0,
+                        explanation: "CREATE DATABASE é usado para criar um novo banco de dados no sistema."
+                    }
+                ]
+            },
+            {
+                dia: "Quinta-feira",
+                tema: "JavaScript DOM + APIs",
+                tarefas: [
+                    "Manipular DOM com eventos",
+                    "Consumir APIs públicas"
+                ],
+                quizzes: [
+                    {
+                        question: "Qual método seleciona um elemento por ID?",
+                        options: [
+                            "document.querySelector()",
+                            "document.getElementById()",
+                            "document.getElementsByClassName()",
+                            "document.querySelectorAll()"
+                        ],
+                        answer: 1,
+                        explanation: "getElementById() é o método mais eficiente para selecionar elementos por ID."
+                    }
+                ]
+            },
+            {
+                dia: "Sexta-feira",
+                tema: "Git e GitHub",
+                tarefas: [
+                    "Revisar comandos Git",
+                    "Fazer commits e atualizar portfólio"
+                ],
+                quizzes: [
+                    {
+                        question: "Qual comando envia commits para o repositório remoto?",
+                        options: [
+                            "git add",
+                            "git commit",
+                            "git push",
+                            "git pull"
+                        ],
+                        answer: 2,
+                        explanation: "git push é usado para enviar commits locais para um repositório remoto."
+                    }
+                ]
+            },
+            {
+                dia: "Sábado",
+                tema: "Projeto Prático",
+                tarefas: [
+                    "Desenvolver um sistema real",
+                    "Melhorar projeto já existente"
+                ],
+                quizzes: [
+                    {
+                        question: "Qual etapa vem primeiro no desenvolvimento?",
+                        options: [
+                            "Codificação",
+                            "Testes",
+                            "Planejamento",
+                            "Implantação"
+                        ],
+                        answer: 2,
+                        explanation: "O planejamento é a etapa inicial crucial antes de qualquer desenvolvimento."
+                    }
+                ]
+            },
+            {
+                dia: "Domingo",
+                tema: "Revisão + Portfólio",
+                tarefas: [
+                    "Revisar estudos da semana",
+                    "Atualizar portfólio e GitHub"
+                ],
+                quizzes: [
+                    {
+                        question: "Por que é importante atualizar o portfólio?",
+                        options: [
+                            "Para mostrar evolução",
+                            "Para impressionar recrutadores",
+                            "Para documentar aprendizado",
+                            "Todas as anteriores"
+                        ],
+                        answer: 3,
+                        explanation: "Um portfólio atualizado serve para todos esses propósitos e mais."
+                    }
+                ]
+            }
+        ];
+
+        // Cria os elementos do cronograma
+        const container = document.getElementById("cronograma");
+        
+        cronograma.forEach((dia, diaIndex) => {
+            const div = document.createElement("div");
+            div.className = `dia ${dia.dia.toLowerCase().split('-')[0]}`;
+            
+            div.innerHTML = `
+                <h2>${dia.dia}</h2>
+                <div class="tema">${dia.tema}</div>
+                <ul>${dia.tarefas.map(t => `<li>${t}</li>`).join('')}</ul>
+                
+                <button class="quiz-btn">Testar Conhecimento (Quiz)</button>
+                <div class="quiz-container" id="quiz-${diaIndex}">
+                    <div id="quiz-content-${diaIndex}"></div>
+                </div>
+            `;
+            
+            container.appendChild(div);
+            
+            // Adiciona eventos para o quiz
+            const quizBtn = div.querySelector('.quiz-btn');
+            const quizContainer = div.querySelector('.quiz-container');
+            const quizContent = div.querySelector(`#quiz-content-${diaIndex}`);
+            
+            let currentQuizIndex = 0;
+            
+            function renderQuiz() {
+                const quiz = dia.quizzes[currentQuizIndex];
+                
+                quizContent.innerHTML = `
+                    <div class="quiz-question">${quiz.question}</div>
+                    <div class="quiz-options">
+                        ${quiz.options.map((opt, i) => `
+                            <label>
+                                <input type="radio" name="quiz-${diaIndex}" value="${i}">
+                                ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <button class="quiz-submit">Enviar Resposta</button>
+                    <div class="quiz-result" id="quiz-result-${diaIndex}"></div>
+                    
+                    ${dia.quizzes.length > 1 ? `
+                    <div class="quiz-navigation">
+                        <button class="quiz-prev" ${currentQuizIndex === 0 ? 'disabled' : ''}>Anterior</button>
+                        <span>Questão ${currentQuizIndex + 1} de ${dia.quizzes.length}</span>
+                        <button class="quiz-next" ${currentQuizIndex === dia.quizzes.length - 1 ? 'disabled' : ''}>Próxima</button>
+                    </div>
+                    ` : ''}
+                `;
+                
+                const submitBtn = quizContent.querySelector('.quiz-submit');
+                const resultDiv = quizContent.querySelector(`#quiz-result-${diaIndex}`);
+                
+                submitBtn.addEventListener('click', () => {
+                    const selectedOption = quizContent.querySelector(`input[name="quiz-${diaIndex}"]:checked`);
+                    
+                    if (!selectedOption) {
+                        resultDiv.textContent = "Por favor, selecione uma opção!";
+                        resultDiv.style.color = "#e74c3c";
+                        resultDiv.style.backgroundColor = "#fde8e8";
+                        resultDiv.style.display = "block";
+                        return;
+                    }
+                    
+                    const userAnswer = parseInt(selectedOption.value);
+                    const correctAnswer = quiz.answer;
+                    
+                    if (userAnswer === correctAnswer) {
+                        resultDiv.innerHTML = `✅ Correto! ${quiz.explanation}`;
+                        resultDiv.style.color = "#27ae60";
+                        resultDiv.style.backgroundColor = "#e8f8f0";
+                    } else {
+                        resultDiv.innerHTML = `❌ Incorreto. A resposta correta é: <strong>${quiz.options[correctAnswer]}</strong><br><br>${quiz.explanation}`;
+                        resultDiv.style.color = "#e74c3c";
+                        resultDiv.style.backgroundColor = "#fde8e8";
+                    }
+                    
+                    resultDiv.style.display = "block";
+                });
+                
+                // Adiciona navegação entre quizzes se houver mais de um
+                if (dia.quizzes.length > 1) {
+                    const prevBtn = quizContent.querySelector('.quiz-prev');
+                    const nextBtn = quizContent.querySelector('.quiz-next');
+                    
+                    if (prevBtn) {
+                        prevBtn.addEventListener('click', () => {
+                            if (currentQuizIndex > 0) {
+                                currentQuizIndex--;
+                                renderQuiz();
+                            }
+                        });
+                    }
+                    
+                    if (nextBtn) {
+                        nextBtn.addEventListener('click', () => {
+                            if (currentQuizIndex < dia.quizzes.length - 1) {
+                                currentQuizIndex++;
+                                renderQuiz();
+                            }
+                        });
+                    }
+                }
+            }
+            
+            quizBtn.addEventListener('click', () => {
+                currentQuizIndex = 0;
+                renderQuiz();
+                quizContainer.style.display = quizContainer.style.display === 'block' ? 'none' : 'block';
+                quizBtn.textContent = quizContainer.style.display === 'block' ? 
+                    'Ocultar Quiz' : 'Testar Conhecimento (Quiz)';
+            });
+        });
+        
+        // Atualiza o ano automaticamente
+        document.getElementById("ano").textContent = new Date().getFullYear();
+        
+        // Notificação ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date();
+            const day = now.getDay(); // 0 (Domingo) a 6 (Sábado)
+            
+            if (day >= 1 && day <= 5) { // Dias úteis
+                setTimeout(() => {
+                    alert(`⚡️ Bom dia, Xavier! Hoje é ${cronograma[day-1].dia} - Hora de estudar ${cronograma[day-1].tema}!`);
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
