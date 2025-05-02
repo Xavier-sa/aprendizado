@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1 id="titulo">Olá!</h1>
+    <button id="btn">Clique aqui</button>
+
+    <script>
+      const botao = document.getElementById("btn");
+      const titulo = document.getElementById("titulo");
+
+      botao.addEventListener("click", function() {
+        titulo.textContent = "Você clicou no botão!Seja bem-vindo!";
+        botao.style.display = "none"; // Esconde o botão após o clique
+
+        
+        // Adiciona um novo botão
+        const novoBotao = document.createElement("button");
+        novoBotao.textContent = "Clique aqui para continuar";   
+        novoBotao.id = "novoBtn";
+        document.body.appendChild(novoBotao);
+        novoBotao.addEventListener("click", function() {
+          titulo.textContent = "Você clicou no novo botão!";
+          novoBotao.style.display = "none"; // Esconde o novo botão após o clique
+          const mensagem = document.createElement("p");
+          mensagem.textContent = "Obrigado por clicar!";
+          document.body.appendChild(mensagem);
+        });
+      });
+    </script>
+  </body>
+</html>
