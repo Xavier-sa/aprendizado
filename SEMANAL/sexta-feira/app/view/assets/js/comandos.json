@@ -1,0 +1,118 @@
+[
+    {
+      "comando": "git init",
+      "descricao": "Inicializa um repositório Git local",
+      "exemplo": "git init"
+    },
+    {
+      "comando": "git clone",
+      "descricao": "Clona um repositório remoto",
+      "exemplo": "git clone https://github.com/usuario/repositorio.git"
+    },
+    {
+      "comando": "git status",
+      "descricao": "Mostra o estado atual do repositório",
+      "exemplo": "git status"
+    },
+    {
+      "comando": "git add",
+      "descricao": "Adiciona arquivos ao staging area",
+      "exemplo": "git add arquivo.txt"
+    },
+    {
+      "comando": "git commit",
+      "descricao": "Salva alterações no repositório local",
+      "exemplo": "git commit -m \"mensagem do commit\""
+    },
+    {
+      "comando": "git push",
+      "descricao": "Envia commits locais para o repositório remoto",
+      "exemplo": "git push origin main"
+    },
+    {
+      "comando": "git pull",
+      "descricao": "Atualiza o repositório local com alterações do repositório remoto",
+      "exemplo": "git pull origin main"
+    },
+    {
+      "comando": "git branch",
+      "descricao": "Lista as branches existentes",
+      "exemplo": "git branch"
+    },
+    {
+      "comando": "git branch -d",
+      "descricao": "Deleta uma branch local (somente se já foi mesclada)",
+      "exemplo": "git branch -d nome-da-branch"
+    },
+    {
+      "comando": "git branch -D",
+      "descricao": "Força a exclusão de uma branch local",
+      "exemplo": "git branch -D nome-da-branch"
+    },
+    {
+      "comando": "git checkout",
+      "descricao": "Muda para outra branch ou commit",
+      "exemplo": "git checkout main"
+    },
+    {
+      "comando": "git checkout -b",
+      "descricao": "Cria e muda para uma nova branch",
+      "exemplo": "git checkout -b nova-branch"
+    },
+    {
+      "comando": "git merge",
+      "descricao": "Mescla outra branch na branch atual",
+      "exemplo": "git merge nome-da-branch"
+    },
+    {
+      "comando": "git log",
+      "descricao": "Mostra o histórico de commits",
+      "exemplo": "git log"
+    },
+    {
+      "comando": "git diff",
+      "descricao": "Mostra as diferenças entre arquivos",
+      "exemplo": "git diff"
+    },
+    {
+      "comando": "git stash",
+      "descricao": "Salva alterações não commitadas para aplicar depois",
+      "exemplo": "git stash"
+    },
+    {
+      "comando": "git stash pop",
+      "descricao": "Restaura as alterações salvas com stash",
+      "exemplo": "git stash pop"
+    },
+    {
+      "comando": "git reset --hard",
+      "descricao": "Descarta todas as alterações e volta para um commit específico",
+      "exemplo": "git reset --hard abc1234"
+    },
+    {
+      "comando": "git revert",
+      "descricao": "Cria um novo commit que desfaz outro commit",
+      "exemplo": "git revert abc1234"
+    },
+    {
+      "comando": "git remote -v",
+      "descricao": "Lista os repositórios remotos configurados",
+      "exemplo": "git remote -v"
+    },
+    {
+      "comando": "git fetch",
+      "descricao": "Baixa atualizações do repositório remoto sem aplicar",
+      "exemplo": "git fetch origin"
+    },
+    {
+      "comando": "git rm",
+      "descricao": "Remove arquivos do repositório e do sistema de arquivos",
+      "exemplo": "git rm arquivo.txt"
+    },
+    {
+      "comando": "git mv",
+      "descricao": "Move ou renomeia arquivos no repositório",
+      "exemplo": "git mv antigo.txt novo.txt"
+    }
+  ]
+  

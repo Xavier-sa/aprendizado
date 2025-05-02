@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comandos Git</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body aria-label="Tabela de comandos Git">
+
+    <h1>Comandos Básicos do Git</h1>
+
+    <div class="btn-container">
+        <button class="btn" onclick="toggleDarkMode()" id="btn-dark-mode">
+            <span class="material-symbols-outlined">dark_mode</span>
+        </button>
+        <button class="btn" onclick="lerComandos()">
+            <span class="material-symbols-outlined">hearing</span>
+        </button>
+    </div>
+    
+    <table role="table" aria-describedby="Tabela com comandos Git">
+        <thead>
+            <tr>
+                <th>Comando</th>
+                <th>Descrição</th>
+                <th>Exemplo</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-comandos"></tbody>
+    </table>
+
+    <script src="../js/script.js"></script>
+</body>
+</html>
