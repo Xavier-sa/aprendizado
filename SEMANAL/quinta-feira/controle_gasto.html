@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organizador de Gastos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .section {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .gastos-lista {
+      margin-top: 15px;
+    }
+    .gastos-lista li {
+      border-bottom: 1px solid #ddd;
+      padding: 8px;
+      list-style: none;
+    }
+    #graficoPizza {
+      max-width: 400px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Organizador de Gastos Mensais</h1>
+
+  <div class="section">
+    <h2>Adicionar Gasto</h2>
+    <label for="categoria">Categoria:</label>
+    <select id="categoria">
+      <option>Terreno</option>
+      <option>Aluguel</option>
+      <option>Mercado</option>
+      <option>Cartão de Crédito</option>
+      <option>Empréstimo</option>
+      <option>Dívida (Serasa)</option>
+    </select>
+    <label for="descricao">Descrição:</label>
+    <input type="text" id="descricao">
+    <label for="valor">Valor:</label>
+    <input type="number" id="valor">
+    <button onclick="adicionarGasto()">Adicionar</button>
+  </div>
+
+  <div class="section">
+    <h2>Gastos Registrados</h2>
+    <ul class="gastos-lista" id="listaGastos"></ul>
+    <p><strong>Total de Gastos:</strong> R$ <span id="totalGastos">0.00</span></p>
+    <p><strong>Limite Mercado:</strong> R$ 600.00 | Gasto: R$ <span id="gastoMercado">0.00</span></p>
+    <button onclick="gerarPDF()">Gerar PDF</button>
+  </div>
+
+  <div class="section">
+    <h2>Gráfico de Pizza</h2>
+    <canvas id="graficoPizza"></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+
+    function atualizarLista() {
+      const lista = document.getElementById('listaGastos');
+      const total = document.getElementById('totalGastos');
+      const mercado = document.getElementById('gastoMercado');
+      lista.innerHTML = '';
+      let totalGastos = 0;
+      let totalMercado = 0;
+      gastos.forEach(g => {
+        const li = document.createElement('li');
+        li.textContent = `[${g.categoria}] ${g.descricao} - R$ ${g.valor.toFixed(2)}`;
+        lista.appendChild(li);
+        totalGastos += g.valor;
+        if (g.categoria === 'Mercado') totalMercado += g.valor;
+      });
+      total.innerText = totalGastos.toFixed(2);
+      mercado.innerText = totalMercado.toFixed(2);
+      if (totalMercado > 600) mercado.style.color = 'red';
+      else mercado.style.color = '#333';
+      atualizarGrafico();
+      localStorage.setItem('gastos', JSON.stringify(gastos));
+    }
+
+    function adicionarGasto() {
+      const categoria = document.getElementById('categoria').value;
+      const descricao = document.getElementById('descricao').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+      if (!descricao || isNaN(valor)) return alert('Preencha todos os campos corretamente.');
+      gastos.push({ categoria, descricao, valor });
+      atualizarLista();
+      document.getElementById('descricao').value = '';
+      document.getElementById('valor').value = '';
+    }
+
+    let grafico;
+    function atualizarGrafico() {
+      const ctx = document.getElementById('graficoPizza').getContext('2d');
+      const porCategoria = {};
+      gastos.forEach(g => porCategoria[g.categoria] = (porCategoria[g.categoria] || 0) + g.valor);
+      const labels = Object.keys(porCategoria);
+      const data = Object.values(porCategoria);
+      if (grafico) grafico.destroy();
+      grafico = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Gastos por Categoria',
+            data,
+            backgroundColor: ['#3498db', '#2ecc71', '#f1c40f', '#e67e22', '#9b59b6', '#e74c3c']
+          }]
+        }
+      });
+    }
+
+    function gerarPDF() {
+      const {{ jsPDF }} = window.jspdf;
+      const doc = new jsPDF();
+      doc.text('Relatório de Gastos Mensais', 10, 10);
+      let y = 20;
+      gastos.forEach(g => {
+        doc.text(`[${g.categoria}] ${g.descricao} - R$ ${g.valor.toFixed(2)}`, 10, y);
+        y += 10;
+      });
+      doc.text(`Total: R$ ${gastos.reduce((acc, g) => acc + g.valor, 0).toFixed(2)}`, 10, y);
+      doc.save('relatorio_gastos.pdf');
+    }
+
+    atualizarLista();
+  </script>
+</body>
+</html>
