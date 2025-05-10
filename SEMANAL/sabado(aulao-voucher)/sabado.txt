@@ -1,0 +1,122 @@
+DART-->    Linguagem (para parte logica Orientada a Obejto)!
+
+
+FLUTTER--> Ferramenta (framework ) para Desenvolvimento de apps Widget!
+
+
+acessar :https://dartpad.dev/
+
+
+String = tera uma letrar maiscula demais minusculo
+
+double = decimais
+
+dynamic = coringa aceita tudo desde de letras e numeros , json
+
+main(){
+  String nome = "Xavier";
+  int idade = 10;
+  bool cursandoSenac = true;
+  double renda = 2.5;
+  dynamic rendaExtra = 1.9;
+  
+  String curso = "Analise";
+  String cursoPrincipal = "Desenvolvimento";
+
+  print(nome);
+  print(idade);
+  print(cursandoSenac);
+  print(renda);
+  print(rendaExtra);
+  
+  print(curso);
+  print(cursoPrincipal);
+  
+  print("Seu curso é: \n"+ curso + "Com foco em: "+cursoPrincipal);  //interpolaÇão invoco variavel no meio da string usando $ 
+  
+  print("Ola,$nome");
+  print("Vamos aprender sobre: $curso focado  em $cursoPrincipal"); 
+  
+  
+
+  
+  
+  // comparar 
+  
+  dynamic objeto1 = {
+    "nome": "Xavier",
+    "idade": 23,
+  };
+  dynamic objeto2 = {
+    "nome": "Santos",
+    "idade": 23,
+   
+  };
+  
+  if(objeto1==objeto2){
+    print("Os Objetos sao iguais ");
+  }else{print("Os Objeto são diferentes");
+        };
+  
+  
+  // OU    uso || 
+  
+  // rever tabela verdade 
+  
+  // E     uso &&  
+  
+
+  
+   if(objeto1["idade"]!=objeto2["idade"] ||
+     objeto1["idade"]>=idade &&
+     objeto2["idade"]<=idade){
+     print("Os Objetos(idade) sao iguais ");
+   }else{print("Os Objeto(idade) são diferentes");
+      };
+
+  
+  
+  
+  
+  if(objeto1["nome"]==objeto2["nome"] ||
+     objeto1["nome"]==nome &&
+     objeto1["nome"]==nome){   
+     print("São IGUAIS!");
+  }else{print("São DIFERENTES!");
+    };
+    
+  
+ 
+ 
+ if(cursandoSenac==false)
+  {print("Aluno esta em progresso");
+   }else{print("Aluno não matriculado");
+  };
+  
+  
+  if(renda==7.5){print("Renda equivalente");}
+  else{print("Renda Incompativel");
+ 
+  }
+  
+
+  
+  if(rendaExtra==1.9){
+    print("APTO");
+  }
+ 
+  
+  
+  
+ 
+  
+ 
+  
+}
+
+
+
+
+
+
+
