@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    /* Estilos básicos para centralizar o jogo e definir o layout do tabuleiro */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #tabuleiro {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .celula {
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      border: 2px solid #333;
+      font-size: 2em;
+      text-align: center;
+      line-height: 100px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .celula:hover {
+      background-color: #eee;
+    }
+
+    #mensagem {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #reiniciar {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Jogo da Velha</h1>
+  <!-- Tabuleiro com 9 células -->
+  <div id="tabuleiro">
+    <!-- As células serão criadas pelo JavaScript -->
+  </div>
+  <div id="mensagem"></div>
+  <button id="reiniciar">Reiniciar</button>
+
+  <script>
+    const tabuleiro = document.getElementById("tabuleiro");
+    const mensagem = document.getElementById("mensagem");
+    const reiniciar = document.getElementById("reiniciar");
+
+    // Array que representa o estado do jogo
+    let jogo = ["", "", "", "", "", "", "", "", ""];
+    let jogadorAtual = "X";
+    let jogoAtivo = true;
+
+    // Combinações vencedoras possíveis
+    const combinacoesVencedoras = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    // Função para criar as células do tabuleiro
+    function criarTabuleiro() {
+      tabuleiro.innerHTML = ""; // Limpa o tabuleiro
+      for (let i = 0; i < 9; i++) {
+        const celula = document.createElement("div");
+        celula.classList.add("celula");
+        celula.dataset.index = i; // Armazena o índice da célula
+        celula.addEventListener("click", clicarCelula);
+        tabuleiro.appendChild(celula);
+      }
+    }
+
+    // Função chamada ao clicar em uma célula
+    function clicarCelula(e) {
+      const index = e.target.dataset.index;
+
+      // Se o jogo acabou ou a célula já foi clicada, não faz nada
+      if (!jogoAtivo || jogo[index] !== "") return;
+
+      jogo[index] = jogadorAtual;
+      e.target.textContent = jogadorAtual;
+
+      if (verificarVencedor()) {
+        mensagem.textContent = `Jogador ${jogadorAtual} venceu!`;
+        jogoAtivo = false;
+      } else if (!jogo.includes("")) {
+        mensagem.textContent = "Empate!";
+        jogoAtivo = false;
+      } else {
+        // Troca o jogador
+        jogadorAtual = jogadorAtual === "X" ? "O" : "X";
+        mensagem.textContent = `Vez do jogador ${jogadorAtual}`;
+      }
+    }
+
+    // Verifica se alguém venceu
+    function verificarVencedor() {
+      return combinacoesVencedoras.some(comb => {
+        const [a, b, c] = comb;
+        return (
+          jogo[a] !== "" &&
+          jogo[a] === jogo[b] &&
+          jogo[b] === jogo[c]
+        );
+      });
+    }
+
+    // Reinicia o jogo
+    reiniciar.addEventListener("click", () => {
+      jogo = ["", "", "", "", "", "", "", "", ""];
+      jogadorAtual = "X";
+      jogoAtivo = true;
+      mensagem.textContent = "Novo jogo! Jogador X começa.";
+      criarTabuleiro();
+    });
+
+    // Inicializa o jogo
+    criarTabuleiro();
+    mensagem.textContent = "Jogador X começa.";
+  </script>
+</body>
+</html>
