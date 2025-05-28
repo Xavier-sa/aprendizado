@@ -1,0 +1,43 @@
+DIAGRAMA DE ENTIDADE-RELACIONAMENTO (DER) - GALERIA VOUCHER
+
+
+
+ENTIDADES:
+
+Entidade	        Atributos Chave	                                                    Descrição
+Administrador	    id, nome, email, senha	                                        Gerencia todo o sistema
+Docente	            id, nome, email, senha, linkedin, github	                    Professores do curso
+Turma	            id, nome, ano, descrição	                                    Agrupamento de alunos por edição
+Aluno	            id, nome, email, linkedin, github, foto	                        Participantes do curso
+Projeto	            id, nome, descrição, link	                                    Projetos desenvolvidos por turmas
+Unidade	            id, nome, cidade	                                            Polos do Senac (ex: Campo Grande)
+
+
+RELACIONAMENTOS:
+Administrador gerencia Docente
+
+Um administrador cadastra vários docentes (1:N)
+
+Docente ministra Turma
+
+Um docente pode estar em várias turmas e uma turma tem vários docentes (N:M)
+
+Tabela associativa: docente_turma
+
+Turma contém Aluno
+
+Uma turma tem muitos alunos, mas um aluno pertence a apenas uma turma (1:N)
+
+Restrição: Turma deve ter pelo menos 1 aluno (RF14)
+
+Turma possui Projeto
+
+Uma turma pode ter vários projetos (1:N)
+
+Turma pertence a Unidade
+
+Cada turma está vinculada a um único polo (1:1)
+
+Visitante visualiza Turma/Aluno/Projeto
+
+Relacionamento de leitura sem persistência (não armazenado)

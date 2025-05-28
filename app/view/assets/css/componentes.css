@@ -1,0 +1,41 @@
+
+
+
+
+
+
+/* Estilos de grid */
+
+body {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 68px 1fr 22px;
+}
+
+.navbar-grid {
+    height: 68px;
+    background-color: blueviolet;
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.sidebar-grid {
+    height: 100vh;
+    background-color: rgb(43, 226, 223);
+    grid-column: 1;
+    grid-row: 1 / 4;
+}
+
+.content-grid {
+    height: calc(100vh - 68px - 22px);
+    background-color: rgb(159, 226, 43);
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.footer-grid {
+    height: 22px;
+    background-color: rgb(226, 43, 86);
+    grid-column: 2;
+    grid-row: 3;
+}
