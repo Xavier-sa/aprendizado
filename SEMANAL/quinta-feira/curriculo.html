@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Currículo Versátil</title>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -59,7 +60,7 @@
       <img src="perfil.jpeg" alt="Foto do candidato">
       <div>
         <h1>Wellington A. S. Xavier</h1>
-        <p>Porteiro | Estudante de Desenvolvimento</p>
+        <p>Estudante de Desenvolvimento</p>
       </div>
     </div>
 
@@ -77,6 +78,7 @@
     <ul>
       <li>Gestão Pública - Estácio</li>
       <li>Técnico em Desenvolvimento (cursando)</li>
+      <li>Desenvolvimento Full Stack - Estácio (cursando)</li>
     </ul>
 
     <h2>Habilidades</h2>
@@ -104,16 +106,20 @@
       container.className = "container " + estilo;
     }
 
-    function gerarPDF() {
-      const doc = new jsPDF();
-      doc.setFontSize(12);
-      doc.text("Currículo - Wellington Xavier", 10, 10);
-      doc.text("Resumo: Profissional disciplinado...", 10, 20);
-      doc.text("Experiência: Porteiro, Orientador, Coletor", 10, 30);
-      doc.text("Formação: Gestão Pública, Técnico", 10, 40);
-      doc.text("Habilidades: HTML, CSS, JS...", 10, 50);
-      doc.text("Contato: seuemail@email.com", 10, 60);
-      doc.save("curriculo_wellington.pdf");
+    async function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const elemento = document.getElementById("curriculo");
+
+      const canvas = await html2canvas(elemento, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save("curriculo_wellington.pdf");
     }
   </script>
 </body>
