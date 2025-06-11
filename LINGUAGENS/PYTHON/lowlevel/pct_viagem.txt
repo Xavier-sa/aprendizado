@@ -1,0 +1,8 @@
+| Conceito                        | O que faz                               |
+| ------------------------------- | --------------------------------------- |
+| `tk.Tk()`                       | Cria a janela principal                 |
+| `ttk.Combobox`                  | Cria um menu suspenso para os destinos  |
+| `tk.Checkbutton`                | Cria caixas de seleção para os passeios |
+| `BooleanVar()`                  | Controla o estado dos checkboxes        |
+| `messagebox.showinfo()`         | Exibe janelas popup com mensagens       |
+| `.bind("<<ComboboxSelected>>")` | Detecta quando o destino é selecionado  |

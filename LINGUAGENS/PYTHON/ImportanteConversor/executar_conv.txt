@@ -1,0 +1,5 @@
+python conv.py praticas_psicopedagogicas.docx psicoterapia.docx WhatsAp.jpg WhatsA.jpeg
+
+
+
+ai coloco os arquivos e tipo correto
