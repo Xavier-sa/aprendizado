@@ -1,0 +1,15 @@
+1 Fazer a validadcao por tamnhp da image,, nao permitindo imagem maior que 16MB.
+
+2 Fazer a criação automática do diretório upload caso não exista.
+
+3 Construa um sistema para armazeanamento comunitario de imagens pnde qualwurr usauario possa escolher arquivoos imagens para salvar e posteriomente consiga viusalizar  todas as imagens do sistema em formato de grid alem disso o seistema deve:
+
+    3.1. garantir apenas imagens possam ser salvas
+
+    3.2. armazenar as imagens de groma segura nao sobrepondo imagens enviadas anteriormemte
+
+    3.3. armazenar tambem o nome original e data de envio 
+
+    3.4. permitir fazer download da imagem ao selecionar na grid
+
+4 Gerenciar minhas imagens 
