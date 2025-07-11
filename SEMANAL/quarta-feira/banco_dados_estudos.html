@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco De Dados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #f8f8f8;
+            line-height: 1.6;
+        }
+        code, pre {
+            background-color: #eee;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Banco De Dados</h1>
+    <p>Este é um exemplo de página HTML que representa um banco de dados e ensina comandos SQL básicos para estudo.</p>
+
+    <h2>🔹 O que é um banco de dados?</h2>
+    <p>Um <strong>banco de dados</strong> é um sistema que armazena e organiza informações. Usamos a linguagem <strong>SQL</strong> para interagir com o banco.</p>
+
+    <h2>🔹 Estrutura básica de tabelas relacionadas</h2>
+    <h3>Tabela <code>clientes</code></h3>
+    <pre>
+| id | nome       | email            |
+|----|------------|------------------|
+| 1  | João Silva | joao@email.com   |
+| 2  | Ana Lima   | ana@email.com    |
+    </pre>
+
+    <h3>Tabela <code>pedidos</code></h3>
+    <pre>
+| id | cliente_id | produto         | valor |
+|----|------------|------------------|--------|
+| 1  | 1          | Celular          | 1500   |
+| 2  | 1          | Fone de Ouvido   | 300    |
+| 3  | 2          | Notebook         | 4000   |
+    </pre>
+
+    <h2>🔹 Comandos SQL Básicos</h2>
+
+    <h3>1. SELECT – Buscar dados</h3>
+    <pre><code>
+-- Buscar todos os clientes
+SELECT * FROM clientes;
+
+-- Buscar pedidos do cliente João
+SELECT * FROM pedidos WHERE cliente_id = 1;
+
+-- Buscar nome do cliente e produto comprado
+SELECT c.nome, p.produto
+FROM clientes c
+JOIN pedidos p ON c.id = p.cliente_id;
+    </code></pre>
+
+    <h3>2. INSERT – Inserir dados</h3>
+    <pre><code>
+-- Adicionar novo cliente
+INSERT INTO clientes (nome, email)
+VALUES ('Carlos Mendes', 'carlos@email.com');
+
+-- Adicionar pedido para o cliente 3
+INSERT INTO pedidos (cliente_id, produto, valor)
+VALUES (3, 'Teclado', 250);
+    </code></pre>
+
+    <h3>3. UPDATE – Atualizar dados</h3>
+    <pre><code>
+-- Atualizar email do cliente com id = 2
+UPDATE clientes
+SET email = 'ana.lima@email.com'
+WHERE id = 2;
+
+-- Atualizar valor do pedido 1
+UPDATE pedidos
+SET valor = 1400
+WHERE id = 1;
+    </code></pre>
+
+    <h3>4. DELETE – Apagar dados</h3>
+    <pre><code>
+-- Apagar pedido com id = 2
+DELETE FROM pedidos
+WHERE id = 2;
+
+-- Apagar cliente com id = 3 (e seus pedidos)
+DELETE FROM pedidos WHERE cliente_id = 3;
+DELETE FROM clientes WHERE id = 3;
+    </code></pre>
+
+    <h2>🔹 Exercício prático</h2>
+    <h3>1. Crie as tabelas</h3>
+    <pre><code>
+CREATE TABLE clientes (
+    id INTEGER PRIMARY KEY,
+    nome TEXT,
+    email TEXT
+);
+
+CREATE TABLE pedidos (
+    id INTEGER PRIMARY KEY,
+    cliente_id INTEGER,
+    produto TEXT,
+    valor REAL,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+    </code></pre>
+
+    <h3>2. Insira dados e pratique:</h3>
+    <ul>
+        <li>Insira 2 clientes e 3 pedidos</li>
+        <li>Use <code>SELECT</code> com <code>JOIN</code> para ver o que foi comprado</li>
+        <li>Atualize o nome ou email de um cliente</li>
+        <li>Apague um pedido</li>
+    </ul>
+
+    <p>💡 Dica: use um site como <a href="https://sqliteonline.com/" target="_blank">sqliteonline.com</a> para testar esses comandos sem instalar nada.</p>
+</body>
+</html>
