@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Controle Financeiro</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <h1>Controle Financeiro</h1>
+
+  <h2>Selecione as categorias que deseja preencher:</h2>
+  <div>
+    <label class="category-checkbox"><input type="checkbox" id="catMoradia" /> Moradia</label>
+    <label class="category-checkbox"><input type="checkbox" id="catMoto" /> Moto</label>
+    <label class="category-checkbox"><input type="checkbox" id="catCarro" /> Carro</label>
+  </div>
+
+  <form id="financaForm">
+    <!-- Moradia -->
+    <div id="moradiaCampos" class="categoria-campos">
+      <h3>Moradia</h3>
+      <label>Moai: <input type="number" id="moai" min="0" step="0.01" value="0" /></label>
+      <label>Água: <input type="number" id="agua" min="0" step="0.01" value="0" /></label>
+      <label>Luz: <input type="number" id="luz" min="0" step="0.01" value="0" /></label>
+      <label>Internet Fixa: <input type="number" id="internetFixa" min="0" step="0.01" value="0" /></label>
+      <label>Internet Celular: <input type="number" id="internetCelular" min="0" step="0.01" value="0" /></label>
+      <label>Terreno: <input type="number" id="terreno" min="0" step="0.01" value="0" /></label>
+      <label>Terreno Carne: <input type="number" id="terrenoCarne" min="0" step="0.01" value="0" /></label>
+      <label>Casa Aluguel: <input type="number" id="casaAluguel" min="0" step="0.01" value="0" /></label>
+    </div>
+
+    <!-- Moto -->
+    <div id="motoCampos" class="categoria-campos">
+      <h3>Despesas Moto</h3>
+      <label>Óleo: <input type="number" id="motoOleo" min="0" step="0.01" value="0" /></label>
+      <label>Pneus: <input type="number" id="motoPneus" min="0" step="0.01" value="0" /></label>
+      <label>Remendo (guardar): <input type="number" id="motoRemendo" min="0" step="0.01" value="0" /></label>
+      <label>Transmissão: <input type="number" id="motoTransmissao" min="0" step="0.01" value="0" /></label>
+      <label>Cabos: <input type="number" id="motoCabos" min="0" step="0.01" value="0" /></label>
+      <label>Bateria: <input type="number" id="motoBateria" min="0" step="0.01" value="0" /></label>
+      <label>Gasolina: <input type="number" id="motoGasolina" min="0" step="0.01" value="0" /></label>
+      <label>IPVA / Licenciamento (guardar): <input type="number" id="motoIpva" min="0" step="0.01" value="0" /></label>
+    </div>
+
+    <!-- Carro -->
+    <div id="carroCampos" class="categoria-campos">
+      <h3>Despesas Carro</h3>
+      <label>Óleo: <input type="number" id="carroOleo" min="0" step="0.01" value="0" /></label>
+      <label>Pneus: <input type="number" id="carroPneus" min="0" step="0.01" value="0" /></label>
+      <label>Remendo (guardar): <input type="number" id="carroRemendo" min="0" step="0.01" value="0" /></label>
+      <label>Transmissão: <input type="number" id="carroTransmissao" min="0" step="0.01" value="0" /></label>
+      <label>Cabos: <input type="number" id="carroCabos" min="0" step="0.01" value="0" /></label>
+      <label>Bateria: <input type="number" id="carroBateria" min="0" step="0.01" value="0" /></label>
+      <label>Gasolina: <input type="number" id="carroGasolina" min="0" step="0.01" value="0" /></label>
+      <label>IPVA / Licenciamento (guardar): <input type="number" id="carroIpva" min="0" step="0.01"
+          value="0" /></label>
+    </div>
+
+    <!-- Renda -->
+    <h2>Renda</h2>
+    <label>Salário Base: <input type="number" id="salarioBase" min="0" step="0.01" value="0" /></label>
+    <label>Rendas Extras: <input type="number" id="rendasExtras" min="0" step="0.01" value="0" /></label>
+
+    <button type="submit">Calcular Saldo</button>
+  </form>
+
+  <div id="resultado"></div>
+
+
+  <a href="/">
+    <button class="voltar-btn">⬅ Voltar ao Início</button>
+  </a>
+
+  <script>
+    // Função para mostrar/ocultar campos de categoria
+    function toggleCategoria(categoriaId, camposId) {
+      document.getElementById(categoriaId).addEventListener('change', function () {
+        document.getElementById(camposId).style.display = this.checked ? 'block' : 'none';
+      });
+    }
+
+    toggleCategoria('catMoradia', 'moradiaCampos');
+    toggleCategoria('catMoto', 'motoCampos');
+    toggleCategoria('catCarro', 'carroCampos');
+
+    const form = document.getElementById('financaForm');
+    const resultadoDiv = document.getElementById('resultado');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      function valor(id) {
+        const el = document.getElementById(id);
+        if (!el) return 0;
+        // só soma se campo visível
+        if (el.offsetParent === null) return 0;
+        return parseFloat(el.value) || 0;
+      }
+
+      // Lista dos ids dos inputs que queremos somar (despesas)
+      const despesasIds = [
+        'moai', 'agua', 'luz', 'internetFixa', 'internetCelular', 'terreno', 'terrenoCarne', 'casaAluguel',
+        'motoOleo', 'motoPneus', 'motoRemendo', 'motoTransmissao', 'motoCabos', 'motoBateria', 'motoGasolina', 'motoIpva',
+        'carroOleo', 'carroPneus', 'carroRemendo', 'carroTransmissao', 'carroCabos', 'carroBateria', 'carroGasolina', 'carroIpva'
+      ];
+
+      let totalDespesas = 0;
+      despesasIds.forEach(id => {
+        totalDespesas += valor(id);
+      });
+
+      const salarioBase = valor('salarioBase');
+      const rendasExtras = valor('rendasExtras');
+
+      const totalRendas = salarioBase + rendasExtras;
+      const saldoFinal = totalRendas - totalDespesas;
+
+      resultadoDiv.style.display = 'block';
+      resultadoDiv.innerHTML = `
+        <p><strong>Total de Despesas:</strong> R$ ${totalDespesas.toFixed(2)}</p>
+        <p><strong>Salário + Rendas Extras:</strong> R$ ${totalRendas.toFixed(2)}</p>
+        <p><strong>Saldo Final:</strong> R$ ${saldoFinal.toFixed(2)}</p>
+      `;
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      background: #f0f0f0;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    #placar {
+      margin: 20px 0;
+    }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    td {
+      width: 80px;
+      height: 80px;
+      border: 2px solid #333;
+      font-size: 2em;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+      background: white;
+    }
+
+    #resultado {
+      margin: 20px;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+
+    .voltar-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #bbb;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .voltar-btn:hover {
+      background-color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Jogo da Velha</h2>
+
+  <div id="placar">
+    <span>Vitórias X: <strong id="vitoriasX">0</strong></span> |
+    <span>Vitórias O: <strong id="vitoriasO">0</strong></span>
+  </div>
+
+  <table id="tabuleiro">
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table>
+
+  <div id="resultado"></div>
+  <button onclick="reiniciarJogo()">Reiniciar Jogo</button>
+
+
+  <a href="/">
+    <button class="voltar-btn">⬅ Voltar ao Início</button>
+  </a>
+
+
+  <a href="/logout">
+    <button class="sair-btn">🚪 Sair</button>
+  </a>
+
+
+  <script>
+    const tabuleiro = document.querySelectorAll("td");
+    const resultado = document.getElementById("resultado");
+    const vitoriasX = document.getElementById("vitoriasX");
+    const vitoriasO = document.getElementById("vitoriasO");
+
+    let turno = "X";
+    let jogoAtivo = true;
+
+    tabuleiro.forEach(celula => {
+      celula.addEventListener("click", () => {
+        if (celula.textContent === "" && jogoAtivo) {
+          celula.textContent = turno;
+          if (verificarVencedor()) {
+            resultado.textContent = `Jogador ${turno} venceu!`;
+            jogoAtivo = false;
+            if (turno === "X") vitoriasX.textContent = parseInt(vitoriasX.textContent) + 1;
+            else vitoriasO.textContent = parseInt(vitoriasO.textContent) + 1;
+          } else if (Array.from(tabuleiro).every(c => c.textContent !== "")) {
+            resultado.textContent = "Empate!";
+            jogoAtivo = false;
+          } else {
+            turno = turno === "X" ? "O" : "X";
+          }
+        }
+      });
+    });
+
+    function verificarVencedor() {
+      const combinacoes = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // linhas
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // colunas
+        [0, 4, 8], [2, 4, 6]          // diagonais
+      ];
+
+      return combinacoes.some(combinacao => {
+        const [a, b, c] = combinacao;
+        return tabuleiro[a].textContent &&
+          tabuleiro[a].textContent === tabuleiro[b].textContent &&
+          tabuleiro[a].textContent === tabuleiro[c].textContent;
+      });
+    }
+
+    function reiniciarJogo() {
+      tabuleiro.forEach(celula => celula.textContent = "");
+      resultado.textContent = "";
+      turno = "X";
+      jogoAtivo = true;
+    }
+  </script>
+</body>
+
+</html>
