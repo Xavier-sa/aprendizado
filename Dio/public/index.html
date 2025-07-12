@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <title>Login e Jogos</title>
   <link rel="stylesheet" href="style.css" />
-  
+
 </head>
+
 <body>
   <div class="container">
     <img src="https://github.com/Xavier-sa.png" alt="Avatar do GitHub" class="avatar" />
-    
+
     <!-- Tela de Login -->
     <div id="loginScreen">
       <h2>Login</h2>
@@ -19,7 +21,7 @@
         <button type="submit">Entrar</button>
       </form>
     </div>
-    
+
     <!-- Tela de Jogos (inicialmente escondida) -->
     <div id="gameScreen" class="hidden">
       <h2>Escolha um jogo</h2>
@@ -27,8 +29,12 @@
       <a href="/jogo1"><button>Jogo da Memoria Icones </button></a>
       <a href="/jogo2"><button>Jogo da Memoria Yu Gi Oh </button></a>
       <a href="/simulador"><button>Similar Despesas</button></a>
+
       
-      <button id="logoutBtn">Sair</button>
+
+
+      <button id="logoutBtn" class="sair-btn">🚪 Sair</button>
+
     </div>
   </div>
 
@@ -62,4 +68,5 @@
     });
   </script>
 </body>
+
 </html>

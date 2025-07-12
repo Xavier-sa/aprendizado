@@ -1,184 +1,204 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8" />
-<title>Jogo da Memória Simples</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    max-width: 500px;
-    margin: 30px auto;
-    text-align: center;
-    background: #f7f7f7;
-  }
-  h1 {
-    margin-bottom: 20px;
-  }
-  #game {
-    display: grid;
-    grid-template-columns: repeat(4, 100px);
-    grid-gap: 15px;
-    justify-content: center;
-  }
-  .card {
-    width: 100px;
-    height: 100px;
-    background: #444;
-    border-radius: 8px;
-    cursor: pointer;
-    position: relative;
-    perspective: 600px;
-  }
-  .card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.5s;
-    transform-style: preserve-3d;
-  }
-  .card.flipped .card-inner {
-    transform: rotateY(180deg);
-  }
-  .card-front, .card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    backface-visibility: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 48px;
-    color: white;
-    user-select: none;
-  }
-  .card-front {
-    background: #666;
-  }
-  .card-back {
-    background: #4caf50;
-    transform: rotateY(180deg);
-  }
-  #message {
-    margin-top: 20px;
-    font-size: 20px;
-    color: green;
-    font-weight: bold;
-  }
-  button#restart {
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    background: #2196f3;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  button#restart:hover {
-    background: #1976d2;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <title>Jogo da Memória Simples</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 30px auto;
+      text-align: center;
+      background: #f7f7f7;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #game {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      grid-gap: 15px;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      background: #444;
+      border-radius: 8px;
+      cursor: pointer;
+      position: relative;
+      perspective: 600px;
+    }
+
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.5s;
+      transform-style: preserve-3d;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 48px;
+      color: white;
+      user-select: none;
+    }
+
+    .card-front {
+      background: #666;
+    }
+
+    .card-back {
+      background: #4caf50;
+      transform: rotateY(180deg);
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      color: green;
+      font-weight: bold;
+    }
+
+    button#restart {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      background: #2196f3;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button#restart:hover {
+      background: #1976d2;
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>Jogo da Memória</h1>
-<div id="game"></div>
-<div id="message"></div>
-<button id="restart" style="display:none;">Reiniciar Jogo</button>
+  <h1>Jogo da Memória</h1>
+  <div id="game"></div>
+  <div id="message"></div>
+  <button id="restart" style="display:none;">Reiniciar Jogo</button>
+  
 
-<script>
-  const gameContainer = document.getElementById('game');
-  const message = document.getElementById('message');
-  const restartBtn = document.getElementById('restart');
 
-  // Símbolos para as cartas (pode ser emojis ou letras)
-  const symbols = ['🍎','🍌','🍇','🍉','🍓','🥝'];
+    <a href="/">
+        <button class="voltar-btn">⬅ Voltar ao Início</button>
+      </a>
+  <script>
+    const gameContainer = document.getElementById('game');
+    const message = document.getElementById('message');
+    const restartBtn = document.getElementById('restart');
 
-  // Criar o array duplicado e embaralhado
-  let cards = [...symbols, ...symbols];
-  function shuffle(array) {
-    for (let i = array.length -1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i+1));
-      [array[i], array[j]] = [array[j], array[i]];
+    // Símbolos para as cartas (pode ser emojis ou letras)
+    const symbols = ['🍎', '🍌', '🍇', '🍉', '🍓', '🥝'];
+
+    // Criar o array duplicado e embaralhado
+    let cards = [...symbols, ...symbols];
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
-    return array;
-  }
 
-  let flippedCards = [];
-  let matchedCount = 0;
-  let lockBoard = false;
+    let flippedCards = [];
+    let matchedCount = 0;
+    let lockBoard = false;
 
-  function createCard(symbol) {
-    const card = document.createElement('div');
-    card.classList.add('card');
+    function createCard(symbol) {
+      const card = document.createElement('div');
+      card.classList.add('card');
 
-    card.innerHTML = `
+      card.innerHTML = `
       <div class="card-inner">
         <div class="card-front">?</div>
         <div class="card-back">${symbol}</div>
       </div>
     `;
 
-    card.addEventListener('click', () => {
-      if(lockBoard) return;
-      if(card.classList.contains('flipped')) return;
+      card.addEventListener('click', () => {
+        if (lockBoard) return;
+        if (card.classList.contains('flipped')) return;
 
-      card.classList.add('flipped');
-      flippedCards.push(card);
+        card.classList.add('flipped');
+        flippedCards.push(card);
 
-      if(flippedCards.length === 2){
-        checkMatch();
-      }
-    });
+        if (flippedCards.length === 2) {
+          checkMatch();
+        }
+      });
 
-    return card;
-  }
+      return card;
+    }
 
-  function checkMatch(){
-    lockBoard = true;
-    const [card1, card2] = flippedCards;
-    const symbol1 = card1.querySelector('.card-back').textContent;
-    const symbol2 = card2.querySelector('.card-back').textContent;
+    function checkMatch() {
+      lockBoard = true;
+      const [card1, card2] = flippedCards;
+      const symbol1 = card1.querySelector('.card-back').textContent;
+      const symbol2 = card2.querySelector('.card-back').textContent;
 
-    if(symbol1 === symbol2){
-      matchedCount += 2;
-      flippedCards = [];
-      lockBoard = false;
-      if(matchedCount === cards.length){
-        message.textContent = "Parabéns! Você venceu!";
-        restartBtn.style.display = 'inline-block';
-      }
-    } else {
-      setTimeout(() => {
-        card1.classList.remove('flipped');
-        card2.classList.remove('flipped');
+      if (symbol1 === symbol2) {
+        matchedCount += 2;
         flippedCards = [];
         lockBoard = false;
-      }, 1000);
+        if (matchedCount === cards.length) {
+          message.textContent = "Parabéns! Você venceu!";
+          restartBtn.style.display = 'inline-block';
+        }
+      } else {
+        setTimeout(() => {
+          card1.classList.remove('flipped');
+          card2.classList.remove('flipped');
+          flippedCards = [];
+          lockBoard = false;
+        }, 1000);
+      }
     }
-  }
 
-  function startGame(){
-    message.textContent = '';
-    restartBtn.style.display = 'none';
-    matchedCount = 0;
-    flippedCards = [];
-    lockBoard = false;
+    function startGame() {
+      message.textContent = '';
+      restartBtn.style.display = 'none';
+      matchedCount = 0;
+      flippedCards = [];
+      lockBoard = false;
 
-    cards = shuffle(cards);
-    gameContainer.innerHTML = '';
-    cards.forEach(symbol => {
-      const card = createCard(symbol);
-      gameContainer.appendChild(card);
-    });
-  }
+      cards = shuffle(cards);
+      gameContainer.innerHTML = '';
+      cards.forEach(symbol => {
+        const card = createCard(symbol);
+        gameContainer.appendChild(card);
+      });
+    }
 
-  restartBtn.addEventListener('click', startGame);
+    restartBtn.addEventListener('click', startGame);
 
-  startGame();
-</script>
+    startGame();
+  </script>
 
 </body>
+
 </html>

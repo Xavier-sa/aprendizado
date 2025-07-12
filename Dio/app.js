@@ -1,4 +1,19 @@
-console.log("OK RODANDO!!");
+console.log(`
+                ____________________________________________________________________________________________________________________________
+                                                                                              |*|_______________________________________|*| 
+                \\*\\  /*/      /*\\    \\*\\    /*/    |*|    |*|====*/    |*|***|*|         |*|                                       |*|   
+                 \\*\\/*/      / ^ \\    \\*\\  /*/     |*|    |*|__        |*|_*/*/          |*|     wellington222688@gmail.com        |*| 
+                 /*/\\*\\     /* - *\\    \\*\\/*/      |*|    |*|--        |*| \\*\\         |*|         contate:67 98466-0285         |*| 
+                /*/  \\*\\   /*/   \\*\\    \\**/       |*|    |*|====*/    |*|  \\*\\        |*|_______________________________________|*|
+                ____________________________________________________________________________________________________________________________                                                               
+                                
+                
+
+                Portfólio: 'https://xavierdev.pages.dev'
+                            
+                
+`);
+
 
 const express = require('express');
 const app = express();
@@ -16,15 +31,15 @@ app.get('/jogo', (req, res) => {
 });
 
 app.get('/jogo1', (req, res) => {
-  res.sendFile(path.join(__dirname, 'jogo-memoria', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public','jogo-memoria', 'index.html'));
 });
 app.get('/jogo2', (req, res) => {
-  res.sendFile(path.join(__dirname, 'jogo-memoria-yugi', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public','jogo-memoria-yugi', 'index.html'));
 });
 
 // simulador testando
 app.get('/simulador', (req, res) => {
-  res.sendFile(path.join(__dirname, 'simulador', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public','simulador', 'index.html'));
 });
 
 // API de exemplo
