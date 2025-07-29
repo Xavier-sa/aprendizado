@@ -1,0 +1,77 @@
+<html>
+
+<head>
+    <title>Controle Acadêmico</title>
+</head>
+
+<body>
+    <h1>Controle Acadêmico</h1>
+    <p>
+    <table border="1">
+        <th> Disciplina </th>
+        <th> Professor </th>
+        <th> Salário </th>
+        <th> Despesas </th>
+        <th> Premiacao </th>
+        <tr>
+            <td> Matemática </td>
+            <td> prof. Xavier </td>
+            <td id="salario-matematica"></td>
+            <td class="despesas"></td>
+            <td class="premiacao"></td>
+        </tr>
+        <tr>
+            <td> Português </td>
+            <td> prof. Wellington </td>
+            <td id="salario-portugues"></td>
+            <td class="despesas"></td>
+            <td class="premiacao"></td>
+        </tr>
+        <tr>
+            <td>Raciocionio Lógico</td>
+            <td>prof. Santos</td>
+            <td id="salario-racicionio"></td>
+            <td class="despesas"></td>
+            <td class="premiacao"></td>
+        </tr>
+        <tr>
+            <td>Computação</td>
+            <td>prof. Aparecido</td>
+            <td id="salario-computacao"></td>
+            <td class="despesas"></td>
+            <td class="premiacao"></td>
+        </tr>
+    </table>
+
+    <script>
+        function salario() {
+            let salario = 10000;
+            document.getElementById("salario-matematica").innerText = salario + 10;
+            document.getElementById("salario-portugues").innerText = salario - 100;
+            document.getElementById("salario-racicionio").innerText = salario - 700;
+            document.getElementById("salario-computacao").innerText = salario - 880;
+        }
+
+        function despesasPremiacao() {
+            const despesas = document.getElementsByClassName("despesas"); //nao posso usar id pois ID so pode um na pagina toda
+            const premiacoes = document.getElementsByClassName("premiacao");
+
+            for (let i = 0; i < despesas.length; i++) {
+                despesas[i].innerText = 3800;
+            }
+
+            for (let i = 0; i < premiacoes.length; i++) {
+                premiacoes[i].innerText = 1000;
+            }
+        }
+
+        salario();
+        despesasPremiacao();
+    </script>
+</body>
+
+</html>
+
+<!-- voltar nesse codigo -->
+
+
