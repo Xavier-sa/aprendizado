@@ -1,0 +1,48 @@
+<style>
+    body {
+        background-image: url(https://avatars.githubusercontent.com/u/172450001?v=4);
+        background-repeat: no-repeat;
+        display: flex;
+        align-items: center;
+        align-self: start;
+    }
+    #mensagem{
+        color: rgb(0, 47, 255);
+        
+    }
+    p{
+        padding:20px 10px 30px 20px;
+        font-size:20px;
+    }
+</style>
+
+
+<input type="password" id="senha" placeholder="Digite a senha">
+<button onclick="validar()">Validar</button>
+<button onclick="esquecer()">Esqucer Senha</button>
+
+</button>
+<p id="mensagem"></p>
+
+
+<script>
+    
+
+
+    function validar() {
+        senhacorreta = "1234";
+        let senha = document.getElementById("senha").value;
+        if (senha === senhacorreta) {
+            document.getElementById("mensagem").innerText = "Senha correta!";
+        } else {
+            document.getElementById("mensagem").innerText = "Senha incorreta.";
+        }
+    }
+    function esquecer() {
+        document.getElementById("senha").value = senhacorreta;
+        document.getElementById("mensagem").innerText = "Senha do sistema.";
+
+
+
+    }
+</script>
