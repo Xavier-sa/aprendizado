@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Tabela de Funções JavaScript</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #999;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #ddd;
+    }
+    a {
+      color: blue;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+  <script>
+    function showExample(func) {
+      switch(func) {
+        case 'abs':
+          alert("Exemplo: Math.abs(-10) = " + Math.abs(-10));
+          break;
+        case 'alert':
+          alert("Isso é um exemplo da função alert()");
+          break;
+        case 'confirm':
+          let conf = confirm("Você confirma?");
+          alert("Retorno: " + conf);
+          break;
+        case 'eval':
+          // alert("Exemplo: eval('2 + 3') = " + eval('2 + 3'));
+          alert("Por segurança, o uso de eval está desativado neste exemplo.");
+          break;
+        case 'max':
+          alert("Exemplo: Math.max(10, 20) = " + Math.max(10, 20));
+          break;
+        case 'min':
+          alert("Exemplo: Math.min(10, 20) = " + Math.min(10, 20));
+          break;
+        case 'parseFloat':
+          alert("Exemplo: parseFloat('3.14') = " + parseFloat('3.14'));
+          break;
+        case 'parseInt':
+          alert("Exemplo: parseInt('3.99') = " + parseInt('3.99'));
+          break;
+        case 'prompt':
+          let nome = prompt("Qual é o seu nome?");
+          alert("Você digitou: " + nome);
+          break;
+        case 'random':
+          alert("Exemplo: Math.random(10) = " + Math.random());
+          break;
+        case 'round':
+          alert("Exemplo: Math.round(4.7) = " + Math.round(4.7));
+          break;
+        case 'sqrt':
+          alert("Exemplo: Math.sqrt(25) = " + Math.sqrt(25));
+          break;
+        case 'string':
+          alert("Exemplo: String(1234) = " + String(1234));
+          break;
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Tabela de Funções JavaScript</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Função</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><a onclick="showExample('abs')">abs()</a></td><td>Retorna o valor absoluto de um número</td></tr>
+      <tr><td><a onclick="showExample('alert')">alert()</a></td><td>Exibe uma janela com a mensagem repassada</td></tr>
+      <tr><td><a onclick="showExample('confirm')">confirm()</a></td><td>Exibe uma janela e aguarda o usuário confirmar ou não</td></tr>
+      <tr><td><a onclick="showExample('eval')">eval()</a></td><td>Interpreta e executa strings com código JavaScript (⚠️ perigoso)</td></tr>
+      <tr><td><a onclick="showExample('max')">max()</a></td><td>Retorna o maior valor numérico de dois ou mais</td></tr>
+      <tr><td><a onclick="showExample('min')">min()</a></td><td>Retorna o menor valor numérico de dois ou mais</td></tr>
+      <tr><td><a onclick="showExample('parseFloat')">parseFloat()</a></td><td>Converte uma string em número real</td></tr>
+      <tr><td><a onclick="showExample('parseInt')">parseInt()</a></td><td>Converte uma string em número inteiro</td></tr>
+      <tr><td><a onclick="showExample('prompt')">prompt()</a></td><td>Exibe uma mensagem com campo de entrada</td></tr>
+      <tr><td><a onclick="showExample('random')">random()</a></td><td>Retorna um número aleatório entre 0 e 1</td></tr>
+      <tr><td><a onclick="showExample('round')">round()</a></td><td>Arredonda um número para o inteiro mais próximo</td></tr>
+      <tr><td><a onclick="showExample('sqrt')">sqrt()</a></td><td>Retorna a raiz quadrada de um número</td></tr>
+      <tr><td><a onclick="showExample('string')">String()</a></td><td>Converte um valor para string (texto)</td></tr>
+    </tbody>
+  </table>
+</body>
+</html>

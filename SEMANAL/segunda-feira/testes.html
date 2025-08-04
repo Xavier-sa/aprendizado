@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Sistema Acadêmico</title>
+  <script>
+    function calc_media(n1, n2) {
+      var m = (n1 + n2) / 2;
+      return m;
+    }
+
+    function resultado(form) {
+      // Fix: parseFloat (capital F) and proper syntax for accessing form values
+      var media = calc_media(parseFloat(form.nota1.value), parseFloat(form.nota2.value));
+
+      if (isNaN(media)) {
+        alert("Por favor, insira números válidos nas notas.");
+        return;
+      }
+
+      if (media >= 7)
+        alert("Aprovado");
+      else
+        alert("Recuperação");
+    }
+  </script>
+</head>
+
+<body>
+  <h1>Sistema Acadêmico</h1>
+
+  <form name="myform" action="" method="get">
+    Matrícula: <input type="text" name="matricula"><br>
+    Nome: <input type="text" name="nome_aluno"><br>
+    Data Nascimento: <input type="text" name="nasc_aluno"><br>
+    Sexo:<br>
+    <input type="radio" name="sexo" value="masculino"> Masculino<br>
+    <input type="radio" name="sexo" value="feminino"> Feminino<br>
+    Primeira nota: <input type="text" name="nota1"><br>
+    Segunda nota: <input type="text" name="nota2"><br>
+    <input type="button" name="button" value="Calcular Média" onclick="resultado(this.form)">
+  </form>
+</body>
+
+</html>
