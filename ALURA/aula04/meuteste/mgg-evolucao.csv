@@ -1,0 +1,10 @@
+Linguagem,Ano Início,Senioridade,Status,Área Principal,Projeto Praticado / Sugerido,Próximo Passo
+Python,2024,Júnior,Aprendendo,Backend / Scripts / Dados,"Sistema de conveniência, Tabela de fiado","Criar API REST com Flask ou FastAPI"
+JavaScript,2024,Júnior,Aprendendo,Frontend / Web,"Sistema de lista de compras, Quiz interativo","Integrar API externa (ex: clima, moedas)"
+PHP,2024,Júnior,Aprendendo,Backend / Web,"Sistema de artigos mockados, Galeria de imagens","Usar MVC com banco de dados MySQL"
+HTML/CSS,2024,Júnior,Aprendido,Frontend / Design Web,"Currículo online, Quiz de gestão pública","Criar site responsivo com Bootstrap/Tailwind"
+MySQL,2024,Júnior,Aprendendo,Banco de Dados,"Sistema de conveniência, Galeria de imagens","Criar relacionamentos complexos e otimizar consultas"
+C++,2024,Iniciante,Aprendendo,Lógica / Baixo Nível,"Exercícios de curso Cisco","Criar jogo de console simples"
+Kotlin,2025,Iniciante,Aprendendo,Mobile Android,"Tela de login no Android Studio","Criar app que consome API"
+C#,2025,Iniciante,Sugerida,Desktop / Games / Backend,,"Criar CRUD em WinForms ou WPF"
+Java,2024,Iniciante,Aprendendo,Backend / POO,"Banco digital POO em Java","Criar API REST com Spring Boot"
