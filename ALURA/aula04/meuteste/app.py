@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # --- Dados em CSV (pode colocar seu arquivo local, ou colar o CSV numa variável) ---
-csv_url = "mgg-evolucao.csv"
+csv_url = "https://raw.githubusercontent.com/Xavier-sa/aprendizado/refs/heads/python/alura/ALURA/aula04/meuteste/mgg-evolucao.csv"
 
 df = pd.read_csv(csv_url)
 
