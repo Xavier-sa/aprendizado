@@ -1,7 +1,9 @@
-
 <?php
 require_once 'Database.php';
 
+/**
+ * Retorna os registros paginados da tabela pessoas
+ */
 function listarPessoas($pagina = 0, $limite = 20, $busca = '%') {
     $pdo = Database::conectar();
     $offset = $pagina * $limite;
@@ -14,4 +16,18 @@ function listarPessoas($pagina = 0, $limite = 20, $busca = '%') {
     $stmt->execute();
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+/**
+ * Retorna o total de registros filtrados da tabela pessoas
+ */
+function contarPessoas($busca = '%') {
+    $pdo = Database::conectar();
+
+    $sql = "SELECT COUNT(*) FROM pessoas WHERE nome LIKE :busca";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':busca', $busca, PDO::PARAM_STR);
+    $stmt->execute();
+
+    return (int)$stmt->fetchColumn();
 }

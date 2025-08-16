@@ -1,2 +1,24 @@
+DESLOGAR
 git config --global --unset user.name
 git config --global --unset user.email
+
+
+15/08/2025
+GIT
+
+
+feat: → nova funcionalidade
+
+fix: → correção de bug
+
+refactor: → refatoração
+
+docs: → documentação
+
+chore: → tarefas internas (sem impacto no código funcional)
+
+
+
+
+PHP
+isset — Determina se uma variável está declarada e é diferente de null

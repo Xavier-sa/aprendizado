@@ -7,6 +7,7 @@ require_once 'controlar_paginacao.php';
 <head>
     <meta charset="UTF-8">
     <title>Lista de Pessoas</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
