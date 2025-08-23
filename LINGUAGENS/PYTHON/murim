@@ -1,0 +1,80 @@
+import random
+
+print("🌌 Bem-vindo ao RPG - The Breaker ?")
+print("Você é um discípulo no mundo do Murim.\n")
+
+# Personagem
+apelido = "Xavier-sa"
+energia = 100
+poder = 20
+forca = 150
+vida = 120
+
+print(f"Apelido:\n{apelido:15} ---> Online")
+print(f"Vida: {vida} | Energia: {energia} | Força: {forca} | Poder: {poder}")
+print("\n" + "="*30 + "\n")
+
+# Questão de treino (estudo)
+questao = "Complete a frase corretamente:"
+print("📘 Treino Mental - Questão 1")
+print(questao)
+
+print("Opções:")
+print("A) How Are We")
+print("B) How Are Who")
+print("C) How Are Us")
+print("D) How Are You")
+
+escolha = input("\nDigite sua opção (A, B, C ou D): ").strip().upper()
+
+if escolha == "D":
+    print("\n✅ Correto! Sua mente está afiada.")
+    poder += 5
+else:
+    print("\n❌ Errado! Sua concentração vacilou.")
+    energia -= 10
+
+print(f"\nStatus Atual: Vida {vida} | Energia {energia} | Poder {poder}")
+print("\n" + "="*30 + "\n")
+
+# Início de uma luta
+print("⚔️ Um inimigo aparece: Capanga da Seita Sombria!")
+vida_inimigo = 80
+forca_inimigo = 10
+
+while vida > 0 and vida_inimigo > 0:
+    print(f"\nSua Vida: {vida} | Vida Inimigo: {vida_inimigo}")
+    print("Ações:")
+    print("1) Atacar")
+    print("2) Defender")
+    print("3) Usar Energia (golpe especial)")
+
+    acao = input("Escolha sua ação: ").strip()
+
+    if acao == "1":
+        dano = forca + random.randint(0, 10)
+        vida_inimigo -= dano
+        print(f"💥 Você atacou e causou {dano} de dano!")
+    elif acao == "2":
+        defesa = random.randint(5, 15)
+        dano_recebido = max(0, forca_inimigo - defesa)
+        vida -= dano_recebido
+        print(f"🛡️ Você defendeu! Recebeu apenas {dano_recebido} de dano.")
+    elif acao == "3" and energia >= 20:
+        dano = poder + random.randint(10, 20)
+        vida_inimigo -= dano
+        energia -= 20
+        print(f"⚡ Você usou um golpe especial e causou {dano} de dano!")
+    else:
+        print("⚠️ Ação inválida ou energia insuficiente!")
+
+    # Turno inimigo (se ele ainda estiver vivo)
+    if vida_inimigo > 0:
+        dano_inimigo = forca_inimigo + random.randint(0, 5)
+        vida -= dano_inimigo
+        print(f"👹 O inimigo atacou e causou {dano_inimigo} de dano!")
+
+if vida > 0:
+    print("\n🎉 Você venceu a batalha!")
+else:
+    print("\n💀 Você foi derrotado...")
