@@ -1,0 +1,1 @@
+#alinharCom códigos do celular e caderno 
