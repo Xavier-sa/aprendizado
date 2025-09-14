@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Gastos</title>
+    <title>Controle Financeiro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -28,7 +28,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             overflow: hidden;
         }
 
@@ -102,6 +102,36 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
+        .tipo-transacao {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tipo-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tipo-btn.ativo {
+            border-color: #667eea;
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .tipo-btn[data-tipo="receita"] {
+            color: #38a169;
+        }
+
+        .tipo-btn[data-tipo="despesa"] {
+            color: #e53e3e;
+        }
+
         .botoes {
             display: flex;
             gap: 10px;
@@ -135,6 +165,22 @@
             background: #e53e3e;
         }
 
+        .filtros {
+            padding: 15px 20px;
+            background: #edf2f7;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filtros select {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+        }
+
         .lista-gastos {
             padding: 0 20px 20px;
             max-height: 300px;
@@ -157,6 +203,15 @@
             border-radius: 8px;
             margin-bottom: 10px;
             animation: fadeIn 0.5s ease;
+            border-left: 4px solid #4a5568;
+        }
+
+        .gasto-item.receita {
+            border-left-color: #38a169;
+        }
+
+        .gasto-item.despesa {
+            border-left-color: #e53e3e;
         }
 
         @keyframes fadeIn {
@@ -178,6 +233,9 @@
         .gasto-descricao {
             font-weight: 500;
             color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .gasto-categoria {
@@ -189,6 +247,14 @@
         .gasto-valor {
             font-weight: bold;
             color: #2d3748;
+        }
+
+        .gasto-valor.receita {
+            color: #38a169;
+        }
+
+        .gasto-valor.despesa {
+            color: #e53e3e;
         }
 
         .gasto-data {
@@ -204,20 +270,6 @@
             cursor: pointer;
             font-size: 1.2rem;
             margin-left: 10px;
-        }
-
-        .filtros {
-            padding: 10px 20px;
-            background: #edf2f7;
-            display: flex;
-            gap: 10px;
-        }
-
-        .filtros select {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #cbd5e0;
-            border-radius: 8px;
         }
 
         .sem-gastos {
@@ -238,6 +290,10 @@
             .botoes {
                 flex-direction: column;
             }
+
+            .filtros {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -245,7 +301,7 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-money-bill-wave"></i> Controle de Gastos</h1>
+            <h1><i class="fas fa-money-bill-wave"></i> Controle Financeiro</h1>
             <p>Gerencie suas finanças de forma simples</p>
         </header>
 
@@ -256,9 +312,18 @@
         </div>
 
         <div class="form-container">
+            <div class="tipo-transacao">
+                <div class="tipo-btn ativo" data-tipo="despesa" onclick="selecionarTipo('despesa')">
+                    <i class="fas fa-minus-circle"></i> Despesa
+                </div>
+                <div class="tipo-btn" data-tipo="receita" onclick="selecionarTipo('receita')">
+                    <i class="fas fa-plus-circle"></i> Receita
+                </div>
+            </div>
+
             <div class="form-grupo">
                 <label for="descricao">Descrição</label>
-                <input type="text" id="descricao" placeholder="Ex: Almoço, Transporte, Supermercado">
+                <input type="text" id="descricao" placeholder="Ex: Salário, Almoço, Transporte">
             </div>
 
             <div class="form-grupo">
@@ -269,13 +334,21 @@
             <div class="form-grupo">
                 <label for="categoria">Categoria</label>
                 <select id="categoria">
-                    <option value="alimentacao">Alimentação</option>
-                    <option value="transporte">Transporte</option>
-                    <option value="moradia">Moradia</option>
-                    <option value="saude">Saúde</option>
-                    <option value="educacao">Educação</option>
-                    <option value="lazer">Lazer</option>
-                    <option value="outros">Outros</option>
+                    <!-- Categorias de despesas -->
+                    <option value="alimentacao" data-icon="fa-utensils">Alimentação</option>
+                    <option value="transporte" data-icon="fa-bus">Transporte</option>
+                    <option value="moradia" data-icon="fa-home">Moradia</option>
+                    <option value="saude" data-icon="fa-heartbeat">Saúde</option>
+                    <option value="educacao" data-icon="fa-book">Educação</option>
+                    <option value="lazer" data-icon="fa-gamepad">Lazer</option>
+                    <option value="compras" data-icon="fa-shopping-cart">Compras</option>
+                    <option value="servicos" data-icon="fa-tools">Serviços</option>
+                    <!-- Categorias de receitas -->
+                    <option value="salario" data-icon="fa-money-check" class="receita">Salário</option>
+                    <option value="freelance" data-icon="fa-laptop" class="receita">Freelance</option>
+                    <option value="investimentos" data-icon="fa-chart-line" class="receita">Investimentos</option>
+                    <option value="presente" data-icon="fa-gift" class="receita">Presente</option>
+                    <option value="outros" data-icon="fa-ellipsis-h">Outros</option>
                 </select>
             </div>
 
@@ -285,8 +358,8 @@
             </div>
 
             <div class="botoes">
-                <button class="btn-adicionar" onclick="adicionarGasto()">
-                    <i class="fas fa-plus"></i> Adicionar Gasto
+                <button class="btn-adicionar" onclick="adicionarTransacao()">
+                    <i class="fas fa-plus"></i> Adicionar
                 </button>
                 <button class="btn-limpar" onclick="limparCampos()">
                     <i class="fas fa-eraser"></i> Limpar
@@ -295,14 +368,28 @@
         </div>
 
         <div class="filtros">
+            <select id="filtro-tipo">
+                <option value="todos">Todos os lançamentos</option>
+                <option value="receita">Apenas receitas</option>
+                <option value="despesa">Apenas despesas</option>
+            </select>
+
             <select id="filtro-categoria">
                 <option value="todos">Todas as categorias</option>
+                <!-- Categorias de despesas -->
                 <option value="alimentacao">Alimentação</option>
                 <option value="transporte">Transporte</option>
                 <option value="moradia">Moradia</option>
                 <option value="saude">Saúde</option>
                 <option value="educacao">Educação</option>
                 <option value="lazer">Lazer</option>
+                <option value="compras">Compras</option>
+                <option value="servicos">Serviços</option>
+                <!-- Categorias de receitas -->
+                <option value="salario">Salário</option>
+                <option value="freelance">Freelance</option>
+                <option value="investimentos">Investimentos</option>
+                <option value="presente">Presente</option>
                 <option value="outros">Outros</option>
             </select>
 
@@ -315,55 +402,98 @@
         </div>
 
         <div class="lista-gastos">
-            <h3>Meus Gastos</h3>
-            <ul id="lista-gastos"></ul>
+            <h3>Meus Lançamentos</h3>
+            <ul id="lista-transacoes"></ul>
         </div>
     </div>
 
     <script>
-        let gastos = [];
+        let transacoes = [];
         let total = 0;
+        let tipoSelecionado = 'despesa';
 
         // Inicializa a data com a data atual
         document.getElementById('data').valueAsDate = new Date();
+        
+        // Atualiza as categorias baseadas no tipo selecionado
+        atualizarCategorias();
 
-        // Carrega gastos do localStorage se existirem
-        carregarGastos();
+        // Carrega transações do localStorage se existirem
+        carregarTransacoes();
 
-        function adicionarGasto() {
+        function selecionarTipo(tipo) {
+            tipoSelecionado = tipo;
+            document.querySelectorAll('.tipo-btn').forEach(btn => {
+                btn.classList.toggle('ativo', btn.dataset.tipo === tipo);
+            });
+            atualizarCategorias();
+        }
+
+        function atualizarCategorias() {
+            const categoriaSelect = document.getElementById('categoria');
+            const options = categoriaSelect.querySelectorAll('option');
+            
+            options.forEach(option => {
+                if (option.className === 'receita') {
+                    option.style.display = tipoSelecionado === 'receita' ? 'block' : 'none';
+                } else if (!option.className) {
+                    option.style.display = tipoSelecionado === 'despesa' ? 'block' : 'none';
+                }
+            });
+            
+            // Seleciona a primeira opção visível
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].style.display !== 'none') {
+                    categoriaSelect.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        function adicionarTransacao() {
             const descricao = document.getElementById('descricao').value.trim();
-            const valor = parseFloat(document.getElementById('valor').value);
+            const valorInput = document.getElementById('valor').value;
             const categoria = document.getElementById('categoria').value;
             const data = document.getElementById('data').value;
 
-            if (!descricao || isNaN(valor) || valor <= 0) {
-                alert("Por favor, preencha a descrição e um valor válido.");
+            if (!descricao || !valorInput) {
+                alert("Por favor, preencha a descrição e o valor.");
                 return;
             }
 
-            const gasto = {
+            const valor = parseFloat(valorInput);
+            if (isNaN(valor) || valor <= 0) {
+                alert("Por favor, insira um valor válido.");
+                return;
+            }
+
+            const valorFinal = tipoSelecionado === 'despesa' ? -valor : valor;
+
+            const transacao = {
                 id: Date.now(), // ID único baseado no timestamp
                 descricao,
-                valor,
+                valor: valorFinal,
+                valorAbsoluto: valor,
+                tipo: tipoSelecionado,
                 categoria,
                 data: data || new Date().toISOString().split('T')[0]
             };
 
-            gastos.push(gasto);
-            total += valor;
+            transacoes.push(transacao);
+            total += valorFinal;
 
             atualizarInterface();
-            salvarGastos();
+            salvarTransacoes();
             limparCampos();
         }
 
-        function removerGasto(id) {
-            const gasto = gastos.find(g => g.id === id);
-            if (gasto) {
-                total -= gasto.valor;
-                gastos = gastos.filter(g => g.id !== id);
+        function removerTransacao(id) {
+            const transacao = transacoes.find(t => t.id === id);
+            if (transacao) {
+                total -= transacao.valor;
+                transacoes = transacoes.filter(t => t.id !== id);
                 atualizarInterface();
-                salvarGastos();
+                salvarTransacoes();
             }
         }
 
@@ -376,73 +506,91 @@
         function atualizarInterface() {
             // Atualiza o total
             const totalElement = document.getElementById('total');
-            totalElement.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            totalElement.textContent = `R$ ${Math.abs(total).toFixed(2).replace('.', ',')}`;
+            totalElement.className = `valor ${total >= 0 ? 'positivo' : 'negativo'}`;
 
             // Atualiza status do saldo
             const statusSaldo = document.getElementById('status-saldo');
-            statusSaldo.textContent = total > 0 ? "Saldo positivo" : "Saldo negativo";
-            statusSaldo.className = total > 0 ? "positivo" : "negativo";
+            statusSaldo.textContent = total >= 0 ? "Saldo positivo" : "Saldo negativo";
+            statusSaldo.className = total >= 0 ? "positivo" : "negativo";
 
             // Aplica filtros
+            const filtroTipo = document.getElementById('filtro-tipo').value;
             const filtroCategoria = document.getElementById('filtro-categoria').value;
             const filtroOrdem = document.getElementById('filtro-ordem').value;
 
-            let gastosFiltrados = gastos;
+            let transacoesFiltradas = transacoes;
+
+            // Filtra por tipo
+            if (filtroTipo !== 'todos') {
+                transacoesFiltradas = transacoesFiltradas.filter(t => t.tipo === filtroTipo);
+            }
 
             // Filtra por categoria
             if (filtroCategoria !== 'todos') {
-                gastosFiltrados = gastosFiltrados.filter(g => g.categoria === filtroCategoria);
+                transacoesFiltradas = transacoesFiltradas.filter(t => t.categoria === filtroCategoria);
             }
 
             // Ordena
             switch (filtroOrdem) {
                 case 'recentes':
-                    gastosFiltrados.sort((a, b) => new Date(b.data) - new Date(a.data));
+                    transacoesFiltradas.sort((a, b) => new Date(b.data) - new Date(a.data));
                     break;
                 case 'antigos':
-                    gastosFiltrados.sort((a, b) => new Date(a.data) - new Date(b.data));
+                    transacoesFiltradas.sort((a, b) => new Date(a.data) - new Date(b.data));
                     break;
                 case 'maior':
-                    gastosFiltrados.sort((a, b) => b.valor - a.valor);
+                    transacoesFiltradas.sort((a, b) => Math.abs(b.valor) - Math.abs(a.valor));
                     break;
                 case 'menor':
-                    gastosFiltrados.sort((a, b) => a.valor - b.valor);
+                    transacoesFiltradas.sort((a, b) => Math.abs(a.valor) - Math.abs(b.valor));
                     break;
             }
 
             // Atualiza a lista
-            const lista = document.getElementById('lista-gastos');
+            const lista = document.getElementById('lista-transacoes');
             lista.innerHTML = '';
 
-            if (gastosFiltrados.length === 0) {
-                lista.innerHTML = '<div class="sem-gastos">Nenhum gasto encontrado</div>';
+            if (transacoesFiltradas.length === 0) {
+                lista.innerHTML = '<div class="sem-gastos">Nenhum lançamento encontrado</div>';
                 return;
             }
 
-            gastosFiltrados.forEach(gasto => {
+            transacoesFiltradas.forEach(transacao => {
                 const item = document.createElement('div');
-                item.className = 'gasto-item';
+                item.className = `gasto-item ${transacao.tipo}`;
 
                 const categorias = {
-                    alimentacao: 'Alimentação',
-                    transporte: 'Transporte',
-                    moradia: 'Moradia',
-                    saude: 'Saúde',
-                    educacao: 'Educação',
-                    lazer: 'Lazer',
-                    outros: 'Outros'
+                    alimentacao: { nome: 'Alimentação', icone: 'fa-utensils' },
+                    transporte: { nome: 'Transporte', icone: 'fa-bus' },
+                    moradia: { nome: 'Moradia', icone: 'fa-home' },
+                    saude: { nome: 'Saúde', icone: 'fa-heartbeat' },
+                    educacao: { nome: 'Educação', icone: 'fa-book' },
+                    lazer: { nome: 'Lazer', icone: 'fa-gamepad' },
+                    compras: { nome: 'Compras', icone: 'fa-shopping-cart' },
+                    servicos: { nome: 'Serviços', icone: 'fa-tools' },
+                    salario: { nome: 'Salário', icone: 'fa-money-check' },
+                    freelance: { nome: 'Freelance', icone: 'fa-laptop' },
+                    investimentos: { nome: 'Investimentos', icone: 'fa-chart-line' },
+                    presente: { nome: 'Presente', icone: 'fa-gift' },
+                    outros: { nome: 'Outros', icone: 'fa-ellipsis-h' }
                 };
 
-                const dataFormatada = new Date(gasto.data).toLocaleDateString('pt-BR');
+                const dataFormatada = new Date(transacao.data).toLocaleDateString('pt-BR');
+                const categoriaInfo = categorias[transacao.categoria] || { nome: transacao.categoria, icone: 'fa-ellipsis-h' };
 
                 item.innerHTML = `
           <div class="gasto-info">
-            <div class="gasto-descricao">${gasto.descricao}</div>
-            <div class="gasto-categoria">${categorias[gasto.categoria]}</div>
+            <div class="gasto-descricao">
+              <i class="fas ${categoriaInfo.icone}"></i> ${transacao.descricao}
+            </div>
+            <div class="gasto-categoria">${categoriaInfo.nome}</div>
             <div class="gasto-data">${dataFormatada}</div>
           </div>
-          <div class="gasto-valor">R$ ${gasto.valor.toFixed(2).replace('.', ',')}</div>
-          <button class="btn-excluir" onclick="removerGasto(${gasto.id})">
+          <div class="gasto-valor ${transacao.tipo}">
+            ${transacao.tipo === 'despesa' ? '-' : '+'} R$ ${transacao.valorAbsoluto.toFixed(2).replace('.', ',')}
+          </div>
+          <button class="btn-excluir" onclick="removerTransacao(${transacao.id})">
             <i class="fas fa-trash"></i>
           </button>
         `;
@@ -451,17 +599,17 @@
             });
         }
 
-        function salvarGastos() {
-            localStorage.setItem('gastos', JSON.stringify(gastos));
+        function salvarTransacoes() {
+            localStorage.setItem('transacoes', JSON.stringify(transacoes));
             localStorage.setItem('total', total.toString());
         }
 
-        function carregarGastos() {
-            const gastosSalvos = localStorage.getItem('gastos');
+        function carregarTransacoes() {
+            const transacoesSalvas = localStorage.getItem('transacoes');
             const totalSalvo = localStorage.getItem('total');
 
-            if (gastosSalvos) {
-                gastos = JSON.parse(gastosSalvos);
+            if (transacoesSalvas) {
+                transacoes = JSON.parse(transacoesSalvas);
             }
 
             if (totalSalvo) {
@@ -472,13 +620,14 @@
         }
 
         // Adiciona event listeners para os filtros
+        document.getElementById('filtro-tipo').addEventListener('change', atualizarInterface);
         document.getElementById('filtro-categoria').addEventListener('change', atualizarInterface);
         document.getElementById('filtro-ordem').addEventListener('change', atualizarInterface);
 
-        // Permite adicionar gasto pressionando Enter
+        // Permite adicionar transação pressionando Enter
         document.getElementById('valor').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
-                adicionarGasto();
+                adicionarTransacao();
             }
         });
     </script>
