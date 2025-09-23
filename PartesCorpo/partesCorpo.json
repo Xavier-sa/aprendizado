@@ -1,0 +1,21 @@
+{
+  "body_parts": [
+    { "english": "head", "portuguese": "cabeça" },
+    { "english": "elbow", "portuguese": "cotovelo" },
+    { "english": "arm", "portuguese": "braço" },
+    { "english": "leg", "portuguese": "perna" },
+    { "english": "eye", "portuguese": "olho" },
+    { "english": "ear", "portuguese": "orelha" },
+    { "english": "mouth", "portuguese": "boca" },
+    { "english": "nose", "portuguese": "nariz" },
+    { "english": "hand", "portuguese": "mão" },
+    { "english": "foot", "portuguese": "pé" },
+    { "english": "stomach", "portuguese": "estômago" },
+    { "english": "forehead", "portuguese": "testa" },
+    { "english": "ankle", "portuguese": "tornozelo" },
+    { "english": "back", "portuguese": "costas" },
+    { "english": "shoulders", "portuguese": "ombros" },
+    { "english": "fingers", "portuguese": "dedos" },
+    { "english": "knee", "portuguese": "joelho" }
+  ]
+}

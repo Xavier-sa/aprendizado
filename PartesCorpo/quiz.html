@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz Partes do Corpo - Versão Interativa</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: white;
+      padding: 40px;
+      max-width: 700px;
+      width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e0e0e0;
+      border-radius: 3px;
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4CAF50, #45a049);
+      border-radius: 3px;
+      transition: width 0.5s ease;
+      width: 0%;
+    }
+
+    .score-display {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      background: #667eea;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 300;
+    }
+
+    .question {
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #333;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .question-number {
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .options-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .option {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      padding: 20px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option:hover:not(:disabled) {
+      background: #e9ecef;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .option:disabled {
+      cursor: not-allowed;
+    }
+
+    .option.correct {
+      background: #d4edda !important;
+      border-color: #28a745 !important;
+      color: #155724;
+      animation: pulse-green 0.6s ease;
+    }
+
+    .option.incorrect {
+      background: #f8d7da !important;
+      border-color: #dc3545 !important;
+      color: #721c24;
+      animation: shake 0.6s ease;
+    }
+
+    @keyframes pulse-green {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .feedback {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: 16px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .feedback.show {
+      display: block;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback h4 {
+      color: #856404;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .feedback .translation {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px 0;
+      border-left: 4px solid #667eea;
+    }
+
+    .next-btn {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      display: none;
+      margin: 0 auto;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .next-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .final-score {
+      text-align: center;
+      display: none;
+    }
+
+    .final-score h3 {
+      font-size: 36px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .final-score .score-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 30px auto;
+      font-size: 32px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .score-excellent { background: linear-gradient(45deg, #4CAF50, #45a049); }
+    .score-good { background: linear-gradient(45deg, #2196F3, #1976D2); }
+    .score-average { background: linear-gradient(45deg, #FF9800, #F57C00); }
+    .score-poor { background: linear-gradient(45deg, #f44336, #d32f2f); }
+
+    .restart-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 25px;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .restart-btn:hover {
+      background: #5a6fd8;
+      transform: translateY(-2px);
+    }
+
+    .streak {
+      display: inline-block;
+      background: #ff6b6b;
+      color: white;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 14px;
+      margin-left: 10px;
+      animation: bounce 0.5s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .encouragement {
+      text-align: center;
+      color: #666;
+      font-size: 16px;
+      margin-top: 15px;
+      font-style: italic;
+    }
+
+    @media (max-width: 600px) {
+      .quiz-container {
+        padding: 20px;
+      }
+      
+      .options-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .question {
+        font-size: 20px;
+      }
+      
+      .option {
+        padding: 15px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    
+    <div class="score-display" id="scoreDisplay">0/20</div>
+    
+    <h2>Quiz: Partes do Corpo em Inglês</h2>
+    
+    <div id="questionContainer">
+      <div id="question" class="question"></div>
+      <div id="options" class="options-container"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="nextButton" class="next-btn">Próxima Pergunta</button>
+      <div id="encouragement" class="encouragement"></div>
+    </div>
+
+    <div id="finalScore" class="final-score">
+      <h3>Quiz Finalizado!</h3>
+      <div id="scoreCircle" class="score-circle"></div>
+      <div id="finalMessage"></div>
+      <button id="restartBtn" class="restart-btn">Jogar Novamente</button>
+    </div>
+  </div>
+
+  <script>
+    const bodyParts = [
+      { english: "head", portuguese: "cabeça" },
+      { english: "elbow", portuguese: "cotovelo" },
+      { english: "arm", portuguese: "braço" },
+      { english: "leg", portuguese: "perna" },
+      { english: "eye", portuguese: "olho" },
+      { english: "ear", portuguese: "orelha" },
+      { english: "mouth", portuguese: "boca" },
+      { english: "nose", portuguese: "nariz" },
+      { english: "hand", portuguese: "mão" },
+      { english: "foot", portuguese: "pé" },
+      { english: "stomach", portuguese: "estômago" },
+      { english: "forehead", portuguese: "testa" },
+      { english: "ankle", portuguese: "tornozelo" },
+      { english: "back", portuguese: "costas" },
+      { english: "shoulders", portuguese: "ombros" },
+      { english: "fingers", portuguese: "dedos" },
+      { english: "knee", portuguese: "joelho" },
+      { english: "chest", portuguese: "peito" },
+      { english: "neck", portuguese: "pescoço" },
+      { english: "wrist", portuguese: "pulso" }
+    ];
+
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let streak = 0;
+    let maxStreak = 0;
+
+    const encouragements = {
+      correct: [
+        "Excelente! Você está mandando bem!",
+        "Perfeito! Continue assim!",
+        "Ótimo trabalho! Você está aprendendo rápido!",
+        "Fantástico! Seu inglês está melhorando!",
+        "Parabéns! Resposta certeira!"
+      ],
+      incorrect: [
+        "Não desista! Cada erro é uma oportunidade de aprender!",
+        "Quase lá! Continue tentando!",
+        "Não se preocupe, você vai conseguir na próxima!",
+        "Está tudo bem errar! É assim que aprendemos!",
+        "Continue firme! Você está no caminho certo!"
+      ]
+    };
+
+    function generateQuestions() {
+      const shuffled = [...bodyParts].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 20);
+
+      return selected.map(item => {
+        let options = new Set();
+        options.add(item.english);
+        
+        while (options.size < 4) {
+          const random = bodyParts[Math.floor(Math.random() * bodyParts.length)].english;
+          options.add(random);
+        }
+
+        const shuffledOptions = Array.from(options).sort(() => 0.5 - Math.random());
+
+        return {
+          question: `Qual é a tradução de "${item.portuguese}"?`,
+          correctAnswer: item.english,
+          correctTranslation: item.portuguese,
+          options: shuffledOptions,
+          allTranslations: shuffledOptions.map(opt => {
+            const found = bodyParts.find(bp => bp.english === opt);
+            return { english: opt, portuguese: found ? found.portuguese : opt };
+          })
+        };
+      });
+    }
+
+    function updateProgress() {
+      const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    function updateScoreDisplay() {
+      const display = document.getElementById('scoreDisplay');
+      display.textContent = `${score}/${questions.length}`;
+      
+      if (streak > 2) {
+        const streakElement = display.querySelector('.streak') || document.createElement('span');
+        streakElement.className = 'streak';
+        streakElement.textContent = `${streak} seguidas!`;
+        if (!display.querySelector('.streak')) {
+          display.appendChild(streakElement);
+        }
+      } else {
+        const streakElement = display.querySelector('.streak');
+        if (streakElement) {
+          streakElement.remove();
+        }
+      }
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestionIndex];
+      
+      document.getElementById('question').innerHTML = 
+        `<span class="question-number">${currentQuestionIndex + 1}/20</span> ${q.question}`;
+      
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+
+      q.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.classList.add('option');
+        btn.textContent = option;
+        btn.onclick = () => selectAnswer(option);
+        optionsDiv.appendChild(btn);
+      });
+
+      document.getElementById('feedback').classList.remove('show');
+      document.getElementById('nextButton').style.display = 'none';
+      document.getElementById('encouragement').textContent = '';
+      
+      updateProgress();
+    }
+
+    function selectAnswer(selected) {
+      const q = questions[currentQuestionIndex];
+      const options = document.querySelectorAll('.option');
+      const feedbackDiv = document.getElementById('feedback');
+      
+      let isCorrect = selected === q.correctAnswer;
+
+      options.forEach(btn => {
+        btn.disabled = true;
+        if (btn.textContent === q.correctAnswer) {
+          btn.classList.add('correct');
+        } else if (btn.textContent === selected && !isCorrect) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      if (isCorrect) {
+        score++;
+        streak++;
+        maxStreak = Math.max(maxStreak, streak);
+        showEncouragement(true);
+      } else {
+        streak = 0;
+        showEncouragement(false);
+      }
+
+      updateScoreDisplay();
+      showFeedback(q, selected, isCorrect);
+      
+      setTimeout(() => {
+        document.getElementById('nextButton').style.display = 'block';
+      }, 1000);
+    }
+
+    function showFeedback(question, selected, isCorrect) {
+      const feedbackDiv = document.getElementById('feedback');
+      const selectedTranslation = question.allTranslations.find(t => t.english === selected);
+      
+      let feedbackHTML = `
+        <h4>${isCorrect ? '✅ Correto!' : '❌ Incorreto'}</h4>
+        <div class="translation">
+          <strong>Resposta correta:</strong> "${question.correctAnswer}" = "${question.correctTranslation}"
+        </div>
+      `;
+
+      if (!isCorrect) {
+        feedbackHTML += `
+          <div class="translation">
+            <strong>Sua resposta:</strong> "${selected}" = "${selectedTranslation.portuguese}"
+          </div>
+        `;
+      }
+
+      feedbackHTML += '<div style="margin-top: 15px;"><strong>Todas as opções:</strong></div>';
+      
+      question.allTranslations.forEach(translation => {
+        feedbackHTML += `
+          <div class="translation">
+            "${translation.english}" = "${translation.portuguese}"
+          </div>
+        `;
+      });
+
+      feedbackDiv.innerHTML = feedbackHTML;
+      feedbackDiv.classList.add('show');
+    }
+
+    function showEncouragement(isCorrect) {
+      const encouragementDiv = document.getElementById('encouragement');
+      const messages = isCorrect ? encouragements.correct : encouragements.incorrect;
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      
+      encouragementDiv.textContent = randomMessage;
+      encouragementDiv.style.color = isCorrect ? '#28a745' : '#dc3545';
+    }
+
+    function showFinalScore() {
+      document.getElementById('questionContainer').style.display = 'none';
+      document.getElementById('finalScore').style.display = 'block';
+      
+      const percentage = (score / questions.length) * 100;
+      const scoreCircle = document.getElementById('scoreCircle');
+      const finalMessage = document.getElementById('finalMessage');
+      
+      scoreCircle.textContent = `${score}/20`;
+      
+      let message, scoreClass;
+      if (percentage >= 90) {
+        message = `🏆 Excelente! Você domina o vocabulário de partes do corpo em inglês! ${maxStreak > 0 ? `Sua maior sequência foi de ${maxStreak} acertos!` : ''}`;
+        scoreClass = 'score-excellent';
+      } else if (percentage >= 70) {
+        message = `👏 Muito bem! Você tem um bom conhecimento! Continue praticando para aperfeiçoar ainda mais.`;
+        scoreClass = 'score-good';
+      } else if (percentage >= 50) {
+        message = `👍 Bom começo! Com mais prática, você vai melhorar bastante.`;
+        scoreClass = 'score-average';
+      } else {
+        message = `💪 Continue estudando! Cada tentativa te deixa mais próximo da fluência.`;
+        scoreClass = 'score-poor';
+      }
+      
+      scoreCircle.className = `score-circle ${scoreClass}`;
+      finalMessage.innerHTML = `<p style="font-size: 18px; line-height: 1.6; color: #666;">${message}</p>`;
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      streak = 0;
+      maxStreak = 0;
+      questions = generateQuestions();
+      
+      document.getElementById('questionContainer').style.display = 'block';
+      document.getElementById('finalScore').style.display = 'none';
+      document.getElementById('progressFill').style.width = '0%';
+      
+      updateScoreDisplay();
+      showQuestion();
+    }
+
+    document.getElementById('nextButton').onclick = () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showFinalScore();
+      }
+    };
+
+    document.getElementById('restartBtn').onclick = restartQuiz;
+
+    // Inicializar o quiz
+    questions = generateQuestions();
+    updateScoreDisplay();
+    showQuestion();
+  </script>
+</body>
+</html>
