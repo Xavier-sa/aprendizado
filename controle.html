@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos semelhantes ao seu controle financeiro original */
+        * { margin:0; padding:0; box-sizing:border-box; font-family:sans-serif;}
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height:100vh; padding:20px; }
+        .container { background:white; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2); width:90%; max-width:700px; margin:auto; overflow:hidden;}
+        header { background:#4a5568; color:white; padding:20px; text-align:center; }
+        header h1 { margin-bottom:10px; font-size:1.8rem;}
+        .saldo-total { background:#f7fafc; padding:15px; text-align:center; border-bottom:1px solid #e2e8f0; }
+        .saldo-total h2 { color:#2d3748; font-size:1.5rem;}
+        .saldo-total .valor { font-size:2rem; font-weight:bold; color:#2d3748; margin:5px 0;}
+        .saldo-total .positivo { color:#38a169;}
+        .saldo-total .negativo { color:#e53e3e;}
+        /* ... outros estilos copiados do seu controle financeiro original ... */
+        .btn-logout { margin-top:10px; background:#e53e3e; color:white; border:none; border-radius:8px; padding:10px; cursor:pointer;}
+        .btn-logout:hover { background:#c53030; }
+    </style>
+</head>
+<body>
+    <div class="container" id="app" style="display:none;">
+        <header>
+            <h1><i class="fas fa-money-bill-wave"></i> Controle Financeiro</h1>
+            <p>Gerencie suas finanças de forma simples</p>
+            <button class="btn-logout" onclick="logout()">Sair</button>
+        </header>
+
+        <!-- Seu conteúdo do controle financeiro aqui -->
+        <div class="saldo-total">
+            <h2>Saldo Total</h2>
+            <div class="valor" id="total">R$ 0,00</div>
+            <div id="status-saldo"></div>
+        </div>
+        <!-- ... resto do formulário, filtros e lista de transações ... -->
+    </div>
+
+    <script>
+        // Verifica login
+        if(localStorage.getItem('logado') !== 'true') {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('app').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.removeItem('logado');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
