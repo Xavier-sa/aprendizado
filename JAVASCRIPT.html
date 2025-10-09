@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial JavaScript Interativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f39c12 0%, #e74c3c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #e67e22;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.3s ease;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab.active {
+            background: white;
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .conceito {
+            background: #fef5e7;
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .conceito h3 {
+            color: #d35400;
+            margin-bottom: 10px;
+        }
+
+        .exemplo-codigo {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .comentario { color: #95a5a6; }
+        .keyword { color: #e74c3c; font-weight: bold; }
+        .string { color: #2ecc71; }
+        .number { color: #3498db; }
+        .function { color: #9b59b6; }
+
+        .playground {
+            background: #ecf0f1;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .playground textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            background: #2c3e50;
+            color: #ecf0f1;
+        }
+
+        .output {
+            background: white;
+            border: 2px solid #95a5a6;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+            min-height: 60px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+
+        .btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 5px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #e67e22;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .dica {
+            background: #d5f4e6;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .importante {
+            background: #fadbd8;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .exemplo-visual {
+            background: white;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .card-exercicio {
+            background: #fff9e6;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .card-exercicio h4 {
+            color: #d35400;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        table th {
+            background: #f39c12;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        table tr:hover {
+            background: #fef5e7;
+        }
+
+        .progresso {
+            background: #ecf0f1;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progresso-barra {
+            background: linear-gradient(45deg, #f39c12, #e74c3c);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .quiz-opcao {
+            display: block;
+            padding: 12px;
+            margin: 8px 0;
+            background: #ecf0f1;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-opcao:hover {
+            background: #d5dbdb;
+            transform: translateX(5px);
+        }
+
+        .quiz-opcao.correta {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .quiz-opcao.incorreta {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .content {
+                padding: 15px;
+            }
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Tutorial Interativo de JavaScript</h1>
+            <p>Do Zero ao Avançado - Aprenda Praticando!</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="mostrarSecao('introducao')">1. Introdução</button>
+            <button class="tab" onclick="mostrarSecao('variaveis')">2. Variáveis</button>
+            <button class="tab" onclick="mostrarSecao('funcoes')">3. Funções</button>
+            <button class="tab" onclick="mostrarSecao('arrays')">4. Arrays</button>
+            <button class="tab" onclick="mostrarSecao('objetos')">5. Objetos</button>
+            <button class="tab" onclick="mostrarSecao('dom')">6. DOM</button>
+            <button class="tab" onclick="mostrarSecao('playground')">7. Playground</button>
+            <button class="tab" onclick="mostrarSecao('quiz')">8. Quiz</button>
+        </div>
+
+        <div class="content">
+            <div id="introducao" class="section active">
+                <h2>O que é JavaScript?</h2>
+                
+                <div class="conceito">
+                    <h3>📌 JavaScript</h3>
+                    <p>É uma <strong>linguagem de programação</strong> que roda no navegador e permite tornar páginas web <strong>interativas</strong>!</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Adiciona comportamento às páginas (cliques, animações, validações)</li>
+                        <li>Manipula elementos HTML e CSS dinamicamente</li>
+                        <li>Comunica com servidores (APIs)</li>
+                        <li>Cria aplicações completas (front-end e back-end com Node.js)</li>
+                    </ul>
+                </div>
+
+                <div class="conceito">
+                    <h3>🔧 Como usar JavaScript?</h3>
+                    <p>Existem 3 formas principais:</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario"></span>
+&lt;button <span class="keyword">onclick</span>=<span class="string">"alert('Olá!')"</span>&gt;Clique&lt;/button&gt;
+
+<span class="comentario"></span>
+&lt;script&gt;
+    <span class="keyword">function</span> <span class="function">saudar</span>() {
+        <span class="function">alert</span>(<span class="string">'Bem-vindo!'</span>);
+    }
+&lt;/script&gt;
+
+<span class="comentario"></span>
+&lt;script <span class="keyword">src</span>=<span class="string">"script.js"</span>&gt;&lt;/script&gt;
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>📝 Seu Primeiro Código</h3>
+                    <div class="exemplo-codigo">
+<span class="comentario">// Exibir uma mensagem no console</span>
+<span class="function">console</span>.<span class="function">log</span>(<span class="string">"Olá, Mundo!"</span>);
+
+<span class="comentario">// Exibir um alerta na tela</span>
+<span class="function">alert</span>(<span class="string">"Bem-vindo ao JavaScript!"</span>);
+
+<span class="comentario">// Escrever na página</span>
+<span class="keyword">document</span>.<span class="function">write</span>(<span class="string">"Meu primeiro script!"</span>);
+                    </div>
+                </div>
+
+                <div class="exemplo-visual">
+                    <h3>Teste Agora!</h3>
+                    <button class="btn btn-success" onclick="alert('Você clicou no botão! 🎉')">
+                        Clique Aqui
+                    </button>
+                    <button class="btn" onclick="console.log('Mensagem enviada ao console!')">
+                        Ver no Console (F12)
+                    </button>
+                </div>
+
+                <div class="dica">
+                    <strong>💡 Dica:</strong> Pressione <strong>F12</strong> no navegador para abrir o Console e ver os comandos console.log()!
+                </div>
+
+                <button class="btn btn-success" onclick="mostrarSecao('variaveis')">Próximo: Variáveis →</button>
+            </div>
+
+            <div id="variaveis" class="section">
+                <h2>Variáveis e Tipos de Dados</h2>
+
+                <div class="conceito">
+                    <h3>🎯 O que são Variáveis?</h3>
+                    <p>São <strong>"caixinhas"</strong> que guardam informações na memória do computador.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Declarando variáveis</span>
+<span class="keyword">let</span> nome = <span class="string">"João"</span>;      <span class="comentario">// pode mudar</span>
+<span class="keyword">const</span> idade = <span class="number">25</span>;      <span class="comentario">// não pode mudar</span>
+<span class="keyword">var</span> cidade = <span class="string">"São Paulo"</span>; <span class="comentario">// forma antiga (evite)</span>
+
+<span class="comentario">// Usando as variáveis</span>
+<span class="function">console</span>.<span class="function">log</span>(nome);    <span class="comentario">// João</span>
+<span class="function">console</span>.<span class="function">log</span>(idade);    <span class="comentario">// 25</span>
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>📊 Tipos de Dados</h3>
+                    <table>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Descrição</th>
+                            <th>Exemplo</th>
+                        </tr>
+                        <tr>
+                            <td><strong>String</strong></td>
+                            <td>Texto</td>
+                            <td>"Olá", 'JavaScript'</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Number</strong></td>
+                            <td>Números</td>
+                            <td>42, 3.14, -10</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Boolean</strong></td>
+                            <td>Verdadeiro/Falso</td>
+                            <td>true, false</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Array</strong></td>
+                            <td>Lista</td>
+                            <td>[1, 2, 3, 4]</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Object</strong></td>
+                            <td>Objeto</td>
+                            <td>{nome: "João", idade: 25}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Undefined</strong></td>
+                            <td>Sem valor</td>
+                            <td>let x;</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Null</strong></td>
+                            <td>Vazio intencional</td>
+                            <td>let x = null;</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="conceito">
+                    <h3>➕ Operadores</h3>
+                    <div class="exemplo-codigo">
+<span class="comentario">// Aritméticos</span>
+<span class="keyword">let</span> soma = <span class="number">10</span> + <span class="number">5</span>;      <span class="comentario">// 15</span>
+<span class="keyword">let</span> subtracao = <span class="number">10</span> - <span class="number">5</span>;    <span class="comentario">// 5</span>
+<span class="keyword">let</span> multiplicacao = <span class="number">10</span> * <span class="number">5</span>; <span class="comentario">// 50</span>
+<span class="keyword">let</span> divisao = <span class="number">10</span> / <span class="number">5</span>;      <span class="comentario">// 2</span>
+
+<span class="comentario">// Comparação</span>
+<span class="number">10</span> == <span class="string">"10"</span>      <span class="comentario">// true (compara valor)</span>
+<span class="number">10</span> === <span class="string">"10"</span>    <span class="comentario">// false (compara valor E tipo)</span>
+<span class="number">10</span> > <span class="number">5</span>          <span class="comentario">// true</span>
+<span class="number">10</span> < <span class="number">5</span>          <span class="comentario">// false</span>
+
+<span class="comentario">// Lógicos</span>
+<span class="keyword">true</span> && <span class="keyword">false</span>  <span class="comentario">// false (E)</span>
+<span class="keyword">true</span> || <span class="keyword">false</span>  <span class="comentario">// true (OU)</span>
+!<span class="keyword">true</span>          <span class="comentario">// false (NÃO)</span>
+                    </div>
+                </div>
+
+                <div class="playground">
+                    <h3>🎮 Teste Variáveis</h3>
+                    <textarea id="codigoVar">let nome = "Maria";
+let idade = 30;
+console.log("Nome: " + nome);
+console.log("Idade: " + idade);</textarea>
+                    <button class="btn btn-success" onclick="executarCodigo('codigoVar', 'outputVar')">Executar</button>
+                    <div class="output" id="outputVar">// Resultado aparecerá aqui</div>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('introducao')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('funcoes')">Próximo: Funções →</button>
+            </div>
+
+            <div id="funcoes" class="section">
+                <h2>Funções</h2>
+
+                <div class="conceito">
+                    <h3>⚙️ O que são Funções?</h3>
+                    <p>São <strong>blocos de código reutilizáveis</strong> que executam uma tarefa específica.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Função sem parâmetros</span>
+<span class="keyword">function</span> <span class="function">saudar</span>() {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"Olá!"</span>);
+}
+<span class="function">saudar</span>(); <span class="comentario">// Chama a função</span>
+
+<span class="comentario">// Função com parâmetros</span>
+<span class="keyword">function</span> <span class="function">saudarPessoa</span>(nome) {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">"Olá, "</span> + nome + <span class="string">"!"</span>);
+}
+<span class="function">saudarPessoa</span>(<span class="string">"João"</span>); <span class="comentario">// Olá, João!</span>
+
+<span class="comentario">// Função que retorna valor</span>
+<span class="keyword">function</span> <span class="function">somar</span>(a, b) {
+    <span class="keyword">return</span> a + b;
+}
+<span class="keyword">let</span> resultado = <span class="function">somar</span>(<span class="number">5</span>, <span class="number">3</span>); <span class="comentario">// 8</span>
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>🎯 Arrow Functions (Funções de Seta)</h3>
+                    <p>Forma moderna e mais curta de escrever funções.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Função normal</span>
+<span class="keyword">function</span> <span class="function">dobrar</span>(x) {
+    <span class="keyword">return</span> x * <span class="number">2</span>;
+}
+
+<span class="comentario">// Arrow function (mesma coisa)</span>
+<span class="keyword">const</span> <span class="function">dobrar</span> = (x) => x * <span class="number">2</span>;
+
+<span class="comentario">// Exemplos</span>
+<span class="keyword">const</span> <span class="function">quadrado</span> = x => x * x;
+<span class="keyword">const</span> <span class="function">soma</span> = (a, b) => a + b;
+<span class="keyword">const</span> <span class="function">saudar</span> = nome => <span class="string">`Olá, ${nome}!`</span>;
+                    </div>
+                </div>
+
+                <div class="card-exercicio">
+                    <h4>📝 Exercício 1: Calculadora</h4>
+                    <p>Crie funções para: somar, subtrair, multiplicar e dividir dois números.</p>
+                    <div class="exemplo-codigo">
+<span class="keyword">function</span> <span class="function">somar</span>(a, b) {
+    <span class="keyword">return</span> a + b;
+}
+
+<span class="keyword">function</span> <span class="function">subtrair</span>(a, b) {
+    <span class="keyword">return</span> a - b;
+}
+
+<span class="comentario">// Teste</span>
+<span class="function">console</span>.<span class="function">log</span>(<span class="function">somar</span>(<span class="number">10</span>, <span class="number">5</span>));      <span class="comentario">// 15</span>
+<span class="function">console</span>.<span class="function">log</span>(<span class="function">subtrair</span>(<span class="number">10</span>, <span class="number">5</span>));    <span class="comentario">// 5</span>
+                    </div>
+                </div>
+
+                <div class="playground">
+                    <h3>🎮 Teste Funções</h3>
+                    <textarea id="codigoFunc">function calcularArea(largura, altura) {
+    return largura * altura;
+}
+
+let area = calcularArea(5, 10);
+console.log("Área: " + area);</textarea>
+                    <button class="btn btn-success" onclick="executarCodigo('codigoFunc', 'outputFunc')">Executar</button>
+                    <div class="output" id="outputFunc">// Resultado aparecerá aqui</div>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('variaveis')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('arrays')">Próximo: Arrays →</button>
+            </div>
+
+            <div id="arrays" class="section">
+                <h2>Arrays (Listas)</h2>
+
+                <div class="conceito">
+                    <h3>📦 O que são Arrays?</h3>
+                    <p>São <strong>listas ordenadas</strong> que guardam múltiplos valores.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Criar array</span>
+<span class="keyword">let</span> frutas = [<span class="string">"Maçã"</span>, <span class="string">"Banana"</span>, <span class="string">"Laranja"</span>];
+<span class="keyword">let</span> numeros = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];
+
+<span class="comentario">// Acessar elementos (começa do 0)</span>
+<span class="function">console</span>.<span class="function">log</span>(frutas[<span class="number">0</span>]); <span class="comentario">// "Maçã"</span>
+<span class="function">console</span>.<span class="function">log</span>(frutas[<span class="number">1</span>]); <span class="comentario">// "Banana"</span>
+
+<span class="comentario">// Tamanho do array</span>
+<span class="function">console</span>.<span class="function">log</span>(frutas.length); <span class="comentario">// 3</span>
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>🔧 Métodos Principais</h3>
+                    <div class="exemplo-codigo">
+<span class="keyword">let</span> lista = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+
+<span class="comentario">// push() - Adicionar no final</span>
+lista.<span class="function">push</span>(<span class="number">4</span>);      <span class="comentario">// [1, 2, 3, 4]</span>
+
+<span class="comentario">// pop() - Remover do final</span>
+lista.<span class="function">pop</span>();        <span class="comentario">// [1, 2, 3]</span>
+
+<span class="comentario">// unshift() - Adicionar no início</span>
+lista.<span class="function">unshift</span>(<span class="number">0</span>);      <span class="comentario">// [0, 1, 2, 3]</span>
+
+<span class="comentario">// shift() - Remover do início</span>
+lista.<span class="function">shift</span>();        <span class="comentario">// [1, 2, 3]</span>
+
+<span class="comentario">// splice() - Remover/Adicionar no meio</span>
+lista.<span class="function">splice</span>(<span class="number">1</span>, <span class="number">1</span>);      <span class="comentario">// Remove índice 1: [1, 3]</span>
+
+<span class="comentario">// slice() - Copiar parte do array</span>
+<span class="keyword">let</span> copia = lista.<span class="function">slice</span>(<span class="number">0</span>, <span class="number">2</span>); <span class="comentario">// [1, 3]</span>
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>🔄 Percorrer Arrays</h3>
+                    <div class="exemplo-codigo">
+<span class="keyword">let</span> cores = [<span class="string">"vermelho"</span>, <span class="string">"azul"</span>, <span class="string">"verde"</span>];
+
+<span class="comentario">// For tradicional</span>
+<span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i < cores.length; i++) {
+    <span class="function">console</span>.<span class="function">log</span>(cores[i]);
+}
+
+<span class="comentario">// forEach</span>
+cores.<span class="function">forEach</span>(cor => {
+    <span class="function">console</span>.<span class="function">log</span>(cor);
+});
+
+<span class="comentario">// map() - Transformar cada elemento</span>
+<span class="keyword">let</span> numeros = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];
+<span class="keyword">let</span> dobrados = numeros.<span class="function">map</span>(n => n * <span class="number">2</span>); <span class="comentario">// [2, 4, 6]</span>
+
+<span class="comentario">// filter() - Filtrar elementos</span>
+<span class="keyword">let</span> maiores = numeros.<span class="function">filter</span>(n => n > <span class="number">1</span>); <span class="comentario">// [2, 3]</span>
+                    </div>
+                </div>
+
+                <div class="playground">
+                    <h3>🎮 Teste Arrays</h3>
+                    <textarea id="codigoArray">let numeros = [5, 10, 15, 20];
+console.log("Array original:", numeros);
+
+// Adicionar 25 no final
+numeros.push(25);
+console.log("Depois do push:", numeros);
+
+// Dobrar todos os valores
+let dobrados = numeros.map(n => n * 2);
+console.log("Dobrados:", dobrados);</textarea>
+                    <button class="btn btn-success" onclick="executarCodigo('codigoArray', 'outputArray')">Executar</button>
+                    <div class="output" id="outputArray">// Resultado aparecerá aqui</div>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('funcoes')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('objetos')">Próximo: Objetos →</button>
+            </div>
+
+            <div id="objetos" class="section">
+                <h2>Objetos e Classes</h2>
+
+                <div class="conceito">
+                    <h3>🧱 O que são Objetos?</h3>
+                    <p>São coleções de **propriedades** (variáveis) e **métodos** (funções) que descrevem uma entidade.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Criando um Objeto Literal (JSON)</span>
+<span class="keyword">const</span> carro = {
+    <span class="keyword">marca</span>: <span class="string">"Fiat"</span>,
+    <span class="keyword">modelo</span>: <span class="string">"Uno"</span>,
+    <span class="keyword">ano</span>: <span class="number">2020</span>,
+    <span class="function">ligar</span>: <span class="keyword">function</span>() {
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">"O motor ligou!"</span>);
+    }
+};
+
+<span class="comentario">// Acessando propriedades</span>
+<span class="function">console</span>.<span class="function">log</span>(carro.modelo); <span class="comentario">// Uno</span>
+<span class="function">console</span>.<span class="function">log</span>(carro[<span class="string">"ano"</span>]); <span class="comentario">// 2020</span>
+
+<span class="comentario">// Chamando um método</span>
+carro.<span class="function">ligar</span>();
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>⚙️ Classes (Programação Orientada a Objetos - POO)</h3>
+                    <p>Classes são **moldes** para criar múltiplos objetos do mesmo tipo, facilitando a organização do código.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="keyword">class</span> <span class="function">Pessoa</span> {
+    <span class="function">constructor</span>(nome, idade) {
+        <span class="keyword">this</span>.nome = nome;
+        <span class="keyword">this</span>.idade = idade;
+    }
+
+    <span class="function">apresentar</span>() {
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">`Olá, meu nome é ${this.nome} e tenho ${this.idade} anos.`</span>);
+    }
+}
+
+<span class="comentario">// Criando objetos a partir da classe (Instanciação)</span>
+<span class="keyword">const</span> aluno = <span class="keyword">new</span> <span class="function">Pessoa</span>(<span class="string">"Ana"</span>, <span class="number">22</span>);
+aluno.<span class="function">apresentar</span>(); <span class="comentario">// Olá, meu nome é Ana e tenho 22 anos.</span>
+                    </div>
+                </div>
+
+                <div class="card-exercicio">
+                    <h4>📝 Exercício 2: Objeto Livro</h4>
+                    <p>Crie um objeto chamado <code>livro</code> com as propriedades <code>titulo</code>, <code>autor</code>, e um método <code>ler()</code> que exiba o título do livro no console.</p>
+                    <div class="exemplo-codigo">
+<span class="comentario">// Exemplo de solução</span>
+<span class="keyword">const</span> livro = {
+    <span class="keyword">titulo</span>: <span class="string">"O Guia do Mochileiro"</span>,
+    <span class="keyword">autor</span>: <span class="string">"Douglas Adams"</span>,
+    <span class="function">ler</span>: <span class="keyword">function</span>() {
+        <span class="function">console</span>.<span class="function">log</span>(<span class="string">`Lendo: ${this.titulo}`</span>);
+    }
+};
+
+livro.<span class="function">ler</span>();
+                    </div>
+                </div>
+
+                <div class="playground">
+                    <h3>🎮 Teste Objetos</h3>
+                    <textarea id="codigoObj">class Retangulo {
+    constructor(l, a) {
+        this.largura = l;
+        this.altura = a;
+    }
+    calcularArea() {
+        return this.largura * this.altura;
+    }
+}
+
+const forma = new Retangulo(8, 4);
+console.log("Área: " + forma.calcularArea());</textarea>
+                    <button class="btn btn-success" onclick="executarCodigo('codigoObj', 'outputObj')">Executar</button>
+                    <div class="output" id="outputObj">// Resultado aparecerá aqui</div>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('arrays')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('dom')">Próximo: DOM →</button>
+            </div>
+
+            <div id="dom" class="section">
+                <h2>DOM (Document Object Model)</h2>
+
+                <div class="conceito">
+                    <h3>🌐 O que é o DOM?</h3>
+                    <p>É a **representação em árvore** da sua página HTML. O JavaScript usa o DOM para **encontrar, ler e modificar** qualquer elemento na tela.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Imagine o HTML como uma árvore:</span>
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;h1 <span class="keyword">id</span>=<span class="string">"titulo"</span>&gt;Olá&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>🔍 Selecionando Elementos</h3>
+                    <p>Os métodos mais comuns para "pegar" um elemento do DOM:</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// 1. Por ID (Mais rápido)</span>
+<span class="keyword">const</span> titulo = <span class="keyword">document</span>.<span class="function">getElementById</span>(<span class="string">"titulo"</span>);
+
+<span class="comentario">// 2. Por Classe ou Seletor CSS (Mais flexível)</span>
+<span class="keyword">const</span> botoes = <span class="keyword">document</span>.<span class="function">querySelectorAll</span>(<span class="string">".btn"</span>); 
+<span class="comment">// Retorna uma lista de elementos com a classe 'btn'</span>
+                    </div>
+                </div>
+                
+                <div class="conceito">
+                    <h3>✏️ Modificando Elementos</h3>
+                    <p>Depois de selecionar, podemos mudar o conteúdo, o estilo ou os atributos:</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">// Supondo que 'titulo' foi selecionado (id="titulo")</span>
+
+<span class="comentario">// Mudar o texto</span>
+titulo.textContent = <span class="string">"Novo Título!"</span>;
+
+<span class="comentario">// Mudar o estilo CSS (cor)</span>
+titulo.style.color = <span class="string">"red"</span>;
+
+<span class="comentario">// Adicionar uma nova classe CSS (ex: 'destaque')</span>
+titulo.classList.<span class="function">add</span>(<span class="string">"destaque"</span>);
+                    </div>
+                </div>
+                
+                <div class="playground">
+                    <h3>🎮 Teste DOM</h3>
+                    <div id="elemento-teste" style="color: blue; font-weight: bold;">Eu sou um elemento DOM!</div>
+                    <textarea id="codigoDOM">// O elemento acima tem id="elemento-teste"
+const el = document.getElementById('elemento-teste');
+
+// Mude a cor e o texto do elemento:
+el.style.color = "purple";
+el.textContent = "DOM Manipulado com Sucesso!";
+
+console.log("Cor alterada e texto substituído.");</textarea>
+                    <button class="btn btn-success" onclick="executarCodigo('codigoDOM', 'outputDOM')">Executar</button>
+                    <div class="output" id="outputDOM">// Resultado aparecerá aqui</div>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('objetos')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('playground')">Próximo: Playground →</button>
+            </div>
+            
+            <div id="playground" class="section">
+                <h2>Playground Livre</h2>
+                <p>Use esta área para praticar qualquer código JavaScript que você aprendeu. Lembre-se de usar <code>console.log()</code> para exibir os resultados!</p>
+                
+                <div class="importante">
+                    <strong>⚠️ ATENÇÃO:</strong> Não use <code>alert()</code> ou <code>document.write()</code> aqui, pois eles podem travar o editor. Use apenas <code>console.log()</code>.
+                </div>
+                
+                <div class="playground">
+                    <h3>✨ Seu Código Aqui</h3>
+                    <textarea id="codigoLivre">// Exemplo: Encontre os números pares em uma lista
+let numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+let pares = numeros.filter(n => n % 2 === 0);
+
+console.log("Números pares:", pares);</textarea>
+                    <button class="btn btn-success" onclick="executarCodigo('codigoLivre', 'outputLivre')">Executar Código</button>
+                    <div class="output" id="outputLivre">// Resultado aparecerá aqui</div>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('dom')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('quiz')">Próximo: Quiz →</button>
+            </div>
+
+            <div id="quiz" class="section">
+                <h2>Quiz Final</h2>
+                <p>Teste seus conhecimentos com 3 perguntas rápidas!</p>
+                
+                <div class="progresso">
+                    <div class="progresso-barra" id="quiz-progresso" style="width: 0%;">0/3</div>
+                </div>
+                
+                <div id="quiz-area">
+                    <div class="card-exercicio" id="pergunta-1">
+                        <h4>Pergunta 1: Qual a diferença entre `let` e `const`?</h4>
+                        <div class="quiz-opcao" data-resposta="incorreta" onclick="responder(1, this)">Ambos podem ter o valor alterado.</div>
+                        <div class="quiz-opcao" data-resposta="incorreta" onclick="responder(1, this)">`let` é global, `const` é local.</div>
+                        <div class="quiz-opcao" data-resposta="correta" onclick="responder(1, this)">`let` permite a reatribuição de valor, `const` não.</div>
+                    </div>
+                    
+                    <div class="card-exercicio" id="pergunta-2" style="display: none;">
+                        <h4>Pergunta 2: Qual método Array adiciona um elemento no final da lista?</h4>
+                        <div class="quiz-opcao" data-resposta="incorreta" onclick="responder(2, this)">.shift()</div>
+                        <div class="quiz-opcao" data-resposta="correta" onclick="responder(2, this)">.push()</div>
+                        <div class="quiz-opcao" data-resposta="incorreta" onclick="responder(2, this)">.map()</div>
+                    </div>
+
+                    <div class="card-exercicio" id="pergunta-3" style="display: none;">
+                        <h4>Pergunta 3: Qual seletor DOM encontra *todos* os elementos com a classe `btn`?</h4>
+                        <div class="quiz-opcao" data-resposta="incorreta" onclick="responder(3, this)">getElementById('.btn')</div>
+                        <div class="quiz-opcao" data-resposta="correta" onclick="responder(3, this)">querySelectorAll('.btn')</div>
+                        <div class="quiz-opcao" data-resposta="incorreta" onclick="responder(3, this)">querySelector('.btn')</div>
+                    </div>
+                </div>
+                
+                <div class="output" id="quiz-resultado" style="display: none; text-align: center; font-weight: bold;"></div>
+
+                <button class="btn" onclick="mostrarSecao('playground')">← Anterior</button>
+                <button class="btn btn-danger" onclick="window.location.reload()">Recomeçar Tutorial</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Função essencial para a interatividade das abas
+        function mostrarSecao(secaoId) {
+            // Esconde todas as seções
+            document.querySelectorAll('.section').forEach(secao => {
+                secao.classList.remove('active');
+            });
+            // Ativa a seção desejada
+            document.getElementById(secaoId).classList.add('active');
+
+            // Remove a classe 'active' de todos os botões de aba
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Adiciona a classe 'active' ao botão clicado
+            document.querySelector(`.tab[onclick="mostrarSecao('${secaoId}')"]`).classList.add('active');
+        }
+
+        // Função essencial para executar o código nos Playgrounds
+        function executarCodigo(textareaId, outputId) {
+            const codigo = document.getElementById(textareaId).value;
+            const outputElement = document.getElementById(outputId);
+            let consoleOutput = '';
+            
+            // Sobrescreve temporariamente console.log para capturar a saída
+            const consoleLogOriginal = console.log;
+            console.log = function(...args) {
+                // Captura argumentos e os formata como string
+                const formattedArgs = args.map(arg => {
+                    if (typeof arg === 'object' && arg !== null) {
+                        try {
+                            return JSON.stringify(arg, null, 2);
+                        } catch (e) {
+                            return String(arg); // fallback
+                        }
+                    }
+                    return String(arg);
+                }).join(' ');
+                
+                consoleOutput += formattedArgs + '\n';
+                consoleLogOriginal.apply(console, args); // Chama o console original para debug no F12
+            };
+
+            // Execução do código
+            try {
+                // Usa a função eval() para executar o código JavaScript inserido
+                eval(codigo);
+                outputElement.style.color = '#333';
+            } catch (e) {
+                // Captura erros de execução
+                consoleOutput = `ERRO:\n${e.name}: ${e.message}`;
+                outputElement.style.color = '#e74c3c'; // Cor vermelha para erro
+            } finally {
+                // Restaura o console.log original e exibe a saída
+                console.log = consoleLogOriginal;
+                outputElement.textContent = consoleOutput || 'Comando executado. Sem saída no console.';
+            }
+        }
+        
+        // --- LÓGICA DO QUIZ ---
+        let acertos = 0;
+        let perguntaAtual = 1;
+        const totalPerguntas = 3;
+
+        function atualizarProgresso() {
+            const barra = document.getElementById('quiz-progresso');
+            const percentual = (acertos / totalPerguntas) * 100;
+            barra.style.width = `${percentual}%`;
+            barra.textContent = `${acertos}/${totalPerguntas}`;
+        }
+
+        function responder(numeroPergunta, elementoClicado) {
+            // Desabilita todas as opções após a resposta
+            document.querySelectorAll(`#pergunta-${numeroPergunta} .quiz-opcao`).forEach(opt => {
+                opt.onclick = null; 
+            });
+
+            const resposta = elementoClicado.getAttribute('data-resposta');
+            const feedback = document.getElementById('quiz-resultado');
+            
+            if (resposta === 'correta') {
+                elementoClicado.classList.add('correta');
+                acertos++;
+                feedback.textContent = '✅ Resposta Correta!';
+                feedback.style.color = '#27ae60';
+            } else {
+                elementoClicado.classList.add('incorreta');
+                // Revela a resposta correta
+                document.querySelector(`#pergunta-${numeroPergunta} .quiz-opcao[data-resposta="correta"]`).classList.add('correta');
+                feedback.textContent = '❌ Resposta Incorreta.';
+                feedback.style.color = '#e74c3c';
+            }
+            
+            feedback.style.display = 'block';
+            atualizarProgresso();
+
+            // Próxima pergunta após um pequeno delay
+            setTimeout(() => {
+                const proximaPergunta = document.getElementById(`pergunta-${numeroPergunta + 1}`);
+                const perguntaAtualElement = document.getElementById(`pergunta-${numeroPergunta}`);
+
+                if (proximaPergunta) {
+                    perguntaAtualElement.style.display = 'none';
+                    proximaPergunta.style.display = 'block';
+                    feedback.style.display = 'none';
+                } else {
+                    feedback.textContent = `Fim do Quiz! Você acertou ${acertos} de ${totalPerguntas} perguntas.`;
+                    feedback.style.color = '#d35400';
+                    feedback.style.display = 'block';
+                }
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
