@@ -1,0 +1,27 @@
+
+INSERT INTO compras (cliente_id, produto, valor, data_compra, pago) VALUES
+(15, 'PÃO E LEITE', 15.00, '2025-10-11', 0), -- ADÃO
+(16, 'FRUTA PROIBIDA', 1.00, '2025-10-11', 0), -- EVA
+(17, 'PREGOS PARA ARCA', 50.50, '2025-10-11', 0), -- NOÉ
+(19, 'CABRITO', 85.00, '2025-10-11', 0), -- ISAOUE
+(20, 'ESPECIARIAS', 12.00, '2025-10-11', 0), -- JACÓ
+(21, 'TUNICA DE COR', 150.00, '2025-10-11', 0), -- JOSÉ
+(22, 'CAJADO NOVO', 35.00, '2025-10-11', 0), -- MOISÉS
+(23, 'BARBEAR', 20.00, '2025-10-11', 0), -- ARÃO
+(24, 'CORDAS PARA HARPA', 18.00, '2025-10-11', 0), -- DAVI
+(25, 'OURO', 5000.00, '2025-10-11', 0), -- SALOMÃO
+(26, 'ELIXIR', 40.00, '2025-10-11', 0), -- ELIAS
+(27, 'TINTA PARA PELE', 10.00, '2025-10-11', 0), -- ELISEU
+(28, 'PERGAMINHO', 5.00, '2025-10-11', 0), -- ISAIAS
+(29, 'CARVÃO', 22.00, '2025-10-11', 0), -- JEREMIAS
+(30, 'CERA', 3.50, '2025-10-11', 0), -- EZEQUIEL
+(31, 'LINHO', 60.00, '2025-10-11', 0), -- DANIEL
+(32, 'PEIXE', 15.00, '2025-10-11', 0), -- JONAS
+(33, 'CESTA DE PESCA', 30.00, '2025-10-11', 0), -- JOÃO
+(34, 'TINTA ROXA', 120.00, '2025-10-11', 0); -- PAULO
+
+
+(9, 35, 'GERENCIAMENTO', 2700.00, '2025-06-11', 1, '2025-10-11', NULL),
+(10, 35, 'CONSULTORIA EM GESTÃO PÚBLICA', 3500.00, '2025-08-15', 1, '2025-10-10', 'Contrato com prefeitura'),
+(11, 35, 'DESENVOLVIMENTO DE SISTEMA WEB', 4200.00, '2025-09-01', 0, NULL, 'Fase de testes'),
+(12, 35, 'INTEGRAÇÃO DE DADOS GOVBR', 1800.00, '2025-09-20', 0, NULL, 'Módulo de integração com sistemas públicos');

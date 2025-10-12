@@ -26,7 +26,7 @@ class CompraModel:
                 GROUP_CONCAT(
                     CONCAT(
                         c.id, '|', c.produto, '|', c.valor, '|', 
-                        DATE_FORMAT(c.data_compra, '%%d/%%m/%%Y'), '|', c.pago, '|', c.data_compra
+                        DATE_FORMAT(c.data_compra, '%d/%m/%Y'), '|', c.pago, '|', c.data_compra
                     )
                     ORDER BY c.data_compra DESC
                     SEPARATOR '@@'
