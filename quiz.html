@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treino Arcade - tabela & quiz</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#06b6d4;
+      --muted:#94a3b8;
+      --success:#16a34a;
+      --danger:#ef4444;
+      --glass: rgba(255,255,255,0.03);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background:linear-gradient(180deg,#071025 0%, #081327 100%);
+      color:#e6eef6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .container{
+      width:100%;
+      max-width:920px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:20px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+    header h1{font-size:20px;margin:0}
+    header p{margin:0;color:var(--muted);font-size:13px}
+
+    .layout{display:grid;grid-template-columns: 360px 1fr;gap:18px}
+    @media (max-width:800px){ .layout{grid-template-columns:1fr} }
+
+    /* tabela */
+    table{width:100%;border-collapse:collapse}
+    thead th{text-align:left;padding:12px 12px;color:var(--muted);font-size:13px}
+    tbody td{padding:10px 12px;border-top:1px solid rgba(255,255,255,0.03);font-size:14px}
+    tbody tr.active{background: linear-gradient(90deg, rgba(6,182,212,0.06), rgba(6,182,212,0.03));}
+    .status{
+      display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .locked{color:var(--muted)}
+    .active .status{color:var(--accent);border-color:rgba(6,182,212,0.25)}
+    .passed .status{color:var(--success);border-color:rgba(22,163,74,0.18)}
+
+    /* card de quiz */
+    .card{
+      background:var(--card);
+      padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
+      min-height:220px;display:flex;flex-direction:column;justify-content:space-between;
+    }
+    .question{font-size:16px;margin-bottom:12px}
+    .options{display:grid;gap:8px}
+    .option{
+      padding:10px 12px;border-radius:8px;background:var(--glass);
+      cursor:pointer;border:1px solid transparent;
+      transition:transform .08s ease, box-shadow .08s ease;
+      user-select:none;
+    }
+    .option:hover{transform:translateY(-2px)}
+    .btns{display:flex;gap:8px;align-items:center;margin-top:12px}
+    button{
+      background:linear-gradient(180deg,#0b1220,#071022);color:#e6eef6;border:1px solid rgba(255,255,255,0.04);
+      padding:8px 12px;border-radius:8px;cursor:pointer;
+    }
+    .msg{font-size:13px;color:var(--muted);margin-top:8px}
+    .small{font-size:12px;color:var(--muted)}
+    .reset{background:transparent;border:1px dashed rgba(255,255,255,0.06);padding:6px 8px}
+    .level-indicator{font-weight:600;color:var(--accent)}
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <div>
+        <h1>Treino Arcade — tabela & quiz</h1>
+        <p>Avance somente se acertar. Se errar, volta para o início.</p>
+      </div>
+      <div class="small">Progresso: <span id="progressText">0 / 0</span></div>
+    </header>
+
+    <div class="layout">
+      <!-- Coluna esquerda: tabela de níveis -->
+      <div>
+        <div style="margin-bottom:10px;color:var(--muted);font-size:13px">Níveis</div>
+        <div style="background:transparent;border-radius:8px;overflow:hidden">
+          <table aria-describedby="levels">
+            <thead>
+              <tr><th style="width:52px">Nível</th><th>Título</th><th style="width:120px">Status</th></tr>
+            </thead>
+            <tbody id="levelsBody">
+              <!-- preenchido por JS -->
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px" class="small">Dica: clique nas opções do quiz para responder. Acompanhe o progresso.</div>
+      </div>
+
+      <!-- Coluna direita: quiz card -->
+      <div>
+        <div class="card" role="region" aria-live="polite">
+          <div>
+            <div class="small">Nível atual: <span class="level-indicator" id="currentLevelLabel">—</span></div>
+            <div class="question" id="questionText">Carregando...</div>
+            <div class="options" id="optionsList" role="list">
+              <!-- opções preenchidas por JS -->
+            </div>
+            <div class="msg" id="messageArea"></div>
+          </div>
+
+          <div class="btns">
+            <button id="btnSkip" title="Pular (não recomendado)">Pular</button>
+            <button id="btnReset" class="reset" title="Resetar progresso">Resetar Progresso</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // QUESTÕES: um array de níveis com perguntas (você pode editar aqui)
+    const levels = [
+      { title: "HTML Básico", question: "Qual tag marca o início de um documento HTML?", options: ["<start>", "<doc>", "<html>", "<body>"], answerIndex: 2 },
+      { title: "Tags de texto", question: "Qual tag cria um parágrafo?", options: ["<p>", "<para>", "<txt>", "<div>"], answerIndex: 0 },
+      { title: "Listas", question: "Qual tag inicia uma lista não ordenada?", options: ["<ol>", "<ul>", "<li>", "<list>"], answerIndex: 1 },
+      { title: "Links", question: "Qual atributo define o destino de um link?", options: ["href", "src", "target", "link"], answerIndex: 0 },
+      { title: "Formulários", question: "Qual elemento envia dados ao servidor?", options: ["<input>", "<label>", "<form>", "<button>"], answerIndex: 2 },
+    ];
+
+    // Estado
+    let currentLevel = 0; // índice do nível atual (0 = primeiro)
+    const total = levels.length;
+    const progressText = document.getElementById('progressText');
+    const levelsBody = document.getElementById('levelsBody');
+    const questionText = document.getElementById('questionText');
+    const optionsList = document.getElementById('optionsList');
+    const messageArea = document.getElementById('messageArea');
+    const currentLevelLabel = document.getElementById('currentLevelLabel');
+
+    // Inicializar tabela
+    function renderLevels(passedUpTo = -1){
+      levelsBody.innerHTML = '';
+      for (let i=0;i<levels.length;i++){
+        const tr = document.createElement('tr');
+        tr.className = i === currentLevel ? 'active' : (i < passedUpTo ? 'passed' : 'locked');
+        const tdIndex = document.createElement('td');
+        tdIndex.textContent = i+1;
+        const tdTitle = document.createElement('td');
+        tdTitle.textContent = levels[i].title;
+        const tdStatus = document.createElement('td');
+        const span = document.createElement('span');
+        span.className = 'status';
+        if (i < passedUpTo) { span.textContent = 'Passed'; } 
+        else if (i === currentLevel) { span.textContent = 'Active'; }
+        else { span.textContent = 'Locked'; span.style.opacity=0.7 }
+        tdStatus.appendChild(span);
+        tr.appendChild(tdIndex); tr.appendChild(tdTitle); tr.appendChild(tdStatus);
+        levelsBody.appendChild(tr);
+      }
+      progressText.textContent = `${Math.max(0, passedUpTo)} / ${total}`;
+    }
+
+    // Render pergunta do nível atual
+    function renderQuestion(){
+      const lvl = levels[currentLevel];
+      currentLevelLabel.textContent = `${currentLevel+1} — ${lvl.title}`;
+      questionText.textContent = lvl.question;
+      optionsList.innerHTML = '';
+      messageArea.textContent = '';
+      lvl.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.setAttribute('role','button');
+        div.setAttribute('tabindex','0');
+        div.textContent = opt;
+        div.addEventListener('click', ()=> tryAnswer(idx));
+        div.addEventListener('keydown', (e)=>{ if (e.key==='Enter' || e.key===' ') tryAnswer(idx) });
+        optionsList.appendChild(div);
+      });
+    }
+
+    // Tenta responder: se certo avança, se errado reseta tudo
+    function tryAnswer(selectedIdx){
+      const correct = levels[currentLevel].answerIndex === selectedIdx;
+      if (correct){
+        // acerto
+        messageArea.style.color = '';
+        messageArea.textContent = `✔️ Correto! Você passou do nível ${currentLevel+1}.`;
+        currentLevel++;
+        if (currentLevel >= total){
+          // terminou todos
+          renderLevels(total);
+          questionText.textContent = "Parabéns! Você completou todos os níveis 👏";
+          optionsList.innerHTML = '';
+          currentLevelLabel.textContent = 'FINALIZADO';
+          progressText.textContent = `${total} / ${total}`;
+          // opcional: tocar som ou mostrar animação (não incluído)
+        } else {
+          // avança ao próximo nível após uma breve pausa
+          renderLevels(currentLevel); // marca os anteriores como passed
+          setTimeout(()=>{
+            renderQuestion();
+          }, 600);
+        }
+      } else {
+        // erro -> reset total
+        messageArea.style.color = 'var(--danger)';
+        messageArea.textContent = `❌ Errado. Voltando ao início (Nível 1).`;
+        // Animação pequena: piscar os níveis
+        flashReset();
+        setTimeout(()=> resetProgress(), 700);
+      }
+    }
+
+    function resetProgress(){
+      currentLevel = 0;
+      renderLevels(0);
+      renderQuestion();
+    }
+
+    function flashReset(){
+      // efeito visual rápido: marcar nada and then back
+      renderLevels(0);
+    }
+
+    // Botões
+    document.getElementById('btnReset').addEventListener('click', ()=>{
+      if (confirm('Deseja realmente resetar o progresso?')) resetProgress();
+    });
+    document.getElementById('btnSkip').addEventListener('click', ()=>{
+      // Pular para o próximo (usar com cuidado) — não recomendado, mas útil para teste
+      if (currentLevel < total - 1){
+        currentLevel++;
+        renderLevels(currentLevel);
+        renderQuestion();
+      } else {
+        currentLevel = total;
+        renderLevels(total);
+        renderQuestion();
+      }
+    });
+
+    // Inicialização
+    function init(){
+      // se quiser persistência, pode usar localStorage -> por simplicidade não usamos aqui
+      renderLevels(0);
+      renderQuestion();
+    }
+
+    init();
+  </script>
+</body>
+</html>
