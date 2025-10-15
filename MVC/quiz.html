@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Treino Arcade - tabela & quiz</title>
+  <link rel="stylesheet" href="style.css">     
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <div>
+        <h1>Treino Arcade — tabela & quiz</h1>
+        <p>Avance somente se acertar. Se errar, volta para o início.</p>
+      </div>
+      <div class="small">Progresso: <span id="progressText">0 / 0</span></div>
+    </header>
+
+    <div class="layout">
+      <!-- Coluna esquerda: tabela de níveis -->
+      <div>
+        <div style="margin-bottom:10px;color:var(--muted);font-size:13px">Níveis</div>
+        <div style="background:transparent;border-radius:8px;overflow:hidden">
+          <table aria-describedby="levels">
+            <thead>
+              <tr><th style="width:52px">Nível</th><th>Título</th><th style="width:120px">Status</th></tr>
+            </thead>
+            <tbody id="levelsBody">
+              <!-- preenchido por JS -->
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:12px" class="small">Dica: clique nas opções do quiz para responder. Acompanhe o progresso.</div>
+      </div>
+
+      <!-- Coluna direita: quiz card -->
+      <div>
+        <div class="card" role="region" aria-live="polite">
+          <div>
+            <div class="small">Nível atual: <span class="level-indicator" id="currentLevelLabel">—</span></div>
+            <div class="question" id="questionText">Carregando...</div>
+            <div class="options" id="optionsList" role="list">
+              <!-- opções preenchidas por JS -->
+            </div>
+            <div class="msg" id="messageArea"></div>
+          </div>
+
+          <div class="btns">
+            <button id="btnSkip" title="Pular (não recomendado)">Pular</button>
+            <button id="btnReset" class="reset" title="Resetar progresso">Resetar Progresso</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script src="main.js"></script>
+  
+</body>
+</html>
