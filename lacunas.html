@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Quiz de Lacunas - Mercadinho</title>
+    <style>
+        /* Estilo simples e limpo */
+        :root {
+            font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: #f4f7fb;
+            color: #1b1e23
+        }
+
+        .container {
+            max-width: 780px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(15, 20, 30, 0.06)
+        }
+
+        h1 {
+            font-size: 20px;
+            margin: 0 0 12px
+        }
+
+        p.lead {
+            color: #555;
+            margin-top: 0
+        }
+
+        .sentence {
+            margin: 16px 0;
+            padding: 12px;
+            border-radius: 8px;
+            background: #fbfdff;
+            border: 1px solid #eef3fb
+        }
+
+        .blank {
+            display: inline-flex;
+            vertical-align: middle
+        }
+
+        select,
+        input[type="text"] {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #cfd8e6;
+            background: white
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        button {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer
+        }
+
+        button.primary {
+            background: #2563eb;
+            color: white
+        }
+
+        button.ghost {
+            background: transparent;
+            border: 1px solid #cbd5e1
+        }
+
+        .result {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px
+        }
+
+        .correct {
+            background: #e6f7ff;
+            border-left: 4px solid #0ea5e9
+        }
+
+        .wrong {
+            background: #fff1f2;
+            border-left: 4px solid #fb7185
+        }
+
+        .explanation {
+            margin-top: 8px;
+            color: #334155
+        }
+
+        .score {
+            font-weight: 700
+        }
+
+        .small {
+            font-size: 13px;
+            color: #6b7280
+        }
+
+        .highlight-correct {
+            color: #0ea5e9;
+            font-weight: 700
+        }
+
+        .highlight-wrong {
+            color: #ef4444;
+            font-weight: 700
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Preencha as lacunas — Quiz simples</h1>
+        <p class="lead">Escolha a opção correta para completar cada frase. Ao terminar, clique em
+            <strong>Verificar</strong>.</p>
+
+        <!-- Lista de frases com lacunas. Cada lacuna é um <select> com opções. -->
+        <div id="quiz"></div>
+
+        <div class="actions">
+            <button id="checkBtn" class="primary">Verificar</button>
+            <button id="resetBtn" class="ghost">Reiniciar</button>
+        </div>
+
+        <div id="feedback"></div>
+
+        <p class="small" style="margin-top:12px">Projeto simples em HTML/CSS/JS </p>
+    </div>
+
+    <script>
+        /* ======= DADOS DO QUIZ =======
+           Cada item tem:
+           - text: texto da frase com token {{blank}} indicando onde colocar a lacuna
+           - options: lista de opções a mostrar no select
+           - answer: valor correto (comparado por igualdade simples)
+           - explanation: texto curto explicando por que a opção correta está certa
+        */
+
+        const quizData = [
+            {
+                id: 1,
+                text: 'O __{{blank}}__ é usado para identificar unicamente cada registro em uma tabela.',
+                options: ['telefone', 'id', 'nome', 'endereço'],
+                answer: 'id',
+                explanation: 'A chave primária (id) identifica unicamente cada registro.'
+            },
+            {
+                id: 2,
+                text: 'Para inserir um novo registro usamos o comando __{{blank}}__.',
+                options: ['SELECT', 'UPDATE', 'INSERT INTO', 'DELETE'],
+                answer: 'INSERT INTO',
+                explanation: 'O comando INSERT INTO adiciona novos registros em uma tabela.'
+            },
+            {
+                id: 3,
+                text: 'Uma tabela no banco de dados é composta por __{{blank}}__ e __{{blank}}__.',
+                options: ['linhas', 'colunas', 'comentários', 'funções'],
+                answer: ['linhas', 'colunas'],
+                explanation: 'Tabelas têm colunas (campos) e linhas (registros).',
+                multipleAnswers: true
+            },
+            {
+                id: 4,
+                text: 'O comando __{{blank}}__ é usado para recuperar dados de uma tabela.',
+                options: ['SELECT', 'INSERT', 'DELETE', 'CREATE'],
+                answer: 'SELECT',
+                explanation: 'SELECT é usado para consultar e recuperar dados do banco.'
+            },
+            {
+                id: 5,
+                text: 'Para atualizar registros existentes usamos o comando __{{blank}}__.',
+                options: ['ALTER', 'UPDATE', 'MODIFY', 'CHANGE'],
+                answer: 'UPDATE',
+                explanation: 'UPDATE modifica registros existentes em uma tabela.'
+            }
+        ];
+
+        /* ======= Função que monta o HTML do quiz ======= */
+        function renderQuiz() {
+            const container = document.getElementById('quiz');
+            container.innerHTML = '';
+
+            quizData.forEach((item, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'sentence';
+
+                // Se a frase tem duas lacunas (como o item 3) vamos gerar dois selects e substituir os tokens por placeholders
+                if (Array.isArray(item.answer)) {
+                    // dividir texto em partes ao redor dos tokens {{blank}}
+                    const parts = item.text.split('{{blank}}');
+                    // montar nodes intercalando texto e selects
+                    parts.forEach((part, i) => {
+                        // texto
+                        const span = document.createElement('span');
+                        span.textContent = part;
+                        wrapper.appendChild(span);
+
+                        // Se não for o último pedaço, adicionar um select
+                        if (i < parts.length - 1) {
+                            const select = createSelect(item.options, `${item.id}_part_${i}`);
+                            wrapper.appendChild(select);
+                        }
+                    });
+
+                } else {
+                    // apenas uma lacuna: substituir o token por um select simples
+                    const html = item.text.replace('{{blank}}', `<span class="blank">${createSelectHtml(item.options, item.id)}</span>`);
+                    wrapper.innerHTML = html;
+                }
+
+                // explicação oculta — será mostrada depois da verificação
+                const explanation = document.createElement('div');
+                explanation.className = 'explanation';
+                explanation.id = `exp_${item.id}`;
+                explanation.style.display = 'none';
+                explanation.textContent = item.explanation;
+
+                wrapper.appendChild(explanation);
+                container.appendChild(wrapper);
+            });
+        }
+
+        /* Helper que gera um select como elemento DOM */
+        function createSelect(options, id) {
+            const select = document.createElement('select');
+            select.setAttribute('data-quiz-id', id);
+            // opção vazia inicial
+            const empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = '-- escolha --';
+            select.appendChild(empty);
+
+            options.forEach(opt => {
+                const o = document.createElement('option');
+                o.value = opt;
+                o.textContent = opt;
+                select.appendChild(o);
+            });
+
+            return select;
+        }
+
+        /* Versão que retorna HTML string (usada para inserção direta) */
+        function createSelectHtml(options, id) {
+            let s = `<select data-quiz-id='${id}'>`;
+            s += `<option value=''>-- escolha --</option>`;
+            options.forEach(opt => {
+                s += `<option value='${opt}'>${opt}</option>`;
+            });
+            s += `</select>`;
+            return s;
+        }
+
+        /* ======= Lógica de verificação ======= */
+        function checkAnswers() {
+            let correctCount = 0;
+            let total = 0;
+
+            quizData.forEach(item => {
+                if (Array.isArray(item.answer)) {
+                    // para cada parte, buscar o select correspondente
+                    const parts = item.text.split('{{blank}}');
+                    parts.forEach((p, i) => {
+                        if (i < parts.length - 1) {
+                            total++;
+                            const id = `${item.id}_part_${i}`;
+                            const sel = document.querySelector(`select[data-quiz-id='${id}']`);
+                            const val = sel ? sel.value : '';
+                            const correct = item.answer[i];
+                            markSelect(sel, val === correct);
+                            if (val === correct) correctCount++;
+                        }
+                    });
+                    // mostrar explicação
+                    document.getElementById(`exp_${item.id}`).style.display = 'block';
+
+                } else {
+                    total++;
+                    const sel = document.querySelector(`select[data-quiz-id='${item.id}']`);
+                    const val = sel ? sel.value : '';
+                    const correct = item.answer;
+                    markSelect(sel, val === correct);
+                    if (val === correct) correctCount++;
+                    document.getElementById(`exp_${item.id}`).style.display = 'block';
+                }
+            });
+
+            // mostrar resultado geral
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = '';
+            const box = document.createElement('div');
+            box.className = 'result';
+
+            const scorePct = Math.round((correctCount / total) * 100);
+            box.innerHTML = `<div class='score'>Você acertou ${correctCount} de ${total} — ${scorePct}%</div>`;
+            feedback.appendChild(box);
+        }
+
+        /* marca visual do select: correto ou errado */
+        function markSelect(sel, ok) {
+            if (!sel) return;
+            // Remover estilos anteriores
+            sel.style.border = '';
+            sel.style.background = '';
+
+            if (ok) {
+                // borda azul suave
+                sel.style.border = '2px solid #0ea5e9';
+                sel.style.background = '#f0fbff';
+            } else {
+                // borda vermelha suave
+                sel.style.border = '2px solid #fb7185';
+                sel.style.background = '#fff5f7';
+            }
+        }
+
+        /* reinicia o quiz */
+        function resetQuiz() {
+            // limpar selects
+            const selects = document.querySelectorAll('#quiz select');
+            selects.forEach(s => {
+                s.value = '';
+                s.style.border = '';
+                s.style.background = '';
+            });
+            // ocultar explicações
+            quizData.forEach(item => {
+                const el = document.getElementById(`exp_${item.id}`);
+                if (el) el.style.display = 'none';
+            });
+            // limpar feedback
+            document.getElementById('feedback').innerHTML = '';
+        }
+
+        // eventos
+        document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+        document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+
+        // renderiza na abertura
+        renderQuiz();
+    </script>
+</body>
+
+</html>
