@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial SQL Interativo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #34495e;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.3s ease;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .tab.active {
+            background: white;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .conceito {
+            background: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .conceito h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .exemplo-codigo {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .exemplo-codigo .comentario {
+            color: #95a5a6;
+        }
+
+        .exemplo-codigo .keyword {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .exemplo-codigo .string {
+            color: #2ecc71;
+        }
+
+        .tabela-exemplo {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tabela-exemplo th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .tabela-exemplo td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .tabela-exemplo tr:hover {
+            background: #f8f9fa;
+        }
+
+        .simulador {
+            background: #f8f9fa;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .simulador textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px 5px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .resultado.sucesso {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .resultado.erro {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .quiz-container {
+            margin: 20px 0;
+        }
+
+        .questao {
+            background: white;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .questao h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .opcao {
+            display: block;
+            padding: 12px;
+            margin: 8px 0;
+            background: #ecf0f1;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .opcao:hover {
+            background: #d5dbdb;
+            transform: translateX(5px);
+        }
+
+        .opcao.correta {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .opcao.incorreta {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .progresso {
+            background: #ecf0f1;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progresso-barra {
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .dica {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .importante {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Tutorial Interativo de SQL</h1>
+            <p>Do Zero ao Básico - Aprenda fazendo!</p>
+        </div>
+
+        <div class="tabs" id="tabsContainer">
+            <button class="tab active" onclick="mostrarSecao('conceitos')">1. Conceitos Básicos</button>
+            <button class="tab" onclick="mostrarSecao('ddl')">2. DDL - Estrutura</button>
+            <button class="tab" onclick="mostrarSecao('dml')">3. DML - Manipulação</button>
+            <button class="tab" onclick="mostrarSecao('consultas')">4. Consultas SELECT</button>
+            <button class="tab" onclick="mostrarSecao('simulador')">5. Simulador SQL</button>
+            <button class="tab" onclick="mostrarSecao('quiz')">6. Quiz Final</button>
+        </div>
+
+        <div class="content">
+            <!-- SEÇÃO 1: CONCEITOS BÁSICOS -->
+            <div id="conceitos" class="section active">
+                <h2>O que é um Banco de Dados?</h2>
+                
+                <div class="conceito">
+                    <h3>Banco de Dados</h3>
+                    <p>É como um <strong>armário digital organizado</strong> onde guardamos informações de forma estruturada. Imagine uma biblioteca onde cada livro (dado) tem seu lugar específico.</p>
+                </div>
+
+                <div class="conceito">
+                    <h3>SQL (Structured Query Language)</h3>
+                    <p>É a <strong>linguagem</strong> que usamos para "conversar" com o banco de dados. É como dar comandos para:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Criar tabelas (estrutura)</li>
+                        <li>Inserir dados (adicionar informação)</li>
+                        <li>Buscar informações (fazer perguntas)</li>
+                        <li>Atualizar dados (modificar)</li>
+                        <li>Deletar dados (remover)</li>
+                    </ul>
+                </div>
+
+                <h3 style="margin-top: 30px;">Elementos Principais</h3>
+
+                <div class="conceito">
+                    <h3>Tabela</h3>
+                    <p>É como uma <strong>planilha do Excel</strong>. Tem linhas e colunas.</p>
+                    <table class="tabela-exemplo">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>nome</th>
+                                <th>idade</th>
+                                <th>cidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>João Silva</td>
+                                <td>25</td>
+                                <td>São Paulo</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Maria Santos</td>
+                                <td>30</td>
+                                <td>Rio de Janeiro</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="conceito">
+                    <h3>Colunas (Campos)</h3>
+                    <p>São as <strong>categorias</strong> de informação (id, nome, idade, cidade).</p>
+                </div>
+
+                <div class="conceito">
+                    <h3>Linhas (Registros)</h3>
+                    <p>São os <strong>dados em si</strong>. Cada linha representa uma entrada completa.</p>
+                </div>
+
+                <div class="conceito">
+                    <h3>Chave Primária (Primary Key)</h3>
+                    <p>É um <strong>identificador único</strong> para cada linha. Como um CPF - não se repete!</p>
+                    <p style="margin-top: 10px;"><strong>Exemplo:</strong> O campo "id" na tabela acima.</p>
+                </div>
+
+                <div class="dica">
+                    <strong>Analogia útil:</strong> Pense no banco de dados como uma escola:
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Banco de Dados</strong> = Escola inteira</li>
+                        <li><strong>Tabela</strong> = Sala de aula</li>
+                        <li><strong>Colunas</strong> = Características dos alunos (nome, idade, etc)</li>
+                        <li><strong>Linhas</strong> = Cada aluno individual</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-success" onclick="mostrarSecao('ddl')">Próximo: DDL →</button>
+            </div>
+
+            <!-- SEÇÃO 2: DDL -->
+            <div id="ddl" class="section">
+                <h2>DDL - Data Definition Language</h2>
+                <p><strong>DDL</strong> são os comandos para criar e modificar a <strong>estrutura</strong> do banco de dados.</p>
+
+                <div class="conceito">
+                    <h3>CREATE - Criar Tabela</h3>
+                    <p>Cria uma nova tabela no banco de dados.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Criando uma tabela de clientes</span>
+<span class="keyword">CREATE TABLE</span> clientes (
+    id <span class="keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    nome <span class="keyword">VARCHAR</span>(100) <span class="keyword">NOT NULL</span>,
+    email <span class="keyword">VARCHAR</span>(100),
+    idade <span class="keyword">INT</span>,
+    cidade <span class="keyword">VARCHAR</span>(50)
+);
+                    </div>
+
+                    <div class="dica">
+                        <strong>Tipos de Dados Comuns:</strong>
+                        <ul style="margin-left: 20px; margin-top: 10px;">
+                            <li><strong>INT</strong> - Números inteiros (1, 2, 100)</li>
+                            <li><strong>VARCHAR(n)</strong> - Texto com até n caracteres</li>
+                            <li><strong>DATE</strong> - Data (2024-01-15)</li>
+                            <li><strong>DECIMAL(10,2)</strong> - Números decimais (preço: 19.99)</li>
+                            <li><strong>BOOLEAN</strong> - Verdadeiro/Falso</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>ALTER - Modificar Tabela</h3>
+                    <p>Altera a estrutura de uma tabela existente.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Adicionar uma nova coluna</span>
+<span class="keyword">ALTER TABLE</span> clientes
+<span class="keyword">ADD</span> telefone <span class="keyword">VARCHAR</span>(20);
+
+<span class="comentario">-- Modificar uma coluna existente</span>
+<span class="keyword">ALTER TABLE</span> clientes
+<span class="keyword">MODIFY</span> email <span class="keyword">VARCHAR</span>(150);
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>DROP - Excluir Tabela</h3>
+                    <div class="importante">
+                        <strong>CUIDADO!</strong> Este comando deleta a tabela PERMANENTEMENTE!
+                    </div>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Deletar uma tabela</span>
+<span class="keyword">DROP TABLE</span> clientes;
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Exemplo Prático Completo</h3>
+                <div class="exemplo-codigo">
+<span class="comentario">-- Criar banco de dados de uma loja</span>
+<span class="keyword">CREATE TABLE</span> produtos (
+    produto_id <span class="keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    nome <span class="keyword">VARCHAR</span>(100) <span class="keyword">NOT NULL</span>,
+    preco <span class="keyword">DECIMAL</span>(10,2) <span class="keyword">NOT NULL</span>,
+    estoque <span class="keyword">INT DEFAULT</span> 0,
+    categoria <span class="keyword">VARCHAR</span>(50),
+    data_cadastro <span class="keyword">DATE</span>
+);
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('conceitos')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('dml')">Próximo: DML →</button>
+            </div>
+
+            <!-- SEÇÃO 3: DML -->
+            <div id="dml" class="section">
+                <h2>DML - Data Manipulation Language</h2>
+                <p><strong>DML</strong> são os comandos para manipular os <strong>dados</strong> dentro das tabelas.</p>
+
+                <div class="conceito">
+                    <h3>INSERT - Inserir Dados</h3>
+                    <p>Adiciona novas linhas (registros) na tabela.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Inserir um registro</span>
+<span class="keyword">INSERT INTO</span> produtos (nome, preco, estoque, categoria)
+<span class="keyword">VALUES</span> (<span class="string">'Notebook'</span>, 2500.00, 10, <span class="string">'Eletrônicos'</span>);
+
+<span class="comentario">-- Inserir múltiplos registros</span>
+<span class="keyword">INSERT INTO</span> produtos (nome, preco, estoque, categoria)
+<span class="keyword">VALUES</span>
+    (<span class="string">'Mouse'</span>, 50.00, 100, <span class="string">'Eletrônicos'</span>),
+    (<span class="string">'Teclado'</span>, 150.00, 50, <span class="string">'Eletrônicos'</span>),
+    (<span class="string">'Monitor'</span>, 800.00, 20, <span class="string">'Eletrônicos'</span>);
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>UPDATE - Atualizar Dados</h3>
+                    <p>Modifica dados existentes na tabela.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Atualizar um produto específico</span>
+<span class="keyword">UPDATE</span> produtos
+<span class="keyword">SET</span> preco = 2300.00, estoque = 15
+<span class="keyword">WHERE</span> nome = <span class="string">'Notebook'</span>;
+
+<span class="comentario">-- Aumentar preço de todos eletrônicos em 10%</span>
+<span class="keyword">UPDATE</span> produtos
+<span class="keyword">SET</span> preco = preco * 1.10
+<span class="keyword">WHERE</span> categoria = <span class="string">'Eletrônicos'</span>;
+                    </div>
+
+                    <div class="importante">
+                        <strong>IMPORTANTE:</strong> Sempre use WHERE no UPDATE! Sem ele, TODOS os registros serão alterados!
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>DELETE - Deletar Dados</h3>
+                    <p>Remove linhas específicas da tabela.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Deletar um produto específico</span>
+<span class="keyword">DELETE FROM</span> produtos
+<span class="keyword">WHERE</span> produto_id = 5;
+
+<span class="comentario">-- Deletar produtos sem estoque</span>
+<span class="keyword">DELETE FROM</span> produtos
+<span class="keyword">WHERE</span> estoque = 0;
+                    </div>
+
+                    <div class="importante">
+                        <strong>CUIDADO:</strong> DELETE sem WHERE apaga TODOS os registros da tabela!
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Resumo Visual</h3>
+                <table class="tabela-exemplo">
+                    <thead>
+                        <tr>
+                            <th>Comando</th>
+                            <th>O que faz</th>
+                            <th>Exemplo Simples</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>INSERT</strong></td>
+                            <td>Adiciona dados</td>
+                            <td>INSERT INTO tabela VALUES (...)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>UPDATE</strong></td>
+                            <td>Modifica dados</td>
+                            <td>UPDATE tabela SET campo = valor</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DELETE</strong></td>
+                            <td>Remove dados</td>
+                            <td>DELETE FROM tabela WHERE...</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <button class="btn" onclick="mostrarSecao('ddl')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('consultas')">Próximo: SELECT →</button>
+            </div>
+
+            <!-- SEÇÃO 4: CONSULTAS SELECT -->
+            <div id="consultas" class="section">
+                <h2>SELECT - Consultando Dados</h2>
+                <p><strong>SELECT</strong> é o comando mais usado! Serve para <strong>buscar e visualizar</strong> dados.</p>
+
+                <div class="conceito">
+                    <h3>SELECT Básico</h3>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Selecionar todas as colunas</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos;
+
+<span class="comentario">-- Selecionar colunas específicas</span>
+<span class="keyword">SELECT</span> nome, preco <span class="keyword">FROM</span> produtos;
+
+<span class="comentario">-- Com alias (apelido)</span>
+<span class="keyword">SELECT</span> nome <span class="keyword">AS</span> produto, preco <span class="keyword">AS</span> valor 
+<span class="keyword">FROM</span> produtos;
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>WHERE - Filtros</h3>
+                    <p>Seleciona apenas os registros que atendem uma condição.</p>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Produtos com preço maior que 100</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos
+<span class="keyword">WHERE</span> preco > 100;
+
+<span class="comentario">-- Produtos de uma categoria específica</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos
+<span class="keyword">WHERE</span> categoria = <span class="string">'Eletrônicos'</span>;
+
+<span class="comentario">-- Múltiplas condições</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos
+<span class="keyword">WHERE</span> categoria = <span class="string">'Eletrônicos'</span> <span class="keyword">AND</span> preco < 1000;
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>ORDER BY - Ordenar Resultados</h3>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Ordenar por preço (crescente)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos
+<span class="keyword">ORDER BY</span> preco <span class="keyword">ASC</span>;
+
+<span class="comentario">-- Ordenar por preço (decrescente)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos
+<span class="keyword">ORDER BY</span> preco <span class="keyword">DESC</span>;
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>LIMIT - Limitar Resultados</h3>
+                    
+                    <div class="exemplo-codigo">
+<span class="comentario">-- Mostrar apenas os 5 primeiros</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> produtos
+<span class="keyword">LIMIT</span> 5;
+
+<span class="comentario">-- 10 produtos mais caros</span>
+<span class="keyword">SELECT</span> nome, preco <span class="keyword">FROM</span> produtos
+<span class="keyword">ORDER BY</span> preco <span class="keyword">DESC</span>
+<span class="keyword">LIMIT</span> 10;
+                    </div>
+                </div>
+
+                <div class="conceito">
+                    <h3>Operadores de Comparação</h3>
+                    <table class="tabela-exemplo">
+                        <thead>
+                            <tr>
+                                <th>Operador</th>
+                                <th>Significado</th>
+                                <th>Exemplo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>=</td><td>Igual</td><td>preco = 100</td></tr>
+                            <tr><td>></td><td>Maior que</td><td>estoque > 10</td></tr>
+                            <tr><td><</td><td>Menor que</td><td>preco < 50</td></tr>
+                            <tr><td>>=</td><td>Maior ou igual</td><td>idade >= 18</td></tr>
+                            <tr><td><=</td><td>Menor ou igual</td><td>preco <= 100</td></tr>
+                            <tr><td>!=</td><td>Diferente</td><td>status != 'inativo'</td></tr>
+                            <tr><td>LIKE</td><td>Parecido (busca)</td><td>nome LIKE '%phone%'</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('dml')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('simulador')">Próximo: Simulador →</button>
+            </div>
+
+            <!-- SEÇÃO 5: SIMULADOR -->
+            <div id="simulador" class="section">
+                <h2>Simulador SQL Interativo</h2>
+                <p>Pratique seus comandos SQL! O simulador tem uma tabela de produtos pré-carregada.</p>
+
+                <div class="simulador">
+                    <h3>Tabela: produtos</h3>
+                    <table class="tabela-exemplo" id="tabelaSimulador">
+                        <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>nome</th>
+                                <th>preco</th>
+                                <th>estoque</th>
+                                <th>categoria</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dadosTabela"></tbody>
+                    </table>
+
+                    <h3 style="margin-top: 20px;">Digite seu comando SQL:</h3>
+                    <textarea id="comandoSQL" placeholder="Exemplo: SELECT * FROM produtos WHERE preco > 100"></textarea>
+                    
+                    <button class="btn btn-success" onclick="executarSQL()">Executar SQL</button>
+                    <button class="btn btn-danger" onclick="resetarTabela()">Resetar Dados</button>
+
+                    <div id="resultadoSQL" class="resultado"></div>
+                </div>
+
+                <div class="dica">
+                    <strong>Comandos para testar:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>SELECT * FROM produtos</li>
+                        <li>SELECT nome, preco FROM produtos WHERE preco > 500</li>
+                        <li>SELECT * FROM produtos ORDER BY preco DESC</li>
+                        <li>SELECT * FROM produtos WHERE categoria = 'Eletrônicos'</li>
+                    </ul>
+                </div>
+
+                <button class="btn" onclick="mostrarSecao('consultas')">← Anterior</button>
+                <button class="btn btn-success" onclick="mostrarSecao('quiz')">Próximo: Quiz →</button>
+            </div>
+
+            <!-- SEÇÃO 6: QUIZ -->
+            <div id="quiz" class="section">
+                <h2>Quiz Final - Teste seus Conhecimentos</h2>
+                
+                <div class="progresso">
+                    <div class="progresso-barra" id="progressoQuiz" style="width: 0%">0%</div>
+                </div>
+
+                <div class="quiz-container" id="quizContainer"></div>
+
+                <button class="btn" onclick="mostrarSecao('simulador')">← Anterior</button>
+                <button class="btn btn-success" onclick="verificarRespostas()">Verificar Respostas</button>
+                <button class="btn" onclick="reiniciarQuiz()">Reiniciar Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // --------- TROCAR ENTRE AS SEÇÕES ---------
+    function mostrarSecao(id) {
+        // desativa todas
+        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+
+        // ativa a escolhida
+        document.getElementById(id).classList.add('active');
+        document.querySelector(`.tab[onclick="mostrarSecao('${id}')"]`).classList.add('active');
+    }
+
+    // --------- SIMULADOR SQL BÁSICO ---------
+    let dadosOriginais = [
+        { id: 1, nome: "Notebook", preco: 2500.00, estoque: 10, categoria: "Eletrônicos" },
+        { id: 2, nome: "Mouse", preco: 50.00, estoque: 100, categoria: "Eletrônicos" },
+        { id: 3, nome: "Camiseta", preco: 80.00, estoque: 200, categoria: "Roupas" },
+        { id: 4, nome: "Geladeira", preco: 3000.00, estoque: 5, categoria: "Eletrodomésticos" },
+        { id: 5, nome: "Bola de Futebol", preco: 120.00, estoque: 50, categoria: "Esportes" }
+    ];
+    let dadosAtuais = [...dadosOriginais];
+
+    function renderTabela(dados) {
+        const tbody = document.getElementById("dadosTabela");
+        tbody.innerHTML = "";
+        dados.forEach(item => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${item.nome}</td>
+                    <td>${item.preco}</td>
+                    <td>${item.estoque}</td>
+                    <td>${item.categoria}</td>
+                </tr>
+            `;
+        });
+    }
+
+    function executarSQL() {
+        const comando = document.getElementById("comandoSQL").value.trim().toUpperCase();
+        const resultadoDiv = document.getElementById("resultadoSQL");
+        resultadoDiv.style.display = "block";
+
+        try {
+            if (comando.startsWith("SELECT * FROM PRODUTOS")) {
+                renderTabela(dadosAtuais);
+                resultadoDiv.className = "resultado sucesso";
+                resultadoDiv.innerText = "Consulta executada com sucesso!";
+            } else if (comando.includes("WHERE PRECO > 100")) {
+                renderTabela(dadosAtuais.filter(p => p.preco > 100));
+                resultadoDiv.className = "resultado sucesso";
+                resultadoDiv.innerText = "Consulta executada (produtos com preço > 100)";
+            } else if (comando.includes("ORDER BY PRECO DESC")) {
+                renderTabela([...dadosAtuais].sort((a, b) => b.preco - a.preco));
+                resultadoDiv.className = "resultado sucesso";
+                resultadoDiv.innerText = "Consulta executada (ordenado por preço DESC)";
+            } else if (comando.includes("CATEGORIA = 'ELETRÔNICOS'")) {
+                renderTabela(dadosAtuais.filter(p => p.categoria === "Eletrônicos"));
+                resultadoDiv.className = "resultado sucesso";
+                resultadoDiv.innerText = "Consulta executada (somente Eletrônicos)";
+            } else {
+                resultadoDiv.className = "resultado erro";
+                resultadoDiv.innerText = "Comando não reconhecido neste simulador (somente SELECTs básicos).";
+            }
+        } catch (e) {
+            resultadoDiv.className = "resultado erro";
+            resultadoDiv.innerText = "Erro ao executar comando.";
+        }
+    }
+
+    function resetarTabela() {
+        dadosAtuais = [...dadosOriginais];
+        renderTabela(dadosAtuais);
+        document.getElementById("resultadoSQL").style.display = "none";
+    }
+
+    // Inicializa a tabela
+    renderTabela(dadosAtuais);
+
+    // --------- QUIZ ---------
+    const perguntas = [
+        {
+            pergunta: "Qual comando é usado para criar uma tabela?",
+            opcoes: ["INSERT", "CREATE", "UPDATE", "SELECT"],
+            correta: 1
+        },
+        {
+            pergunta: "Qual comando remove todos os registros de uma tabela?",
+            opcoes: ["DELETE", "DROP", "TRUNCATE", "REMOVE"],
+            correta: 2
+        },
+        {
+            pergunta: "Qual cláusula é usada para filtrar resultados?",
+            opcoes: ["WHERE", "ORDER BY", "LIMIT", "FILTER"],
+            correta: 0
+        },
+        {
+            pergunta: "Qual comando altera dados já existentes?",
+            opcoes: ["INSERT", "ALTER", "UPDATE", "CHANGE"],
+            correta: 2
+        }
+    ];
+
+    let progresso = 0;
+
+    function carregarQuiz() {
+        const quizContainer = document.getElementById("quizContainer");
+        quizContainer.innerHTML = "";
+        perguntas.forEach((q, i) => {
+            let div = document.createElement("div");
+            div.className = "questao";
+            div.innerHTML = `<h4>${i + 1}. ${q.pergunta}</h4>`;
+            q.opcoes.forEach((opcao, idx) => {
+                let btn = document.createElement("div");
+                btn.className = "opcao";
+                btn.innerText = opcao;
+                btn.onclick = () => verificarResposta(i, idx, btn);
+                div.appendChild(btn);
+            });
+            quizContainer.appendChild(div);
+        });
+    }
+
+    function verificarResposta(indicePergunta, indiceOpcao, elemento) {
+        const questao = perguntas[indicePergunta];
+        const opcoes = elemento.parentNode.querySelectorAll(".opcao");
+
+        opcoes.forEach(op => op.style.pointerEvents = "none"); // bloqueia clique
+
+        if (indiceOpcao === questao.correta) {
+            elemento.classList.add("correta");
+            progresso += 100 / perguntas.length;
+        } else {
+            elemento.classList.add("incorreta");
+            opcoes[questao.correta].classList.add("correta");
+        }
+
+        atualizarProgresso();
+    }
+
+    function atualizarProgresso() {
+        const barra = document.getElementById("progressoQuiz");
+        barra.style.width = progresso + "%";
+        barra.innerText = Math.round(progresso) + "%";
+    }
+
+    carregarQuiz();
+</script>
+
+
+
