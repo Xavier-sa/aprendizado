@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PROJETO ARCA - Treinamento de Elite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --stark-gold: #FFD700;
+            --arc-blue: #00D9FF;
+            --doom-purple: #9D4EDD;
+            --shock-yellow: #FFF500;
+            --assassin-red: #DC143C;
+            --dark-bg: #0a0e27;
+            --panel-bg: rgba(15, 25, 45, 0.95);
+            --glow-intensity: 0 0 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: #0a0e27;
+            color: #e0e6f0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(157, 78, 221, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%);
+            z-index: -1;
+            animation: bgPulse 15s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .scan-line {
+            position: fixed;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--arc-blue), transparent);
+            animation: scan 4s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 60px auto 40px;
+            background: var(--panel-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            box-shadow: 
+                0 0 40px rgba(0, 217, 255, 0.2),
+                inset 0 0 60px rgba(0, 217, 255, 0.05);
+            position: relative;
+            animation: panelEntry 0.8s ease-out;
+        }
+
+        @keyframes panelEntry {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--arc-blue), var(--doom-purple), var(--stark-gold));
+            border-radius: 20px;
+            z-index: -1;
+            opacity: 0;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.3; }
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--arc-blue), var(--doom-purple));
+            color: #000;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            box-shadow: var(--glow-intensity) var(--arc-blue);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--stark-gold), var(--arc-blue), var(--doom-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: titleShine 3s linear infinite;
+            background-size: 200% auto;
+        }
+
+        @keyframes titleShine {
+            to { background-position: 200% center; }
+        }
+
+        .mission-brief {
+            color: #b8c5d6;
+            font-size: 18px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 4px solid var(--arc-blue);
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 8px;
+            font-weight: 300;
+        }
+
+        .mission-brief strong {
+            color: var(--stark-gold);
+            font-weight: 700;
+        }
+
+        #quiz {
+            margin: 30px 0;
+        }
+
+        .sentence {
+            margin: 24px 0;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(20, 30, 50, 0.7);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+            animation: questionAppear 0.5s ease-out backwards;
+        }
+
+        .sentence:nth-child(1) { animation-delay: 0.1s; }
+        .sentence:nth-child(2) { animation-delay: 0.2s; }
+        .sentence:nth-child(3) { animation-delay: 0.3s; }
+        .sentence:nth-child(4) { animation-delay: 0.4s; }
+        .sentence:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes questionAppear {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .sentence:hover {
+            border-color: var(--arc-blue);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .sentence::before {
+            content: '⚡';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sentence:hover::before {
+            opacity: 1;
+        }
+
+        select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 2px solid rgba(0, 217, 255, 0.4);
+            background: rgba(10, 14, 39, 0.9);
+            color: var(--arc-blue);
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 8px;
+        }
+
+        select:hover {
+            border-color: var(--arc-blue);
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--stark-gold);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 16px 40px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, var(--arc-blue), var(--doom-purple));
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+        }
+
+        button.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 40px rgba(0, 217, 255, 0.6);
+        }
+
+        button.ghost {
+            background: transparent;
+            border: 2px solid var(--arc-blue);
+            color: var(--arc-blue);
+        }
+
+        button.ghost:hover {
+            background: rgba(0, 217, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .explanation {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 8px;
+            background: rgba(157, 78, 221, 0.1);
+            border-left: 4px solid var(--doom-purple);
+            font-size: 15px;
+            line-height: 1.6;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .explanation::before {
+            content: '🧠 ANÁLISE DO SISTEMA: ';
+            font-weight: 700;
+            color: var(--doom-purple);
+        }
+
+        #feedback {
+            margin-top: 40px;
+        }
+
+        .result {
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            animation: resultEntry 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes resultEntry {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotate(-5deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .result::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s ease-in-out infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .result.legendary {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 217, 255, 0.2));
+            border: 3px solid var(--stark-gold);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+        }
+
+        .result.master {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(157, 78, 221, 0.2));
+            border: 3px solid var(--arc-blue);
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.4);
+        }
+
+        .result.apprentice {
+            background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(157, 78, 221, 0.2));
+            border: 3px solid var(--assassin-red);
+            box-shadow: 0 0 40px rgba(220, 20, 60, 0.4);
+        }
+
+        .score {
+            font-family: 'Orbitron', monospace;
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .result.legendary .score {
+            color: var(--stark-gold);
+        }
+
+        .result.master .score {
+            color: var(--arc-blue);
+        }
+
+        .result.apprentice .score {
+            color: var(--assassin-red);
+        }
+
+        .verdict {
+            font-size: 20px;
+            line-height: 1.7;
+            margin-top: 16px;
+            font-weight: 500;
+        }
+
+        .verdict-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .correct-answer {
+            border-color: #00ff88 !important;
+            background: rgba(0, 255, 136, 0.1) !important;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4) !important;
+            animation: successPulse 0.6s ease-out;
+        }
+
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .wrong-answer {
+            border-color: #ff4444 !important;
+            background: rgba(255, 68, 68, 0.1) !important;
+            box-shadow: 0 0 25px rgba(255, 68, 68, 0.4) !important;
+            animation: errorShake 0.5s ease-out;
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 217, 255, 0.2);
+            font-size: 14px;
+            color: #6b7c93;
+            font-family: 'Orbitron', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .mission-brief {
+                font-size: 16px;
+            }
+
+            button {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+
+            .score {
+                font-size: 36px;
+            }
+        }
+
+        /* Partículas de energia */
+        .energy-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--arc-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 3s ease-in-out infinite;
+            opacity: 0.6;
+            box-shadow: 0 0 10px var(--arc-blue);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+            }
+            50% {
+                transform: translateY(-20px) translateX(10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scan-line"></div>
+    
+    <div class="container">
+        <div class="header-badge">◈ PROJETO ARCA ◈ TREINAMENTO DE ELITE</div>
+        
+        <h1>Missão: Domínio do Código</h1>
+        
+        <div class="mission-brief">
+            <strong>Agente</strong>, bem-vindo ao simulador de treinamento ARCA.<br><br>
+            Você está prestes a enfrentar uma série de desafios que testarão seu conhecimento sobre bancos de dados e estruturas de dados. <strong>Cada lacuna é uma falha no sistema</strong> que você deve corrigir.<br><br>
+            Lembre-se: <em>"O conhecimento não é poder. Poder é saber usar o conhecimento."</em><br>
+            — <strong>Tony Stark, reformulado por Doutor Destino</strong>
+        </div>
+
+        <div id="quiz"></div>
+
+        <div class="actions">
+            <button id="checkBtn" class="primary">⚡ ATIVAR VERIFICAÇÃO</button>
+            <button id="resetBtn" class="ghost">🔄 REINICIAR MISSÃO</button>
+        </div>
+
+        <div id="feedback"></div>
+
+        <div class="footer">
+            Sistema desenvolvido pela Divisão Stark-Destino | Versão 4.2 | Status: OPERACIONAL
+        </div>
+    </div>
+
+    <script>
+        const heroicPhrases = {
+            correct: [
+                "⚡ Precisão cirúrgica! Stark aprovaria.",
+                "🎯 Hackeou o sistema com maestria!",
+                "💎 Domínio absoluto. Você é um Assassino do Código.",
+                "⚔️ Conhecimento afiado como lâmina oculta.",
+                "🔥 Super Choque não faria melhor!"
+            ],
+            wrong: [
+                "❌ Nem Stark acertou de primeira... recalcule, agente.",
+                "⚠️ O sistema te superou. Todo herói tropeça antes de voar.",
+                "🔻 Destino não tolera falhas... mas permite evolução.",
+                "💀 Assassinos aprendem com cada queda. Levante-se.",
+                "⚡ Curto-circuito detectado. Reinicie seus circuitos mentais."
+            ]
+        };
+
+        const quizData = [
+            {
+                id: 1,
+                text: 'O __{{blank}}__ é usado para identificar unicamente cada registro em uma tabela.',
+                options: ['telefone', 'id', 'nome', 'endereço'],
+                answer: 'id',
+                explanation: 'A chave primária (id) é o DNA digital de cada registro. Sem ela, há apenas caos.'
+            },
+            {
+                id: 2,
+                text: 'Para inserir um novo registro usamos o comando __{{blank}}__.',
+                options: ['SELECT', 'UPDATE', 'INSERT INTO', 'DELETE'],
+                answer: 'INSERT INTO',
+                explanation: 'INSERT INTO é a porta de entrada. Como o portal de um Assassino: rápido, preciso, letal.'
+            },
+            {
+                id: 3,
+                text: 'Uma tabela no banco de dados é composta por __{{blank}}__ e __{{blank}}__.',
+                options: ['linhas', 'colunas', 'comentários', 'funções'],
+                answer: ['linhas', 'colunas'],
+                explanation: 'Linhas e colunas formam a matriz. Como Tony estrutura o código da armadura: camadas sobre camadas.',
+                multipleAnswers: true
+            },
+            {
+                id: 4,
+                text: 'O comando __{{blank}}__ é usado para recuperar dados de uma tabela.',
+                options: ['SELECT', 'INSERT', 'DELETE', 'CREATE'],
+                answer: 'SELECT',
+                explanation: 'SELECT é seu olho de águia. A visão que Destino usa para dominar toda informação.'
+            },
+            {
+                id: 5,
+                text: 'Para atualizar registros existentes usamos o comando __{{blank}}__.',
+                options: ['ALTER', 'UPDATE', 'MODIFY', 'CHANGE'],
+                answer: 'UPDATE',
+                explanation: 'UPDATE é a reprogramação. Como Super Choque ajusta a voltagem: controlado, mas devastador.'
+            }
+        ];
+
+        function getRandomPhrase(type) {
+            const phrases = heroicPhrases[type];
+            return phrases[Math.floor(Math.random() * phrases.length)];
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz');
+            container.innerHTML = '';
+
+            quizData.forEach((item, idx) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'sentence';
+
+                if (Array.isArray(item.answer)) {
+                    const parts = item.text.split('{{blank}}');
+                    parts.forEach((part, i) => {
+                        const span = document.createElement('span');
+                        span.textContent = part;
+                        wrapper.appendChild(span);
+
+                        if (i < parts.length - 1) {
+                            const select = createSelect(item.options, `${item.id}_part_${i}`);
+                            wrapper.appendChild(select);
+                        }
+                    });
+                } else {
+                    const html = item.text.replace('{{blank}}', `<span class="blank">${createSelectHtml(item.options, item.id)}</span>`);
+                    wrapper.innerHTML = html;
+                }
+
+                const explanation = document.createElement('div');
+                explanation.className = 'explanation';
+                explanation.id = `exp_${item.id}`;
+                explanation.style.display = 'none';
+                explanation.textContent = item.explanation;
+
+                wrapper.appendChild(explanation);
+                container.appendChild(wrapper);
+            });
+
+            createEnergyParticles();
+        }
+
+        function createSelect(options, id) {
+            const select = document.createElement('select');
+            select.setAttribute('data-quiz-id', id);
+            const empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = '▸ SELECIONE';
+            select.appendChild(empty);
+
+            options.forEach(opt => {
+                const o = document.createElement('option');
+                o.value = opt;
+                o.textContent = opt;
+                select.appendChild(o);
+            });
+
+            return select;
+        }
+
+        function createSelectHtml(options, id) {
+            let s = `<select data-quiz-id='${id}'>`;
+            s += `<option value=''>▸ SELECIONE</option>`;
+            options.forEach(opt => {
+                s += `<option value='${opt}'>${opt}</option>`;
+            });
+            s += `</select>`;
+            return s;
+        }
+
+        function checkAnswers() {
+            let correctCount = 0;
+            let total = 0;
+
+            quizData.forEach(item => {
+                if (Array.isArray(item.answer)) {
+                    const parts = item.text.split('{{blank}}');
+                    parts.forEach((p, i) => {
+                        if (i < parts.length - 1) {
+                            total++;
+                            const id = `${item.id}_part_${i}`;
+                            const sel = document.querySelector(`select[data-quiz-id='${id}']`);
+                            const val = sel ? sel.value : '';
+                            const correct = item.answer[i];
+                            const isCorrect = val === correct;
+                            markSelect(sel, isCorrect);
+                            if (isCorrect) correctCount++;
+                        }
+                    });
+                    document.getElementById(`exp_${item.id}`).style.display = 'block';
+                } else {
+                    total++;
+                    const sel = document.querySelector(`select[data-quiz-id='${item.id}']`);
+                    const val = sel ? sel.value : '';
+                    const correct = item.answer;
+                    const isCorrect = val === correct;
+                    markSelect(sel, isCorrect);
+                    if (isCorrect) correctCount++;
+                    document.getElementById(`exp_${item.id}`).style.display = 'block';
+                }
+            });
+
+            showResult(correctCount, total);
+        }
+
+        function markSelect(sel, ok) {
+            if (!sel) return;
+            sel.style.border = '';
+            sel.style.background = '';
+            sel.classList.remove('correct-answer', 'wrong-answer');
+
+            if (ok) {
+                sel.classList.add('correct-answer');
+            } else {
+                sel.classList.add('wrong-answer');
+            }
+        }
+
+        function showResult(correct, total) {
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = '';
+            
+            const box = document.createElement('div');
+            box.className = 'result';
+            
+            const scorePct = Math.round((correct / total) * 100);
+            
+            let resultClass, verdict, verdictTitle;
+            
+            if (scorePct >= 90) {
+                resultClass = 'legendary';
+                verdictTitle = '⚡ LENDÁRIO ⚡';
+                verdict = 'Você domina o código como um Assassino das Linhas de Dados. Stark te contrataria. Destino te respeitaria. O sistema se curva diante de você.';
+            } else if (scorePct >= 60) {
+                resultClass = 'master';
+                verdictTitle = '🔥 MESTRE EM ASCENSÃO 🔥';
+                verdict = 'Seu poder está crescendo, agente. Continue o treino. Super Choque começou assim — com faíscas que se tornaram relâmpagos.';
+            } else {
+                resultClass = 'apprentice';
+                verdictTitle = '⚔️ APRENDIZ EM FORMAÇÃO ⚔️';
+                verdict = 'O sistema te superou desta vez... mas todo herói cai antes de se tornar lendário. Assassinos nascem das cinzas. Levante-se. Tente novamente.';
+            }
+            
+            box.classList.add(resultClass);
+            box.innerHTML = `
+                <div class="score">${correct}/${total}</div>
+                <div class="verdict-title">${verdictTitle}</div>
+                <div class="verdict">${verdict}</div>
+            `;
+            
+            feedback.appendChild(box);
+        }
+
+        function resetQuiz() {
+            const selects = document.querySelectorAll('#quiz select');
+            selects.forEach(s => {
+                s.value = '';
+                s.style.border = '';
+                s.style.background = '';
+                s.classList.remove('correct-answer', 'wrong-answer');
+            });
+            
+            quizData.forEach(item => {
+                const el = document.getElementById(`exp_${item.id}`);
+                if (el) el.style.display = 'none';
+            });
+            
+            document.getElementById('feedback').innerHTML = '';
+        }
+
+        function createEnergyParticles() {
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'energy-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 3 + 's';
+                document.body.appendChild(particle);
+            }
+        }
+
+        document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+        document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+
+        renderQuiz();
+    </script>
+</body>
+</html>
