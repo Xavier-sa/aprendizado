@@ -93,9 +93,120 @@ const cronograma = [
                 ],
                 answer: 1,
                 explanation: "getElementById() é o método mais eficiente para selecionar elementos por ID."
+            },
+            {
+                question: "Qual método adiciona um evento a um elemento HTML?",
+                options: [
+                    "addEventListener()",
+                    "attachEvent()",
+                    "onEvent()",
+                    "createEvent()"
+                ],
+                answer: 0,
+                explanation: "O método addEventListener() é usado para escutar eventos como cliques, teclas e outros."
+            },
+            {
+                question: "Qual propriedade altera o conteúdo de texto de um elemento?",
+                options: [
+                    "innerHTML",
+                    "textContent",
+                    "value",
+                    "nodeValue"
+                ],
+                answer: 1,
+                explanation: "textContent altera apenas o texto interno de um elemento, sem interpretar HTML."
+            },
+            {
+                question: "Qual método retorna todos os elementos com uma determinada classe?",
+                options: [
+                    "getElementById()",
+                    "querySelector()",
+                    "getElementsByClassName()",
+                    "querySelectorAll()"
+                ],
+                answer: 2,
+                explanation: "getElementsByClassName() retorna uma coleção de todos os elementos com a classe especificada."
+            },
+            {
+                question: "Como acessar o valor de um campo de input com o ID 'nome'?",
+                options: [
+                    "document.querySelector('#nome').textContent",
+                    "document.getElementById('nome').value",
+                    "document.getElementById('nome').innerHTML",
+                    "document.querySelector('nome').inputValue"
+                ],
+                answer: 1,
+                explanation: "A propriedade .value retorna o valor atual de um campo de formulário."
+            },
+            {
+                question: "Qual método é usado para criar um novo elemento HTML via JavaScript?",
+                options: [
+                    "createElement()",
+                    "appendChild()",
+                    "insertBefore()",
+                    "newElement()"
+                ],
+                answer: 0,
+                explanation: "createElement() cria dinamicamente um novo nó HTML no DOM."
+            },
+            {
+                question: "Qual função é usada para converter uma resposta JSON em objeto JavaScript?",
+                options: [
+                    "JSON.parse()",
+                    "JSON.stringify()",
+                    "parseJSON()",
+                    "toJSON()"
+                ],
+                answer: 0,
+                explanation: "JSON.parse() transforma uma string JSON em um objeto JavaScript utilizável."
+            },
+            {
+                question: "Qual método da API Fetch é usado para realizar requisições HTTP?",
+                options: [
+                    "fetch()",
+                    "getRequest()",
+                    "ajax()",
+                    "XMLHttpRequest()"
+                ],
+                answer: 0,
+                explanation: "fetch() é o método moderno para realizar requisições HTTP de forma assíncrona."
+            },
+            {
+                question: "Qual propriedade oculta um elemento no DOM?",
+                options: [
+                    "element.hidden = true;",
+                    "element.display = none;",
+                    "element.visible = false;",
+                    "element.hide()"
+                ],
+                answer: 0,
+                explanation: "A propriedade hidden é booleana e serve para esconder ou mostrar elementos facilmente."
+            },
+            {
+                question: "Qual é o evento disparado quando um botão é clicado?",
+                options: [
+                    "change",
+                    "click",
+                    "submit",
+                    "keydown"
+                ],
+                answer: 1,
+                explanation: "O evento 'click' é acionado sempre que o usuário clica em um elemento interativo."
+            },
+            {
+                question: "O que faz o método appendChild()?",
+                options: [
+                    "Remove um elemento do DOM",
+                    "Adiciona um elemento como filho de outro",
+                    "Cria um novo nó",
+                    "Copia o conteúdo de um nó"
+                ],
+                answer: 1,
+                explanation: "appendChild() adiciona um elemento ao final da lista de filhos de outro nó pai."
             }
         ]
     },
+
     {
         dia: "Sexta-feira",
         tema: "Git e GitHub",
