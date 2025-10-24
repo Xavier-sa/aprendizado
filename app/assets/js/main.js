@@ -208,23 +208,122 @@ const cronograma = [
     },
 
     {
-        dia: "Sexta-feira",
-        tema: "Git e GitHub",
-        tarefas: [
+        "dia": "Sexta-feira",
+        "tema": "Git e GitHub",
+        "tarefas": [
             "Revisar comandos Git",
             "Fazer commits e atualizar portfólio"
         ],
-        quizzes: [
+        "quizzes": [
             {
-                question: "Qual comando envia commits para o repositório remoto?",
-                options: [
+                "question": "Qual comando envia commits para o repositório remoto?",
+                "options": [
                     "git add",
                     "git commit",
                     "git push",
                     "git pull"
                 ],
-                answer: 2,
-                explanation: "git push é usado para enviar commits locais para um repositório remoto."
+                "answer": 2,
+                "explanation": "git push é usado para enviar commits locais para um repositório remoto."
+            },
+            {
+                "question": "Qual comando é usado para preparar arquivos para o commit (adicionar à área de staging)?",
+                "options": [
+                    "git stage",
+                    "git add",
+                    "git prepare",
+                    "git track"
+                ],
+                "answer": 1,
+                "explanation": "O comando git add é usado para adicionar alterações na área de staging (preparação) para o próximo commit."
+            },
+            {
+                "question": "O que o comando 'git commit -m \"mensagem\"' faz?",
+                "options": [
+                    "Baixa as alterações do repositório remoto.",
+                    "Cria um novo ramo (branch).",
+                    "Salva as alterações na história local do repositório com uma mensagem descritiva.",
+                    "Envia as alterações para o repositório remoto."
+                ],
+                "answer": 2,
+                "explanation": "O comando git commit salva o estado atual do seu código (as alterações na área de staging) no histórico do repositório local. A flag -m permite adicionar a mensagem de forma rápida."
+            },
+            {
+                "question": "Para que serve o comando 'git clone'?",
+                "options": [
+                    "Criar um novo repositório local.",
+                    "Copiar um repositório remoto existente para o seu computador local.",
+                    "Excluir um repositório.",
+                    "Mudar o nome de um arquivo."
+                ],
+                "answer": 1,
+                "explanation": "git clone é usado para fazer uma cópia de um repositório Git existente (geralmente remoto, como no GitHub) para o seu diretório local."
+            },
+            {
+                "question": "Qual comando é usado para listar os branches no seu repositório local?",
+                "options": [
+                    "git status",
+                    "git log",
+                    "git branch",
+                    "git checkout"
+                ],
+                "answer": 2,
+                "explanation": "git branch lista todos os branches locais e mostra qual você está usando atualmente (geralmente com um asterisco *)."
+            },
+            {
+                "question": "O que é um 'merge' no contexto do Git?",
+                "options": [
+                    "A ação de desfazer um commit.",
+                    "O processo de combinar o histórico de desenvolvimento de dois branches em um só.",
+                    "A criação de um novo commit vazio.",
+                    "A exclusão de um arquivo modificado."
+                ],
+                "answer": 1,
+                "explanation": "Merge (mesclagem) é o ato de integrar as alterações feitas em um branch de volta para outro branch (ex: da feature branch para a main branch)."
+            },
+            {
+                "question": "Qual é a função do arquivo '.gitignore'?",
+                "options": [
+                    "Definir permissões de acesso ao repositório.",
+                    "Listar os comandos Git mais utilizados.",
+                    "Especificar arquivos e diretórios que o Git deve ignorar e não rastrear.",
+                    "Armazenar credenciais de usuário do GitHub."
+                ],
+                "answer": 2,
+                "explanation": "O arquivo .gitignore permite que você liste arquivos ou padrões de nomes de arquivos que não devem ser incluídos ou rastreados pelo Git, como arquivos de log, binários compilados ou variáveis de ambiente."
+            },
+            {
+                "question": "Qual comando você usaria para baixar e integrar as mudanças do repositório remoto (fetch + merge)?",
+                "options": [
+                    "git push",
+                    "git clone",
+                    "git pull",
+                    "git fetch"
+                ],
+                "answer": 2,
+                "explanation": "O comando git pull é um atalho que executa git fetch (baixa as mudanças) e em seguida git merge (integra as mudanças) automaticamente."
+            },
+            {
+                "question": "Se você acabou de fazer alterações em arquivos, qual é a ordem correta para salvar essas alterações permanentemente no histórico remoto do repositório?",
+                "options": [
+                    "git push -> git commit -> git add",
+                    "git commit -> git add -> git push",
+                    "git add -> git commit -> git push",
+                    "git add -> git push -> git commit"
+                ],
+                "answer": 2,
+                "explanation": "A ordem correta é: 1. git add (prepara as alterações), 2. git commit (salva as alterações localmente), 3. git push (envia as alterações locais para o remoto)."
+            },
+            {
+                "question": "Como você muda para um branch existente chamado 'desenvolvimento'?",
+                "options": [
+                    "git change desenvolvimento",
+                    "git switch desenvolvimento",
+                    "git checkout desenvolvimento",
+                    "git move desenvolvimento"
+                ],
+                "answer": 2,
+                "explanation": "Tanto 'git checkout desenvolvimento' quanto 'git switch desenvolvimento' (o comando mais moderno para essa finalidade) mudam para o branch especificado. Como o 'git checkout' ainda é amplamente usado e aceito, consideraremos 'git checkout' ou 'git switch' (dependendo da versão do Git) como a resposta. No entanto, em muitos quizzes e ambientes mais antigos, 'git checkout' é a resposta esperada."
             }
         ]
     },
