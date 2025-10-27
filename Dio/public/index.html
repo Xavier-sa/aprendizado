@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Login </title>
+  <link rel="stylesheet" href="style.css" />
+
+</head>
+
+<body>
+  <div class="container">
+    <img src="https://github.com/Xavier-sa.png" alt="Avatar do GitHub" class="avatar" />
+
+    <!-- Tela de Login -->
+    <div id="loginScreen">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <input type="text" id="usuario" placeholder="Usuário" required /><br /><br />
+        <input type="password" id="senha" placeholder="Senha" required /><br /><br />
+        <button type="submit">Entrar</button>
+      </form>
+    </div>
+
+    <!-- Tela de Jogos (inicialmente escondida) -->
+    <div id="gameScreen" class="hidden">
+      <h2>Escolha um jogo</h2>
+      <a href="/jogo"><button>Jogo da Velha</button></a>
+      <a href="/jogo1"><button>Jogo da Memoria Icones </button></a>
+      <a href="/jogo2"><button>Jogo da Memoria Yu Gi Oh </button></a>
+      <a href="/simulador"><button>Similar Despesas</button></a>
+
+      
+
+
+      <button id="logoutBtn" class="sair-btn">🚪 Sair</button>
+
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginScreen = document.getElementById('loginScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const usuario = document.getElementById('usuario').value;
+      const senha = document.getElementById('senha').value;
+
+      if (usuario === 'admin' && senha === '1234') {
+        alert('Login bem-sucedido!');
+        loginScreen.classList.add('hidden'); // esconde login
+        gameScreen.classList.remove('hidden'); // mostra jogos
+      } else {
+        alert('Usuário ou senha incorretos.');
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      // Voltar para tela de login
+      gameScreen.classList.add('hidden');
+      loginScreen.classList.remove('hidden');
+      // Limpar inputs
+      document.getElementById('usuario').value = '';
+      document.getElementById('senha').value = '';
+    });
+  </script>
+</body>
+
+</html>

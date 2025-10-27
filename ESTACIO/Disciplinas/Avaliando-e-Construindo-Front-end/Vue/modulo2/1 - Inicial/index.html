@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODOLIST</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="app">
+        <div id="wrapper">
+            <h1>TODO.LIST</h1>
+            <div id="form-wrapper">
+                <div id="o-form">
+                    <input type="text" id="text-novo-item">
+                    <div>
+                        <input type="checkbox" id="is-importante">
+                        <label for="is-importante"> Importante</label><br>
+                    </div>
+                    <button>
+                        Salvar
+                    </button>
+                </div>
+                <p id="contagem"></p>
+            </div>
+
+            <div id="list-wrapper">
+                <div class="item">
+                    <p class="texto-item">Item a Fazer</p>
+                </div>
+                <div class="item">
+                    <p class="texto-item">Item a Fazer</p>
+                </div>
+                <div class="item feito">
+                    <p class="texto-item">Item Feito</p>
+                </div>
+                <div class="item importante">
+                    <p class="texto-item">Item Importante</p>
+                </div>
+                <div class="item feito">
+                    <p class="texto-item">Item Feito</p>
+                </div>
+                <div class="item importante">
+                    <p class="texto-item">Item Importante</p>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3.0.0-rc.5/dist/vue.global.js"></script>
+
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                }
+            },
+        }).mount("#app")
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,34 @@
+print("Hello, World!")
+
+apelido = "Xavier-sa"
+energia = 1000
+poder = 200
+forca = 1000
+vida = 10000
+
+print(f"Apelido:\n{apelido:15} ---> Online")
+print("\n\n\n")
+print(f"{'='*20}")
+
+
+questao = "Complete a frase corretamente:"
+print(" Questão -1-")
+print(questao)
+
+
+print("Opções:")
+print("A) How Are We")
+print("B) How Are Who")
+print("C) How Are Us")
+print("D) How Are You")
+
+
+escolha = input("\nDigite sua opção (A, B, C ou D): ").strip().upper()
+
+
+if escolha == "D":
+    print("\n✅ Correto! A frase fica: 'How Are You?'")
+elif escolha in ["A", "B", "C"]:
+    print("\n❌ Errado! Tente novamente.")
+else:
+    print("\nOpção inválida! Escolha A, B, C ou D.")
