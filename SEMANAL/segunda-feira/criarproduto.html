@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Produtos</title>
+<style>
+  body {
+    background: #f5f5f5;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  .produto {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    width: 180px;
+    padding: 15px;
+    box-sizing: border-box;
+    text-align: center;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  .produto:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.25);
+  }
+  .produto img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  .nome {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #222;
+    margin-bottom: 4px;
+  }
+  .codigo {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .preco {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #b30000;
+  }
+</style>
+</head>
+<body>
+
+<div style="width:120px; height:120px;">
+  <!-- cole aqui o SVG completo -->
+  <svg width="120" height="120" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" fill="none" stroke="#888" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="12" y="8" width="40" height="48" rx="6" ry="6" fill="#ccc" />
+    <line x1="20" y1="16" x2="44" y2="16" stroke="#666" stroke-width="2" />
+    <line x1="20" y1="24" x2="44" y2="24" stroke="#666" stroke-width="2" />
+    <line x1="20" y1="32" x2="44" y2="32" stroke="#666" stroke-width="2" />
+    <line x1="20" y1="40" x2="44" y2="40" stroke="#666" stroke-width="2" />
+    <line x1="20" y1="48" x2="44" y2="48" stroke="#666" stroke-width="2" />
+    <text x="32" y="58" font-size="10" text-anchor="middle" fill="#666" font-family="Arial, sans-serif">ARROZ</text>
+  </svg>
+</div>
+
+
+</body>
+</html>

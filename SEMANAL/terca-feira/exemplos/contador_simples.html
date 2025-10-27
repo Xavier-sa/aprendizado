@@ -1,0 +1,51 @@
+<style>
+  body {
+    display: flex;
+    padding: 120px 150px 180px 150px;
+  }
+
+  button {
+    border: 80px rgb(175, 96, 26);
+    border-radius: 700px;
+    background-color: bisque;
+  }
+
+  .restar {
+    background-color: red;
+  }
+
+  p {
+    display: flex;
+  }
+</style>
+
+<button onclick="contar()">Clique aqui <br>(+)</button>
+<p id="resultado">0</p>
+<button onclick="contardiminuir()">Clique aqui <br>(-)</button>
+<button class="restar" onclick="zerar()">RESETAR</button>
+
+
+
+
+<script>
+  let contador = 0;
+
+  function contar() {
+    contador++;
+    document.getElementById("resultado").innerText = contador;
+  }
+  function contardiminuir() {
+    contador--;
+    document.getElementById("resultado").innerText = contador;
+
+  }
+  function zerar() {
+    contador = 0;
+    document.getElementById("resultado").innerText = contador;
+
+  }
+
+</script>
+
+
+<!-- voltarei nesse arquvio quando comecar programar para um empresa -->
