@@ -55,7 +55,7 @@ Materiais mais densos com teoria, exemplos e playgrounds para prática imediata:
 
 1.  **Clone o Repositório:**
     ```bash
-    git clone (https://github.com/Xavier-sa/aprendizado.git)
+    git clone https://github.com/Xavier-sa/aprendizado.git
     ```
 
 2.  **Acesse a Branch do Projeto:**
