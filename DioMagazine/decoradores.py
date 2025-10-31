@@ -11,3 +11,4 @@ def mensagem_para_xavier(funcao_mensagem):
 print(mensagem_para_xavier(dizer_oi))
 print(mensagem_para_xavier(incentivar_aprender))
 
+# O exemplo acima trata-se de "INNER FUNCTIONS"
