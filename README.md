@@ -59,7 +59,9 @@ Materiais mais densos com teoria, exemplos e playgrounds para prática imediata:
     ```
 
 2.  **Acesse a Branch do Projeto:**
+    
     Como o conteúdo principal e mais atualizado está na branch **`cronograma`**, você deve mudar para ela após o clone:
+    
     ```bash
     git checkout cronograma
     ```
