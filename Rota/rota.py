@@ -5,32 +5,8 @@ Sistema de Gerenciamento de Caminhões - Estrutura MVC unificada em um único ar
 # ==============================================================================
 # 1. MODEL (model.py)
 # ==============================================================================
-from datetime import datetime
-from typing import Optional, List
 
-class Motorista:
-    def __init__(self, id: int, nome: str, cnh: str, telefone: str):
-        self.id = id
-        self.nome = nome
-        self.cnh = cnh
-        self.telefone = telefone
-        self.disponivel = True
-    
-    def __str__(self):
-        return f"Motorista {self.id}: {self.nome} - CNH: {self.cnh}"
 
-class Caminhao:
-    def __init__(self, placa: str, modelo: str, capacidade: float):
-        self.placa = placa
-        self.modelo = modelo
-        self.capacidade = capacidade
-        self.disponivel = True
-        self.motorista: Optional[Motorista] = None
-    
-    def __str__(self):
-        status = "Disponível" if self.disponivel else "Em viagem"
-        motorista = f" - Motorista: {self.motorista.nome}" if self.motorista else ""
-        return f"Caminhão {self.placa}: {self.modelo} - {status}{motorista}"
 
 class Viagem:
     def __init__(self, caminhao: Caminhao, motorista: Motorista, destino: str, carga: str):
