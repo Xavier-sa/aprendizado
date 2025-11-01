@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
-from caminhao import Caminhao
-from motorista import Motorista
+from model.caminhao import Caminhao
+from model.motorista import Motorista
 
 
 class Viagem:

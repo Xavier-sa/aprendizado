@@ -1,6 +1,4 @@
-from datetime import datetime
-from typing import Optional, List
-from caminhao import Caminhao
+
 
 class Motorista:
     def __init__(self, id: int, nome: str, cnh: str, telefone: str):
