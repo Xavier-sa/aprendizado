@@ -1,3 +1,10 @@
+
+from datetime import datetime
+from typing import Optional, List
+from model.motorista import Motorista
+from model.caminhao import Caminhao
+from model.viagem import Viagem
+
 class SistemaController:
     def __init__(self):
         self.motoristas: List[Motorista] = []
