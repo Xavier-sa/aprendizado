@@ -1,3 +1,7 @@
+from caminhao import Caminhao
+from datetime import datetime
+from typing import Optional, List
+from motorista import Motorista
 class Caminhao:
     def __init__(self, placa: str, modelo: str, capacidade: float):
         self.placa = placa
