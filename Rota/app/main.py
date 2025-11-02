@@ -9,4 +9,4 @@ def main():
     sistema.exibir_menu_principal()
 
 if __name__ == "__main__":
-    main()1
+    main()
