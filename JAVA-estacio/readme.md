@@ -1,4 +1,4 @@
-````markdown
+
 # 🧩 Programação Orientada a Objetos em Java  
 ## Classes, Objetos e Encapsulamento
 
@@ -143,7 +143,7 @@ Código: 0.123456789 (valor aleatório)
 * Curso: *Introdução à Programação OO em Java*
 * Conceitos: *Encapsulamento, Classes, Objetos e Visibilidade*
 
-```
+
 
 ---
 
