@@ -1,0 +1,6 @@
+services:
+  rota-app:
+    build: .
+    container_name: sistema-rota
+    stdin_open: true
+    tty: true
