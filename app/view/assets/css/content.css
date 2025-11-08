@@ -1,0 +1,22 @@
+.content {
+    
+    position: absolute;
+    right: 0;
+    top: 68px;
+    width: calc(100vw - 200px);
+    height: calc(100vh - 68px - 22px);
+    overflow: auto;
+
+    font-size: 26px;/* -------- */
+           
+    line-height: 37px;/* -------- */
+           
+    background-color: #ECF0F1; /*--- troquei cor  (blanchedalmond) */
+
+    
+       
+}
+p {
+            margin: 30px 0;
+            font-size: 24px;
+}

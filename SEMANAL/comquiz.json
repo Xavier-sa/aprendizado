@@ -1,0 +1,62 @@
+[
+    {
+        question: "Qual comando SQL insere novos dados em uma tabela?",
+        options: ["SELECT", "INSERT", "UPDATE", "DELETE"],
+        answer: 1,
+        explanation: "O comando INSERT é usado para adicionar novos registros a uma tabela."
+    },
+    {
+        question: "Qual comando SQL altera dados existentes em uma tabela?",
+        options: ["INSERT", "UPDATE", "SELECT", "DROP"],
+        answer: 1,
+        explanation: "O comando UPDATE é usado para modificar dados existentes em uma tabela."
+    },
+    {
+        question: "Qual comando SQL remove dados de uma tabela?",
+        options: ["REMOVE", "DROP", "DELETE", "CLEAR"],
+        answer: 2,
+        explanation: "DELETE é usado para apagar registros de uma tabela, sem excluir a estrutura da tabela."
+    },
+    {
+        question: "Qual comando SQL cria uma nova tabela?",
+        options: ["NEW TABLE", "MAKE TABLE", "CREATE TABLE", "ADD TABLE"],
+        answer: 2,
+        explanation: "CREATE TABLE é usado para definir uma nova tabela no banco de dados."
+    },
+    {
+        question: "Qual cláusula SQL é usada para filtrar os resultados de uma consulta?",
+        options: ["WHERE", "FILTER", "LIMIT", "HAVING"],
+        answer: 0,
+        explanation: "A cláusula WHERE filtra os registros com base em uma condição."
+    },
+    {
+        question: "Qual comando SQL é usado para excluir uma tabela completamente?",
+        options: ["REMOVE TABLE", "DELETE TABLE", "DROP TABLE", "ERASE TABLE"],
+        answer: 2,
+        explanation: "DROP TABLE remove a tabela e todos os seus dados permanentemente."
+    },
+    {
+        question: "Qual palavra-chave SQL limita o número de registros retornados?",
+        options: ["LIMIT", "ROWCOUNT", "TOP", "STOP"],
+        answer: 0,
+        explanation: "LIMIT é usada para restringir a quantidade de resultados em uma consulta."
+    },
+    {
+        question: "Qual comando SQL retorna registros distintos (sem duplicatas)?",
+        options: ["UNIQUE", "FILTER", "DISTINCT", "ORDER BY"],
+        answer: 2,
+        explanation: "DISTINCT remove duplicatas nos resultados da consulta."
+    },
+    {
+        question: "Qual cláusula SQL ordena os resultados de uma consulta?",
+        options: ["SORT BY", "GROUP BY", "ORDER BY", "ARRANGE"],
+        answer: 2,
+        explanation: "ORDER BY organiza os resultados com base em uma ou mais colunas."
+    },
+    {
+        question: "Qual comando SQL conta quantos registros existem em uma tabela?",
+        options: ["COUNT(*)", "SUM()", "TOTAL()", "CALC()"],
+        answer: 0,
+        explanation: "COUNT(*) retorna o número total de linhas em uma tabela ou resultado."
+    }
+]

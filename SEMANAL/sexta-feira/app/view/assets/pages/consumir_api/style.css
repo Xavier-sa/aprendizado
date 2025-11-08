@@ -1,0 +1,18 @@
+body {
+  text-align: center;
+  background-color: #0f0f0f;
+  color: white;
+  font-family: sans-serif;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+#cards img {
+  width: 100px;
+  margin: 5px;
+}

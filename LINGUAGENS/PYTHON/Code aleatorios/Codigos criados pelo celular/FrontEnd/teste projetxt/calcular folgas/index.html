@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Folgas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Folgas</h1>
+        <form id="calculator">
+            <label for="lastWorkDate">Data do Último Trabalho:</label>
+            <input type="date" id="lastWorkDate" name="lastWorkDate">
+            <br>
+            <button type="button" onclick="calculateNextOff()">Calcular Próxima Folga</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateNextOff() {
+            const lastWorkDate = new Date(document.getElementById('lastWorkDate').value);
+            if (isNaN(lastWorkDate.getTime())) {
+                document.getElementById('result').innerText = 'Por favor, insira uma data válida.';
+                return;
+            }
+            
+            // O trabalhador trabalha 12 horas e folga 36 horas
+            const hoursWorked = 12;
+            const offPeriod = 36 * 60 * 60 * 1000; // 36 horas em milissegundos
+            
+            // Adiciona o período de folga à data do último trabalho
+            const nextOffDate = new Date(lastWorkDate.getTime() + offPeriod);
+            
+            // Formata a data para exibição
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const formattedNextOffDate = nextOffDate.toLocaleDateString('pt-BR', options);
+            
+            document.getElementById('result').innerText = `Próxima folga: ${formattedNextOffDate}`;
+        }
+    </script>
+</body>
+</html>

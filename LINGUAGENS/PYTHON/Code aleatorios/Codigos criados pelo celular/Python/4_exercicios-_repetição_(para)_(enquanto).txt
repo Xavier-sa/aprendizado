@@ -1,0 +1,51 @@
+1 - Escreva um algoritmo que imprima todos os numeros inteiros do intervalo fechado de 1 a 100 (para).
+
+
+	Algoritmo 1_ate_100
+  		 declare: i: inteiro;
+
+	Inicio
+  		 para(i de 1 ate 100 passo 1) faça:
+   		 escreva(i+1);
+  		 fim para
+	Fim
+
+2- Escreva um algoritmo que imprima todos os numeros inteiros de 100 a 1 (em ordem decrescente) (enquanto)
+
+	Algoritmo decrescente_100_ate_1
+   		declare: i: inteiro;
+
+	Inicio
+  		 i=100
+    		 enquanto(i>=1) faça:
+     	 	 escreva(i);
+    		 i=i-1
+  		 fim enquanto
+	Fim 
+ 
+
+3 - escreva um algoritmo que imprima todos os numeros inteiros de 100 a 200 (para).
+
+	Algoritmo 100_ate_200
+   		 declare: i: inteiro;
+
+	Inicio
+ 	 	 para(i de 100 ate 200 passo 1 ) faça:
+           	 escreva(i) 
+   	 	 fim para
+	Fim
+   
+
+4 - Escreva um algoritmo que imprimatodos os numeros inteiros de 200 a 100 (em ordem decrescente) (enquanto).
+
+ 	Algoritmo decrescente_200_ate_100
+        	declare: inteiro: i:
+
+	Inicio
+  		 i=200
+  		 enquanto(i>=100) faça:
+      		 escreva(i);
+    		 i=i-1
+   		 fim enquanto
+	Fim
+    

@@ -1,0 +1,17 @@
+
+body {
+  background-color: yellowgreen;
+}
+
+head{
+    background-image: url(theking.jpg);
+}
+
+img{
+    border-radius: 0%;
+    align-items:start ;
+}
+div {
+    background-image:solid;;
+    background: rgba(0, 128, 0, 0.3) /* Green background with 30% opacity */
+  }

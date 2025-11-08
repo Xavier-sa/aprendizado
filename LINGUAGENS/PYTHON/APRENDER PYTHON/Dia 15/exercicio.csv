@@ -1,0 +1,3 @@
+Exercícios de Decoração
+Decorador de Log: Crie um decorador que registre os argumentos e o resultado de uma função.
+Decorador de Autorização: Crie um decorador que verifique se um usuário tem permissões para executar uma função.

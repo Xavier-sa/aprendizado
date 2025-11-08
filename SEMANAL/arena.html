@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Arena DBZ - Cards de Jogadores</title>
+  <style>
+    /* Estilo geral */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(#000, #1a1a1a); /* fundo sombrio, estilo Bleach */
+      background-attachment: fixed;
+      color: #fff;
+      margin: 0;
+      padding: 0 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #ff4500; /* cor mais chamativa */
+      margin-top: 20px;
+    }
+    #contador {
+      text-align: center;
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #ffa500;
+    }
+    .container-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .card {
+      background-color: #222;
+      border: 1px solid #ff4500;
+      border-radius: 8px;
+      padding: 10px;
+      width: 200px;
+      box-shadow: 0 0 15px #ff4500aa;
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card h3 {
+      margin: 0 0 5px 0;
+      color: #ff4500;
+    }
+    .card p {
+      margin: 2px 0;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #000;
+      padding: 10px;
+      border: 1px solid #555;
+      margin-top: 20px;
+      max-height: 40vh;
+      overflow-y: auto;
+      color: #0f0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Arena: Todos vs Todos</h1>
+
+  <div id="contador">Aguardando jogadores... Batalha começa em 5 segundos.</div>
+
+  <div class="container-cards" id="cards"></div>
+
+  <pre id="log"></pre>
+
+  <script>
+    // Configurações iniciais do jogador 'Anjonegro'
+    const anjonegroStats = {
+      vida: 10000,    // vida inicial do Anjonegro
+      forca: 15000,    // força inicial do Anjonegro
+      ki: 2000000       // ki inicial do Anjonegro
+    };
+
+    const racas = ["Sayajin", "Humano", "Namekuseijin", "Androide", "Majin"];
+    const jogadores = [];
+
+    // Gerar jogadores
+    for (let i = 1; i <= 10; i++) {
+      jogadores.push({        id: i,
+        nome: i === 1 ? "Anjonegro" : `Jogador${i}`,
+        raca: racas[Math.floor(Math.random() * racas.length)],
+        vida: i === 1 ? anjonegroStats.vida : Math.floor(Math.random() * 300) + 300,
+        forca: i === 1 ? anjonegroStats.forca : Math.floor(Math.random() * 50) + 50,
+        ki: i === 1 ? anjonegroStats.ki : Math.floor(Math.random() * 100) + 50
+      });
+    }
+
+    // Renderizar cards
+    const cardsDiv = document.getElementById('cards');
+    jogadores.forEach(j => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${j.id}`;
+      card.innerHTML = `
+        <h3>${j.nome}</h3>
+        <p><strong>Raça:</strong> ${j.raca}</p>
+        <p class="vida"><strong>Vida:</strong> ${j.vida}</p>
+        <p><strong>Força:</strong> ${j.forca}</p>
+        <p><strong>Ki:</strong> ${j.ki}</p>
+      `;
+      cardsDiv.appendChild(card);
+    });
+
+    // Funções auxiliares
+    const log = document.getElementById('log');
+    const contador = document.getElementById('contador');
+
+    function escreverLog(msg) {
+      log.textContent += msg + '\n';
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    let tempoRestante = 5; // contagem regressiva para iniciar
+    const intervalo = setInterval(() => {
+      tempoRestante--;
+      contador.textContent = `Batalha começa em ${tempoRestante} segundos...`;
+      if (tempoRestante <= 0) {
+        clearInterval(intervalo);
+        contador.textContent = "🔥 Batalha iniciada!";
+        iniciarBatalhaTodosVsTodos();
+      }
+    }, 1000);
+
+    function ataque(atacante, defensor) {
+      if (defensor.vida <= 0 || atacante.vida <= 0) return false; // não ataca morto
+
+      const dano = Math.floor(Math.random() * atacante.forca) + 10;
+      defensor.vida -= dano;
+      escreverLog(`${atacante.nome} atacou ${defensor.nome} causando ${dano} de dano.`);
+
+      // Atualizar vida no card
+      const cardDefensor = document.getElementById(`card-${defensor.id}`);
+      if (cardDefensor) {
+        const vidaElemento = cardDefensor.querySelector('.vida');
+        if (vidaElemento) vidaElemento.innerHTML = `<strong>Vida:</strong> ${defensor.vida > 0 ? defensor.vida : 0}`;
+      }
+
+      // Se defensor morreu
+      if (defensor.vida <= 0) {
+        escreverLog(`💀 ${defensor.nome} foi derrotado!`);
+        if (cardDefensor) {
+          cardDefensor.style.opacity = '0.5';
+          setTimeout(() => {
+            cardDefensor.remove();
+          }, 500);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    let rodada = 1;
+    let vivos = [];
+
+    async function iniciarBatalhaTodosVsTodos() {
+      escreverLog("\n🔥 A batalha começou! 🔥\n");
+      vivos = jogadores.filter(j => j.vida > 0);
+
+      while (vivos.length > 1) {
+        escreverLog(`--- Rodada ${rodada} ---`);
+        for (let i = 0; i < vivos.length; i++) {
+          const atacante = vivos[i];
+          const alvos = vivos.filter(j => j.id !== atacante.id && j.vida > 0);
+          if (alvos.length === 0) break;
+          const alvo = alvos[Math.floor(Math.random() * alvos.length)];
+          ataque(atacante, alvo);
+          await delay(500); // intervalo de 500ms entre ataques
+        }
+        vivos = jogadores.filter(j => j.vida > 0);
+        rodada++;
+      }
+
+      const vencedor = vivos[0];
+      if (vencedor) {
+        escreverLog(`\n🏆 ${vencedor.nome} venceu a batalha! 🏆`);
+      } else {
+        escreverLog("⚔️ Todos foram derrotados! Empate!");
+      }
+    }
+  </script>
+</body>
+</html>

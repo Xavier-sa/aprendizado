@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Organizador de Gastos Mensais</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    input, select, button {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    table {
+      width: 100%;
+      margin-top: 15px;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .actions button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Organizador de Gastos Mensais</h1>
+    <label>Descrição: <input id="descricao" type="text"></label>
+    <label>Valor (R$): <input id="valor" type="number" step="0.01"></label>
+    <label>Categoria:
+      <select id="categoria">
+        <option value="Terreno">Terreno</option>
+        <option value="Aluguel">Aluguel</option>
+        <option value="Mercado">Mercado</option>
+        <option value="Cartão de Crédito">Cartão de Crédito</option>
+        <option value="Empréstimo">Empréstimo</option>
+        <option value="Outros">Outros</option>
+      </select>
+    </label>
+    <button onclick="adicionarGasto()">Adicionar</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Descrição</th>
+          <th>Valor (R$)</th>
+          <th>Categoria</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela-gastos"></tbody>
+    </table>
+
+    <canvas id="graficoPizza" width="400" height="400"></canvas>
+  </div>
+
+  <script>
+    let gastos = [];
+    let indiceEditando = null;
+
+    function adicionarGasto() {
+      const descricao = document.getElementById('descricao').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+      const categoria = document.getElementById('categoria').value;
+      
+      if (!descricao || isNaN(valor)) {
+        alert("Preencha todos os campos corretamente.");
+        return;
+      }
+
+      if (indiceEditando !== null) {
+        gastos[indiceEditando] = { descricao, valor, categoria };
+        indiceEditando = null;
+      } else {
+        gastos.push({ descricao, valor, categoria });
+      }
+
+      document.getElementById('descricao').value = '';
+      document.getElementById('valor').value = '';
+      atualizarTabela();
+      atualizarGrafico();
+    }
+
+    function editarGasto(index) {
+      const gasto = gastos[index];
+      document.getElementById('descricao').value = gasto.descricao;
+      document.getElementById('valor').value = gasto.valor;
+      document.getElementById('categoria').value = gasto.categoria;
+      indiceEditando = index;
+    }
+
+    function removerGasto(index) {
+      gastos.splice(index, 1);
+      atualizarTabela();
+      atualizarGrafico();
+    }
+
+    function atualizarTabela() {
+      const tabela = document.getElementById('tabela-gastos');
+      tabela.innerHTML = '';
+
+      gastos.forEach((gasto, index) => {
+        const linha = tabela.insertRow();
+        linha.insertCell(0).innerText = gasto.descricao;
+        linha.insertCell(1).innerText = gasto.valor.toFixed(2);
+        linha.insertCell(2).innerText = gasto.categoria;
+
+        const celulaAcoes = linha.insertCell(3);
+        celulaAcoes.classList.add('actions');
+        celulaAcoes.innerHTML = `
+          <button onclick="editarGasto(${index})">Editar</button>
+          <button onclick="removerGasto(${index})">Remover</button>
+        `;
+      });
+    }
+
+    function atualizarGrafico() {
+      const ctx = document.getElementById('graficoPizza').getContext('2d');
+
+      const categorias = {};
+      gastos.forEach(g => {
+        if (!categorias[g.categoria]) categorias[g.categoria] = 0;
+        categorias[g.categoria] += g.valor;
+      });
+
+      const chartData = {
+        labels: Object.keys(categorias),
+        datasets: [{
+          label: 'Gastos por categoria',
+          data: Object.values(categorias),
+          backgroundColor: [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+          ]
+        }]
+      };
+
+      if (window.pizzaChart) window.pizzaChart.destroy();
+      window.pizzaChart = new Chart(ctx, {
+        type: 'pie',
+        data: chartData
+      });
+    }
+  </script>
+</body>
+</html>

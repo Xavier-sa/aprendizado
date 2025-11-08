@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Organizador de Gastos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #555;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Organizador de Gastos Mensais</h1>
+
+    <label for="categoria">Categoria</label>
+    <select id="categoria">
+      <option>Alimentação</option>
+      <option>Transporte</option>
+      <option>Moradia</option>
+      <option>Lazer</option>
+      <option>Saúde</option>
+      <option>Outros</option>
+    </select>
+
+    <label for="valor">Valor (R$)</label>
+    <input type="number" id="valor" step="0.01">
+
+    <label for="data">Data</label>
+    <input type="date" id="data">
+
+    <button onclick="adicionarGasto()">Adicionar Gasto</button>
+    <button onclick="gerarPDF()">Gerar PDF</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Categoria</th>
+          <th>Valor (R$)</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody id="lista-gastos"></tbody>
+    </table>
+
+    <canvas id="graficoGastos"></canvas>
+  </div>
+
+  <script>
+    let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+
+    function atualizarLista() {
+      const tbody = document.getElementById("lista-gastos");
+      tbody.innerHTML = "";
+      gastos.forEach(g => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${g.categoria}</td><td>R$ ${g.valor.toFixed(2)}</td><td>${g.data}</td>`;
+        tbody.appendChild(tr);
+      });
+      localStorage.setItem('gastos', JSON.stringify(gastos));
+      desenharGrafico();
+    }
+
+    function adicionarGasto() {
+      const categoria = document.getElementById("categoria").value;
+      const valor = parseFloat(document.getElementById("valor").value);
+      const data = document.getElementById("data").value;
+      if (!isNaN(valor) && data) {
+        gastos.push({ categoria, valor, data });
+        atualizarLista();
+        document.getElementById("valor").value = '';
+        document.getElementById("data").value = '';
+      }
+    }
+
+    function desenharGrafico() {
+      const categorias = {};
+      gastos.forEach(g => {
+        categorias[g.categoria] = (categorias[g.categoria] || 0) + g.valor;
+      });
+
+      const ctx = document.getElementById('graficoGastos').getContext('2d');
+      if (window.chartGastos) window.chartGastos.destroy();
+      window.chartGastos = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(categorias),
+          datasets: [{
+            data: Object.values(categorias),
+            backgroundColor: ['#f39c12','#27ae60','#e74c3c','#8e44ad','#3498db','#95a5a6']
+          }]
+        }
+      });
+    }
+
+    function gerarPDF() {
+      html2canvas(document.querySelector(".container")).then(canvas => {
+        const imgData = canvas.toDataURL("image/png");
+        const doc = new jsPDF("p", "mm", "a4");
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        doc.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        doc.save("gastos_mensais.pdf");
+      });
+    }
+
+    atualizarLista();
+  </script>
+</body>
+</html>

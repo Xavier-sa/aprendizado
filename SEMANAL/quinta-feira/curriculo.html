@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Currículo Versátil</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .profissional {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .dbz {
+      background-color: #111;
+      color: #FFA500;
+      border: 3px solid #FF4500;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .header img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+    }
+    h1 {
+      margin: 0;
+    }
+    select, button {
+      margin-top: 20px;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <label for="estilo">Escolha o estilo:</label>
+    <select id="estilo" onchange="trocarEstilo()">
+      <option value="profissional">Profissional</option>
+      <option value="dbz">DBZ</option>
+    </select>
+    <button onclick="gerarPDF()">Gerar PDF</button>
+  </div>
+
+  <div id="curriculo" class="container profissional">
+    <div class="header">
+      <img src="perfil.jpeg" alt="Foto do candidato">
+      <div>
+        <h1>Wellington A. S. Xavier</h1>
+        <p>Estudante de Desenvolvimento</p>
+      </div>
+    </div>
+
+    <h2>Resumo</h2>
+    <p>Profissional disciplinado, resiliente, com facilidade para aprender e interagir com o público. Estudando desenvolvimento web e buscando oportunidade de estágio.</p>
+
+    <h2>Experiência Profissional</h2>
+    <ul>
+      <li>Porteiro - Base de Coleta (Atual)</li>
+      <li>Orientador - Ecoponto</li>
+      <li>Coletor de Lixo - Limpeza Urbana</li>
+    </ul>
+
+    <h2>Formação Acadêmica</h2>
+    <ul>
+      <li>Gestão Pública - Estácio</li>
+      <li>Técnico em Desenvolvimento (cursando)</li>
+      <li>Desenvolvimento Full Stack - Estácio (cursando)</li>
+    </ul>
+
+    <h2>Habilidades</h2>
+    <ul>
+      <li>HTML, CSS, JavaScript, PHP, Python, MySQL</li>
+      <li>Resolução de problemas, disciplina, vontade de aprender</li>
+    </ul>
+
+    <h2>Idiomas</h2>
+    <ul>
+      <li>Português (nativo)</li>
+    </ul>
+
+    <h2>Contato</h2>
+    <ul>
+      <li>https://www.linkedin.com/in/wellington-xavier-90a004300/</li>
+      <li>GitHub: github.com/Xavier-sa</li>
+    </ul>
+  </div>
+
+  <script>
+    function trocarEstilo() {
+      const estilo = document.getElementById("estilo").value;
+      const container = document.getElementById("curriculo");
+      container.className = "container " + estilo;
+    }
+
+    async function gerarPDF() {
+      const { jsPDF } = window.jspdf;
+      const elemento = document.getElementById("curriculo");
+
+      const canvas = await html2canvas(elemento, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save("curriculo_wellington.pdf");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Velha</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            background-color: #fff;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+
+        #status {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <h1>Jogo da Velha</h1>
+        <div id="game-board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <div id="status"></div>
+        <button onclick="restartGame()">Reiniciar Jogo</button>
+    </div>
+
+    <script>
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let gameActive = true;
+
+        const statusDisplay = document.getElementById('status');
+        const winMessage = () => `Jogador ${currentPlayer} venceu!`;
+        const drawMessage = () => `Empate!`;
+        const currentPlayerTurn = () => `É a vez do jogador ${currentPlayer}`;
+
+        statusDisplay.innerHTML = currentPlayerTurn();
+
+        const winningConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        function handleCellClick(clickedCellEvent) {
+            const clickedCell = clickedCellEvent.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+            if (board[clickedCellIndex] !== "" || !gameActive) {
+                return;
+            }
+
+            board[clickedCellIndex] = currentPlayer;
+            clickedCell.innerHTML = currentPlayer;
+
+            checkResult();
+        }
+
+        function checkResult() {
+            let roundWon = false;
+
+            for (let i = 0; i < winningConditions.length; i++) {
+                const winCondition = winningConditions[i];
+                let a = board[winCondition[0]];
+                let b = board[winCondition[1]];
+                let c = board[winCondition[2]];
+                if (a === '' || b === '' || c === '') {
+                    continue;
+                }
+                if (a === b && b === c) {
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if (roundWon) {
+                statusDisplay.innerHTML = winMessage();
+                gameActive = false;
+                return;
+            }
+
+            let roundDraw = !board.includes("");
+            if (roundDraw) {
+                statusDisplay.innerHTML = drawMessage();
+                gameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            statusDisplay.innerHTML = currentPlayerTurn();
+        }
+
+        function restartGame() {
+            gameActive = true;
+            currentPlayer = "X";
+            board = ["", "", "", "", "", "", "", "", ""];
+            statusDisplay.innerHTML = currentPlayerTurn();
+            document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = "");
+        }
+
+        document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
+    </script>
+
+</body>
+</html>

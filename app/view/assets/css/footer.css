@@ -1,0 +1,10 @@
+
+.footer {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    height: 22px;
+    width: calc(100vw - 200px);
+    background-color: #2C3E50; /*--- troquei cor  (yellowgreen) */
+    box-shadow: 4px 0px 12px rgb(0, 0, 0);
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Compras</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #form { margin-bottom: 20px; }
+    #grafico { max-width: 600px; margin: auto; }
+  </style>
+</head>
+<body>
+  <h1>Lista de Compras</h1>
+
+  <div id="form">
+    <input type="text" id="nome" placeholder="Nome do item" />
+    <input type="number" id="preco" placeholder="Preço" step="0.01" />
+    <input type="date" id="dataCompra" />
+    <button onclick="adicionarItem()">Adicionar Item</button>
+  </div>
+
+  <h2>Itens Comprados</h2>
+  <ul id="listaItens"></ul>
+
+  <h2>Gráfico de Preços</h2>
+  <canvas id="grafico"></canvas>
+
+  <script>
+    // Função para salvar item no localStorage
+    function salvarItens(itens) {
+      localStorage.setItem('itens', JSON.stringify(itens));
+    }
+
+    // Função para carregar itens do localStorage
+    function carregarItens() {
+      const itens = JSON.parse(localStorage.getItem('itens')) || [];
+      const listaItens = document.getElementById('listaItens');
+      listaItens.innerHTML = '';
+      itens.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.nome} - R$ ${item.preco} - ${new Date(item.dataCompra).toLocaleDateString()}`;
+        listaItens.appendChild(li);
+      });
+      atualizarGrafico(itens);
+    }
+
+    // Função para adicionar um novo item
+    function adicionarItem() {
+      const nome = document.getElementById('nome').value;
+      const preco = parseFloat(document.getElementById('preco').value);
+      const dataCompra = document.getElementById('dataCompra').value;
+
+      if (nome && preco && dataCompra) {
+        const itens = JSON.parse(localStorage.getItem('itens')) || [];
+        itens.push({ nome, preco, dataCompra });
+        salvarItens(itens);
+        carregarItens();
+      }
+    }
+
+    // Função para atualizar o gráfico
+    function atualizarGrafico(itens) {
+      const ctx = document.getElementById('grafico').getContext('2d');
+      const labels = itens.map(item => new Date(item.dataCompra).toLocaleDateString());
+      const data = itens.map(item => item.preco);
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Preço ao Longo do Tempo',
+            data: data,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            x: { beginAtZero: true },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    // Carregar itens ao iniciar
+    carregarItens();
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<% for(var i=0; i < produtos.length; i++) { %>
+    <tr>
+      <td>
+        <%= produtos[i].codigo %>
+      </td>
+      <td>
+        <%= produtos[i].descricao %>
+      </td>
+      <td>
+        <%= produtos[i].preco %>
+      </td>
+      <td>
+        <%= produtos[i].quantidade %>
+      </td>
+      <td>
+        <a href="/atualizar_produto?id=<%= produtos[i]._id%>" class="btn border-shadow update">
+          <span class="text-gradient"><i class="fas fa-pencil-alt"></i></span>
+        </a>
+        <a class="btn border-shadow delete" data-id=<%=produtos[i]._id%>
+          <span class="text-gradient"><i class="fas fa-times"></i></span>
+        </a>
+      </td>
+    </tr>
+    <% } %>

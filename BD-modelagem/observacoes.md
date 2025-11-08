@@ -1,0 +1,1 @@
+N para N crio uma nova tabela ternaria

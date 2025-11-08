@@ -1,0 +1,153 @@
+@import url(reset.css);
+/* @import url(componentes.css); estou desmembrando */
+@import url(sidebar.css);
+@import url(navbar.css);
+@import url(footer.css);
+@import url(content.css);
+@import url(table.css);
+@import url(adm.css);
+@import url(sobre.css);
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+@import url(cadastrar.css);
+@import url(login.css);
+
+.material-icons {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 31.6px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+}
+
+
+a{
+    color:unset;  /* remove a cor dos links */
+}
+h1{padding: auto; margin: auto; text-align: center; font-size: 30px; color: #333333; margin-bottom: 20px;}
+   
+/* nesse arquivo: estilo pag. home */
+
+/* 
+    reset.css
+    artigo.css
+        css dentro da tag main
+    usuario.css
+        css dentro da tag main
+    categoria.css
+        css dentro da tag main
+
+    componentes.css
+        CSS p/ barra navegação, lateral e rodape
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Responsividade: Ajuste para telas pequenas (celulares) */
+@media (max-width: 768px) {
+    /* Centraliza o conteúdo */
+    .login {
+        padding: 10px;
+        height: auto; /* Ajusta a altura */
+    }
+
+    .login form {
+        width: 90%; /* O formulário ocupa 90% da largura */
+        padding: 20px;
+    }
+
+    .login form h1 {
+        font-size: 24px; /* Ajusta o tamanho da fonte */
+    }
+
+    /* Ajuste no tamanho dos ícones */
+    .material-symbols-outlined {
+        font-size: 36px;
+    }
+
+    /* Ajuste no espaçamento e layout */
+    .login form input,
+    .login form button {
+        width: 100%; /* Ajusta para que o input e o botão ocupem 100% da largura */
+        font-size: 14px; /* Ajuste no tamanho da fonte */
+        padding: 12px;
+    }
+
+    /* Espaçamento entre os elementos */
+    .login form p {
+        font-size: 14px; /* Ajusta o tamanho do texto */
+        margin-top: 10px;
+    }
+
+    /* Ajuste nos links */
+    a {
+        font-size: 18px; /* Ajusta o tamanho do link */
+    }
+
+    /* Ajustes adicionais para o layout */
+    .login form {
+        box-shadow: none; /* Remove a sombra em dispositivos móveis */
+    }
+}
+
+/* Responsividade: Ajustes para telas ainda menores (celulares pequenos) */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 22px; /* Ajuste do tamanho do título */
+    }
+
+    .login form {
+        padding: 15px; /* Ajusta o padding para telas menores */
+    }
+
+    .material-symbols-outlined {
+        font-size: 30px; /* Ajusta o tamanho dos ícones */
+    }
+
+    .login form input,
+    .login form button {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    /* Ajustes no texto para melhor leitura em telas pequenas */
+    .login form p {
+        font-size: 12px;
+    }
+}
+
+/* Responsividade para dispositivos muito grandes, como telas de desktop */
+@media (min-width: 1024px) {
+    /* Ajustes para garantir que o layout não fique muito grande em telas grandes */
+    .login form {
+        width: 40%; /* Limita a largura do formulário para telas grandes */
+    }
+
+    h1 {
+        font-size: 36px; /* Ajusta o título para telas grandes */
+    }
+
+    /* Ícones maiores para telas grandes */
+    .material-symbols-outlined {
+        font-size: 48px;
+    }
+}

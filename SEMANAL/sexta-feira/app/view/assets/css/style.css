@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    padding: 20px;
+    transition: all 0.3s ease;
+    
+}
+h1 {
+    text-align: center;
+}
+
+/* Estilo para modo escuro */
+.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode table, 
+.dark-mode th, 
+.dark-mode td {
+    border-color: #555;
+}
+
+/* Tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #aaa;
+    padding: 12px;
+    text-align: left;
+}
+
+/* Container de botões */
+.btn-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Botões */
+.btn {
+    padding: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: none;
+    background-color: #00ee0c;
+    color: white;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+}
+
+.btn:hover {
+    background-color: #29292b;
+    transform: scale(1.1);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Botão ativo/selecionado */
+.btn.selecionado {
+    background-color: #a1b300;
+    color: #121212;
+}
+
+/* Modo escuro para botões */
+.dark-mode .btn {
+    background-color: #bb86fc;
+    color: #121212;
+}
+
+.dark-mode .btn:hover {
+    background-color: #67ead9;
+}
+
+.dark-mode .btn.selecionado {
+    background-color: #a1b300;
+    color: #121212;
+}
+
+/* Ícones */
+.material-symbols-outlined {
+    font-size: 20px;
+}

@@ -1,0 +1,23 @@
+<!-- API usada:** [https://api.chucknorris.io](https://api.chucknorris.io)  
+🔹 Ao clicar no botão, uma piada aleatória aparece na tela. -->
+
+
+
+<!DOCTYPE html>
+<html>
+  <body>
+    <button id="buscar">Buscar Piada</button>
+    <p id="piada"></p>
+
+    <script>
+      document.getElementById("buscar").addEventListener("click", async () => {
+        const resposta = await fetch("https://api.chucknorris.io/jokes/random");
+        const dados = await resposta.json();
+        document.getElementById("piada").textContent = dados.value;
+      });
+    </script>
+  </body>
+</html>
+
+
+

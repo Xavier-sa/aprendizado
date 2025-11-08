@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de iPhone</title>
+  <style>
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .iphone {
+      position: relative;
+      width: 300px;
+      height: 600px;
+      background: #fff;
+      border-radius: 40px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+      border: 8px solid #222;
+    }
+
+    /* Notch */
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 30px;
+      background: #222;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .camera {
+      width: 10px;
+      height: 10px;
+      background: #000;
+      border-radius: 50%;
+    }
+
+    .speaker {
+      width: 40px;
+      height: 6px;
+      background: #000;
+      border-radius: 3px;
+    }
+
+    /* Botões laterais */
+    .btn {
+      position: absolute;
+      background: #555;
+      border-radius: 6px;
+    }
+
+    .volume-up {
+      width: 6px;
+      height: 40px;
+      left: -10px;
+      top: 80px;
+    }
+
+    .volume-down {
+      width: 6px;
+      height: 40px;
+      left: -10px;
+      top: 140px;
+    }
+
+    .power {
+      width: 6px;
+      height: 60px;
+      right: -10px;
+      top: 100px;
+    }
+
+    /* Tela */
+    .screen {
+      position: absolute;
+      top: 30px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #f2f2f2;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .app {
+      text-align: center;
+    }
+
+    button {
+      background: #007aff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005fcc;
+    }
+  </style>
+</head>
+<body>
+  <div class="iphone">
+    <!-- Botões laterais -->
+    <div class="btn volume-up"></div>
+    <div class="btn volume-down"></div>
+    <div class="btn power"></div>
+
+    <!-- Notch -->
+    <div class="notch">
+      <div class="camera"></div>
+      <div class="speaker"></div>
+    </div>
+
+    <!-- Tela -->
+    <div class="screen">
+      <div class="app">
+        <h1>Olá 👋</h1>
+        <p>Bem-vindo ao seu iPhone simulado!</p>
+        <button id="acao">Clique aqui</button>
+        <p id="resposta"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("acao").addEventListener("click", () => {
+      document.getElementById("resposta").textContent = "Você clicou no botão!";
+    });
+  </script>
+</body>
+</html>

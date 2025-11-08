@@ -1,0 +1,48 @@
+/* Estilo geral do corpo */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Preto com tom dark */
+    color: #e0e0e0; /* Cinza claro para contraste */
+}
+
+/* Estilo para o cabeçalho */
+header {
+    background-color: #1a1a1a; /* Fundo um pouco mais claro */
+    color: #00bcd4; /* Azul claro (inspirado em Solo Leveling) */
+    padding: 1em;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+/* Estilo do conteúdo principal */
+main {
+    padding: 2em;
+}
+
+/* Estilo para blocos de código */
+pre {
+    background-color: #1e1e1e; /* Fundo de código */
+    color: #80d4ff; /* Azul claro para texto */
+    padding: 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+
+/* Links */
+a {
+    color: #00bcd4;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Rodapé */
+footer {
+    background-color: #1a1a1a;
+    color: #757575;
+    text-align: center;
+    padding: 1em 0;
+    font-size: 0.9em;
+}

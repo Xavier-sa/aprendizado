@@ -1,0 +1,1 @@
+let animals = ["dog", "cat", "hamster"];

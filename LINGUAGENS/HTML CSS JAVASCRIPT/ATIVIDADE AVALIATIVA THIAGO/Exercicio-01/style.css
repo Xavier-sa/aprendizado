@@ -1,0 +1,54 @@
+body {
+    background: linear-gradient(to bottom, #ffcc00, #ff6600); /* Fundo em gradiente amarelo e laranja */
+    color: #fff; /* Texto branco */
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+.calculadora {
+    background: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente */
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #ffcc00; /* Título amarelo */
+}
+
+table {/*tabelinha*/
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 2px solid #fff; /* Bordas brancas */
+}
+
+th {
+    background-color: #ff6600; /* Cabeçalho laranja */
+}
+
+td {
+    background-color: rgba(255, 255, 255, 0.1); /* Células semi-transparentes */
+}
+
+button {
+    background-color: #ffcc00; /* Botões amarelos */
+    color: #000;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: bold;
+}
+
+button:hover {
+    background-color: #ff6600; /* Efeito de hover */
+}
