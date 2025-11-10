@@ -1,0 +1,16 @@
+{
+    "nivel": 1,
+    "pontos": 190,
+    "conceitos_dominados": [
+        "Variáveis",
+        "Operadores Aritméticos",
+        "Operadores Comparação",
+        "Estrutura IF",
+        "Estrutura ELSE",
+        "Loop WHILE",
+        "Loop FOR",
+        "Listas",
+        "Funções"
+    ],
+    "ultima_atualizacao": "2025-11-10 10:40:36"
+}

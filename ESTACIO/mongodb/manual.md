@@ -1,7 +1,3 @@
-Claro! Aqui está um modelo de **`README.md`** com os comandos básicos do MongoDB — ideal para consulta rápida no terminal ou para manter em seus projetos.
-
----
-
 ````markdown
 # 📘 Comandos Básicos MongoDB (via mongosh)
 
@@ -170,7 +166,4 @@ exit
 
 ```
 
----
 
-Se quiser, posso te gerar esse README já formatado em arquivo `.md` para baixar ou compartilhar. Deseja isso?
-```
