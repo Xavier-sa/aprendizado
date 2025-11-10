@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  rota-app:
+    build: .
+    container_name: patrimonioProjecao
+    ports:
+      - "5000:5000"
+
+    # Somente se você quiser rodar input(), mas seu projeto não usa.
+    stdin_open: true
+    tty: true
+
+    command: ["python", "app.py"]
+
+    restart: unless-stopped
+
+    volumes:
+      - .:/app
