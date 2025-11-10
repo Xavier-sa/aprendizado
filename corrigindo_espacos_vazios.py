@@ -1,7 +1,7 @@
 import os
 
 # Caminho para a pasta do repositório local
-repo_path = 'C:/Users/Pichau/aprendizado'
+repo_path = 'C:/Users/USER/Documents/RASCUNHO_DOS_GITS/aprendizado'
 
 # Função para renomear arquivos com espaços nos nomes
 def corrigir_nomes_arquivos(caminho_pasta):
