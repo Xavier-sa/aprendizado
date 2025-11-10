@@ -1,3 +1,11 @@
+limpeza:
+# Ao terminar de trabalhar em um projeto:
+docker compose down
+
+# Limpeza semanal:
+docker system prune -f
+
+
 # ✅ Mini Tutorial: Rodando Projeto Flask no Docker
 
 ## **1. Criar o requirements.txt**
