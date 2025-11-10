@@ -1,0 +1,51 @@
+{
+    "acertos": [
+        {
+            "conceito": "Variáveis",
+            "pergunta": "O que é uma variável? (1) Local para armazenar dados (2) Tipo de loop",
+            "data": "2025-11-10 10:38:23"
+        },
+        {
+            "conceito": "Operadores Aritméticos",
+            "pergunta": "Qual operador calcula resto da divisão? (1) % (2) /",
+            "data": "2025-11-10 10:38:28"
+        },
+        {
+            "conceito": "Operadores Comparação",
+            "pergunta": "Operador 'diferente' em Python? (1) != (2) <>",
+            "data": "2025-11-10 10:38:32"
+        },
+        {
+            "conceito": "Estrutura IF",
+            "pergunta": "IF executa bloco quando condição é: (1) True (2) False",
+            "data": "2025-11-10 10:38:38"
+        },
+        {
+            "conceito": "Estrutura ELSE",
+            "pergunta": "Explicação de Estrutura ELSE",
+            "data": "2025-11-10 10:38:51"
+        },
+        {
+            "conceito": "Loop WHILE",
+            "pergunta": "WHILE repete enquanto condição for: (1) True (2) False",
+            "data": "2025-11-10 10:38:56"
+        },
+        {
+            "conceito": "Loop FOR",
+            "pergunta": "Explicação de Loop FOR",
+            "data": "2025-11-10 10:39:33"
+        },
+        {
+            "conceito": "Listas",
+            "pergunta": "Como acessar primeiro elemento? (1) lista[0] (2) lista[1]",
+            "data": "2025-11-10 10:39:38"
+        },
+        {
+            "conceito": "Funções",
+            "pergunta": "Para que serve 'def'? (1) Definir função (2) Deletar variável",
+            "data": "2025-11-10 10:39:39"
+        }
+    ],
+    "erros": [],
+    "tentativas_por_conceito": {}
+}

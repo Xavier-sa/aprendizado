@@ -1,38 +1,21 @@
 import csv
 import os
-import random
+import json
+from datetime import datetime
+from typing import List, Dict, Optional
 
 class IconesSistema:
-    """Sistema centralizado de ícones e formatação"""
-    
-    # Cores (se quiser adicionar cores depois)
-    CORES = {
-        'vermelho': '\033[91m',
-        'verde': '\033[92m', 
-        'amarelo': '\033[93m',
-        'azul': '\033[94m',
-        'magenta': '\033[95m',
-        'ciano': '\033[96m',
-        'reset': '\033[0m'
-    }
-    
-    # Ícones do Sistema
-    SISTEMA = "🏆"
-    DIVISORIA = "=" * 50
-    DIVISORIA_FINA = "-" * 40
+    """Sistema centralizado de ícones"""
     
     # Status e Progresso
     CERTO = "✅"
     ERRADO = "❌"
     AVISO = "⚠️"
     CONCLUIDO = "🎉"
-    FOGUETE = "🚀"
-    TROFEU = "🏅"
     
     # Ações
     SALVAR = "💾"
     SAIR = "🚪"
-    CONFIG = "⚙️"
     
     # Aprendizado
     LIVRO = "📚"
@@ -47,44 +30,179 @@ class IconesSistema:
     # Arquivos e Dados
     PASTA = "📁"
     ARQUIVO = "📄"
-    BANCO_DADOS = "💽"
     
     # Interface
     SETA = "➡️"
-    RELOGIO = "⏰"
-    CORACAO = "❤️"
     FORCA = "💪"
     FOGO = "🔥"
     
     # Emoções
-    SORRISO = "😊"
-    TRISTE = "😔"
-    ESPERTO = "😎"
     MONSTRO = "👾"
 
+
+class GerenciadorArquivos:
+    """Classe responsável por manipulação de arquivos"""
+    
+    @staticmethod
+    def ler_csv(arquivo: str) -> List[List[str]]:
+        """Lê arquivo CSV e retorna lista de linhas"""
+        try:
+            with open(arquivo, 'r', encoding='utf-8') as file:
+                reader = csv.reader(file)
+                return [linha for linha in reader]
+        except FileNotFoundError:
+            return []
+        except Exception as e:
+            print(f"{IconesSistema.ERRADO} Erro ao ler CSV: {e}")
+            return []
+    
+    @staticmethod
+    def escrever_csv(arquivo: str, dados: List[List[str]]) -> bool:
+        """Escreve dados em arquivo CSV"""
+        try:
+            with open(arquivo, 'w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerows(dados)
+            return True
+        except Exception as e:
+            print(f"{IconesSistema.ERRADO} Erro ao escrever CSV: {e}")
+            return False
+    
+    @staticmethod
+    def ler_json(arquivo: str) -> Dict:
+        """Lê arquivo JSON e retorna dicionário"""
+        try:
+            with open(arquivo, 'r', encoding='utf-8') as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return {}
+        except Exception as e:
+            print(f"{IconesSistema.ERRADO} Erro ao ler JSON: {e}")
+            return {}
+    
+    @staticmethod
+    def escrever_json(arquivo: str, dados: Dict) -> bool:
+        """Escreve dados em arquivo JSON"""
+        try:
+            with open(arquivo, 'w', encoding='utf-8') as file:
+                json.dump(dados, file, indent=4, ensure_ascii=False)
+            return True
+        except Exception as e:
+            print(f"{IconesSistema.ERRADO} Erro ao escrever JSON: {e}")
+            return False
+
+
+class Historico:
+    """Gerencia histórico de erros e acertos"""
+    
+    def __init__(self, arquivo: str = './historico.json'):
+        self.arquivo = arquivo
+        self.dados = GerenciadorArquivos.ler_json(arquivo)
+        
+        if not self.dados:
+            self.dados = {
+                'acertos': [],
+                'erros': [],
+                'tentativas_por_conceito': {}
+            }
+    
+    def registrar_acerto(self, conceito: str, pergunta: str):
+        """Registra um acerto"""
+        self.dados['acertos'].append({
+            'conceito': conceito,
+            'pergunta': pergunta,
+            'data': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
+        self._salvar()
+    
+    def registrar_erro(self, conceito: str, pergunta: str, resposta_usuario: str, resposta_correta: str):
+        """Registra um erro com detalhes"""
+        self.dados['erros'].append({
+            'conceito': conceito,
+            'pergunta': pergunta,
+            'resposta_usuario': resposta_usuario,
+            'resposta_correta': resposta_correta,
+            'data': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
+        
+        # Incrementa contador de tentativas
+        if conceito not in self.dados['tentativas_por_conceito']:
+            self.dados['tentativas_por_conceito'][conceito] = 0
+        self.dados['tentativas_por_conceito'][conceito] += 1
+        
+        self._salvar()
+    
+    def mostrar_relatorio(self):
+        """Mostra relatório detalhado"""
+        ic = IconesSistema()
+        
+        print(f"\n{ic.LOUPE} RELATÓRIO DE DESEMPENHO")
+        print("="*60)
+        
+        total_acertos = len(self.dados.get('acertos', []))
+        total_erros = len(self.dados.get('erros', []))
+        total = total_acertos + total_erros
+        
+        if total > 0:
+            taxa_acerto = (total_acertos / total) * 100
+            print(f"{ic.CERTO} Acertos: {total_acertos}")
+            print(f"{ic.ERRADO} Erros: {total_erros}")
+            print(f"{ic.ALVO} Taxa de Acerto: {taxa_acerto:.1f}%")
+        else:
+            print(f"{ic.AVISO} Nenhum dado de desempenho ainda")
+        
+        print(f"\n{ic.FOGO} CONCEITOS COM MAIS DIFICULDADE:")
+        tentativas = self.dados.get('tentativas_por_conceito', {})
+        if tentativas:
+            for conceito, qtd in sorted(tentativas.items(), key=lambda x: x[1], reverse=True)[:5]:
+                print(f"  • {conceito}: {qtd} tentativa(s)")
+        
+        print(f"\n{ic.ERRADO} ÚLTIMOS 5 ERROS:")
+        for erro in self.dados.get('erros', [])[-5:]:
+            print(f"\n  Conceito: {erro['conceito']}")
+            print(f"  Pergunta: {erro['pergunta']}")
+            print(f"  Sua resposta: {erro['resposta_usuario']}")
+            print(f"  Resposta correta: {erro['resposta_correta']}")
+            print(f"  Data: {erro['data']}")
+        
+        print("="*60)
+    
+    def _salvar(self):
+        """Salva histórico em arquivo"""
+        GerenciadorArquivos.escrever_json(self.arquivo, self.dados)
+
+
 class SistemaAprendizado:
+    """Sistema principal de aprendizado"""
+    
     def __init__(self):
         self.nivel = 1
         self.pontos = 0
         self.conceitos_dominados = []
         self.arquivo_csv = './base_aprendizado.csv'
-        self.icone = IconesSistema()  # Instância dos ícones
+        self.arquivo_progresso = './progresso.json'
+        self.icone = IconesSistema()
+        self.historico = Historico()
+        self.gerenciador = GerenciadorArquivos()
+        
+        # Carrega progresso salvo
+        self.carregar_progresso()
     
-    def carregar_dados(self):
+    def carregar_dados(self) -> List[List[str]]:
         """Carrega dados do CSV"""
-        try:
-            with open(self.arquivo_csv, 'r', encoding='utf-8') as file:
-                reader = csv.reader(file)
-                dados = [linha for linha in reader]
-                print(f"{self.icone.CERTO} Base carregada: {len(dados)} conceitos")
-                return dados
-        except FileNotFoundError:
-            print(f"{self.icone.PASTA} Arquivo CSV não encontrado! Criando base de aprendizado...")
-            return self.criar_base_inicial()
+        dados = self.gerenciador.ler_csv(self.arquivo_csv)
+        
+        if not dados:
+            print(f"{self.icone.PASTA} Arquivo CSV não encontrado! Criando base...")
+            dados = self.criar_base_inicial()
+        else:
+            print(f"{self.icone.CERTO} Base carregada: {len(dados)-1} conceitos")
+        
+        return dados
     
-    def criar_base_inicial(self):
+    def criar_base_inicial(self) -> List[List[str]]:
         """Cria base de conceitos fundamentais"""
-        conceitos_fundamentais = [
+        conceitos = [
             ['CONCEITO', 'TIPO', 'DIFICULDADE', 'EXEMPLO', 'EXPLICACAO'],
             ['Variáveis', 'Fundamental', '1', 'x = 10', 'Armazenam dados na memória'],
             ['Operadores Aritméticos', 'Fundamental', '1', '+, -, *, /, %', 'Realizam cálculos matemáticos'],
@@ -92,244 +210,283 @@ class SistemaAprendizado:
             ['Estrutura IF', 'Controle', '2', 'if condicao:', 'Executa código SE condição for True'],
             ['Estrutura ELSE', 'Controle', '2', 'else:', 'Executa quando IF é False'],
             ['Loop WHILE', 'Repetição', '3', 'while condicao:', 'Repete ENQUANTO condição for True'],
-            ['Loop FOR', 'Repetição', '3', 'for i in range(10):', 'Repete PARA cada item em sequência'],
+            ['Loop FOR', 'Repetição', '3', 'for i in range(10):', 'Repete PARA cada item'],
             ['Listas', 'Estrutura Dados', '2', 'lista = [1, 2, 3]', 'Armazenam múltiplos valores'],
             ['Funções', 'Modularização', '4', 'def minha_funcao():', 'Agrupam código reutilizável']
         ]
         
-        with open(self.arquivo_csv, 'w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
-            writer.writerows(conceitos_fundamentais)
+        if self.gerenciador.escrever_csv(self.arquivo_csv, conceitos):
+            print(f"{self.icone.CERTO} Base criada: {self.arquivo_csv}")
         
-        print(f"{self.icone.CERTO} Base de aprendizado criada: base_aprendizado.csv")
-        return conceitos_fundamentais
-
+        return conceitos
+    
+    def carregar_progresso(self):
+        """Carrega progresso salvo do JSON"""
+        progresso = self.gerenciador.ler_json(self.arquivo_progresso)
+        
+        if progresso:
+            self.nivel = progresso.get('nivel', 1)
+            self.pontos = progresso.get('pontos', 0)
+            self.conceitos_dominados = progresso.get('conceitos_dominados', [])
+            print(f"{self.icone.SALVAR} Progresso carregado!")
+    
+    def salvar_progresso(self):
+        """Salva progresso atual no JSON"""
+        progresso = {
+            'nivel': self.nivel,
+            'pontos': self.pontos,
+            'conceitos_dominados': self.conceitos_dominados,
+            'ultima_atualizacao': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        if self.gerenciador.escrever_json(self.arquivo_progresso, progresso):
+            print(f"{self.icone.SALVAR} Progresso salvo com sucesso!")
+            return True
+        return False
+    
     def mostrar_menu(self):
-        """Menu principal do sistema"""
-        ic = self.icone  # Atalho para ícones
+        """Menu principal"""
+        ic = self.icone
         
-        print(f"\n{ic.DIVISORIA}")
-        print(f"{ic.SISTEMA} SISTEMA DE DOMÍNIO DA PROGRAMAÇÃO")
-        print(f"{ic.DIVISORIA}")
+        print("\n" + "="*50)
+        print(f"{ic.TROFEU} SISTEMA DE DOMÍNIO DA PROGRAMAÇÃO")
+        print("="*50)
         print(f"{ic.ALVO} Nível: {self.nivel} | {ic.TROFEU} Pontos: {self.pontos}")
         print(f"{ic.CERTO} Conceitos dominados: {len(self.conceitos_dominados)}")
         print(f"\n1. {ic.LIVRO} Estudar Conceitos")
-        print(f"2. {ic.CEREBRO} Desafios Práticos") 
+        print(f"2. {ic.CEREBRO} Desafios Práticos")
         print(f"3. {ic.LOUPE} Ver Progresso")
         print(f"4. {ic.TROFEU} Teste de Domínio")
         print(f"5. {ic.SALVAR} Salvar Progresso")
         print(f"6. {ic.ARQUIVO} Ver Base CSV")
-        print(f"7. {ic.SAIR} Sair")
-        print(f"{ic.DIVISORIA}")
-
-    def estudar_conceitos(self, dados):
-        """Sistema de estudo com verificação de compreensão"""
+        print(f"7. {ic.FOGO} Relatório de Erros")
+        print(f"8. {ic.SAIR} Sair")
+        print("="*50)
+    
+    def estudar_conceitos(self, dados: List[List[str]]):
+        """Sistema de estudo com verificação"""
         ic = self.icone
         
         print(f"\n{ic.LIVRO} MÓDULO DE ESTUDO")
-        print(f"{ic.FORCA} Só avança quando demonstrar compreensão!")
+        print(f"{ic.FORCA} Demonstre compreensão para avançar!")
         
-        for conceito in dados[1:]:  # Pula cabeçalho
+        for conceito in dados[1:]:
             nome, tipo, dificuldade, exemplo, explicacao = conceito
             
             if nome in self.conceitos_dominados:
                 print(f"{ic.CERTO} JÁ DOMINADO: {nome}")
                 continue
-                
+            
             print(f"\n{ic.ALVO} CONCEITO: {nome}")
             print(f"{ic.LIVRO} Tipo: {tipo} | {ic.FOGO} Dificuldade: {dificuldade}")
             print(f"{ic.LAMPADA} Exemplo: {exemplo}")
             print(f"{ic.PERGUNTA} Explicação: {explicacao}")
             
-            # Verificação de compreensão
-            if not self.verificar_compreensao(nome, exemplo):
-                print(f"{ic.ERRADO} Volte e estude novamente!")
-                return False
-            else:
+            if self.verificar_compreensao(nome, exemplo):
                 self.conceitos_dominados.append(nome)
-                self.pontos += int(dificuldade) * 10
-                print(f"{ic.CONCLUIDO} Conceito dominado! +{int(dificuldade)*10} pontos")
-        
-        return True
-
-    def verificar_compreensao(self, conceito, exemplo):
-        """Sistema de perguntas para verificar aprendizado REAL"""
+                pontos_ganhos = int(dificuldade) * 10
+                self.pontos += pontos_ganhos
+                print(f"{ic.CONCLUIDO} Dominado! +{pontos_ganhos} pontos")
+                self.salvar_progresso()  # Auto-save
+            else:
+                print(f"{ic.ERRADO} Estude novamente!")
+                break
+    
+    def verificar_compreensao(self, conceito: str, exemplo: str) -> bool:
+        """Verifica se o usuário compreendeu o conceito"""
         ic = self.icone
         
-        perguntas = {
+        perguntas_gabarito = {
             'Variáveis': {
-                'pergunta': "O que é uma variável? ",
-                'palavras_chave': ['armazenar', 'dado', 'valor', 'memória', 'nome'],
-                'resposta_minima': 'Variável é um espaço na memória para armazenar dados'
+                'pergunta': "O que é uma variável? (1) Local para armazenar dados (2) Tipo de loop",
+                'resposta': '1'
             },
             'Operadores Aritméticos': {
-                'pergunta': "Para que servem operadores aritméticos? ",
-                'palavras_chave': ['cálculo', 'matemática', 'soma', 'subtração', 'operacao'],
-                'resposta_minima': 'Realizam operações matemáticas como soma e subtração'
+                'pergunta': "Qual operador calcula resto da divisão? (1) % (2) /",
+                'resposta': '1'
             },
-            'Estrutura ELSE': {
-                'pergunta': "Qual a função do ELSE? ",
-                'palavras_chave': ['se não', 'alternativa', 'if', 'falso', 'condição'],
-                'resposta_minima': 'ELSE executa quando a condição do IF é falsa'
+            'Operadores Comparação': {
+                'pergunta': "Operador 'diferente' em Python? (1) != (2) <>",
+                'resposta': '1'
+            },
+            'Estrutura IF': {
+                'pergunta': "IF executa bloco quando condição é: (1) True (2) False",
+                'resposta': '1'
+            },
+            'Loop WHILE': {
+                'pergunta': "WHILE repete enquanto condição for: (1) True (2) False",
+                'resposta': '1'
+            },
+            'Listas': {
+                'pergunta': "Como acessar primeiro elemento? (1) lista[0] (2) lista[1]",
+                'resposta': '1'
+            },
+            'Funções': {
+                'pergunta': "Para que serve 'def'? (1) Definir função (2) Deletar variável",
+                'resposta': '1'
             }
         }
         
-        if conceito in perguntas:
-            pergunta_data = perguntas[conceito]
-            print(f"\n{ic.PERGUNTA} {pergunta_data['pergunta']}")
-            print(f"{ic.LAMPADA} Dica: Explique com detalhes, mostre que entendeu!")
+        if conceito in perguntas_gabarito:
+            pergunta_obj = perguntas_gabarito[conceito]
+            resposta = input(f"{ic.PERGUNTA} {pergunta_obj['pergunta']}: ")
             
-            resposta = input(f"{ic.SETA} Sua explicação: ")
+            if resposta == pergunta_obj['resposta']:
+                self.historico.registrar_acerto(conceito, pergunta_obj['pergunta'])
+                return True
+            else:
+                self.historico.registrar_erro(
+                    conceito,
+                    pergunta_obj['pergunta'],
+                    resposta,
+                    pergunta_obj['resposta']
+                )
+                return False
+        else:
+            # Pergunta genérica
+            explicacao = input(f"{ic.PERGUNTA} Explique '{conceito}': ")
+            acertou = len(explicacao) > 10
             
-            # Verificação ROBUSTA
-            return self.avaliar_resposta(resposta, pergunta_data, conceito)
-        else:
-            # Para conceitos não mapeados
-            resposta = input(f"{ic.PERGUNTA} Explique detalhadamente '{conceito}': ")
-            return len(resposta.split()) >= 8 and any(palavra in resposta.lower() for palavra in ['quando', 'como', 'para', 'armazena', 'executa', 'condição'])
-
-    def avaliar_resposta(self, resposta, pergunta_data, conceito):
-        """Avalia a resposta de forma INTELIGENTE"""
-        ic = self.icone
-        
-        resposta_lower = resposta.lower()
-        palavras = resposta_lower.split()
-        
-        print(f"\n{ic.LOUPE} ANALISANDO SUA RESPOSTA...")
-        print(f"{ic.ARQUIVO} Palavras usadas: {len(palavras)}")
-        
-        # Critérios de AVALIAÇÃO
-        criterios = {
-            'tamanho_minimo': len(palavras) >= 8,
-            'palavras_chave': sum(1 for palavra in pergunta_data['palavras_chave'] if palavra in resposta_lower) >= 2,
-            'coerencia': any(termo in resposta_lower for termo in [' quando ', ' para ', ' que ', ' como '])
-        }
-        
-        print(f"{ic.CERTO if criterios['tamanho_minimo'] else ic.ERRADO} Tamanho adequado (>7 palavras): {criterios['tamanho_minimo']}")
-        print(f"{ic.CERTO if criterios['palavras_chave'] else ic.ERRADO} Palavras-chave encontradas: {criterios['palavras_chave']}")
-        print(f"{ic.CERTO if criterios['coerencia'] else ic.ERRADO} Resposta coerente: {criterios['coerencia']}")
-        
-        # Só passa se atender aos critérios
-        if all(criterios.values()):
-            print(f"{ic.CONCLUIDO} RESPOSTA ACEITA! Você realmente entendeu {conceito}!")
-            print(f"{ic.LAMPADA} Resposta ideal: {pergunta_data['resposta_minima']}")
-            return True
-        else:
-            print(f"{ic.ERRADO} RESPOSTA INSUFICIENTE! Estude mais o conceito.")
-            print(f"{ic.LIVRO} O que era esperado: {pergunta_data['resposta_minima']}")
-            print(f"{ic.FORCA} Tente novamente com mais detalhes!")
-            return False
-
+            if acertou:
+                self.historico.registrar_acerto(conceito, f"Explicação de {conceito}")
+            else:
+                self.historico.registrar_erro(conceito, f"Explicação de {conceito}", explicacao, "Explicação mais elaborada")
+            
+            return acertou
+    
     def desafios_praticos(self):
-        """Sistema de desafios práticos"""
+        """Desafios práticos com histórico"""
         ic = self.icone
         
         print(f"\n{ic.CEREBRO} DESAFIOS PRÁTICOS")
         
         desafios = [
             {
-                "nivel": 1, 
-                "enunciado": "Crie um loop WHILE que conte de 1 a 5 e imprima cada número",
+                "nivel": 1,
+                "conceito": "Loop WHILE",
+                "enunciado": "Conte de 1 a 5 e imprima cada número",
+                "resposta_esperada": 5,
                 "dica": "Use contador = 1, while contador <= 5:",
-                "codigo_exemplo": "contador = 1\nwhile contador <= 5:\n    print(contador)\n    contador += 1"
+                "codigo": "contador = 1\nwhile contador <= 5:\n    print(contador)\n    contador += 1"
             },
             {
-                "nivel": 2, 
-                "enunciado": "Some números pares de 1 a 10 (resultado deve ser 30)",
+                "nivel": 2,
+                "conceito": "Loop FOR com IF",
+                "enunciado": "Some números pares de 1 a 10",
+                "resposta_esperada": 30,
                 "dica": "Use for com range e if numero % 2 == 0",
-                "codigo_exemplo": "soma = 0\nfor num in range(1, 11):\n    if num % 2 == 0:\n        soma += num\nprint(soma)"
+                "codigo": "soma = 0\nfor num in range(1, 11):\n    if num % 2 == 0:\n        soma += num"
+            },
+            {
+                "nivel": 3,
+                "conceito": "Fatorial",
+                "enunciado": "Calcule fatorial de 5",
+                "resposta_esperada": 120,
+                "dica": "fatorial = 1, for i in range(1, 6): fatorial *= i",
+                "codigo": "fatorial = 1\nfor i in range(1, 6):\n    fatorial *= i"
             }
         ]
         
         for desafio in desafios:
             if desafio["nivel"] > self.nivel:
                 continue
-                
-            print(f"\n{ic.ALVO} Desafio Nível {desafio['nivel']}:")
+            
+            print(f"\n{ic.ALVO} Desafio Nível {desafio['nivel']} - {desafio['conceito']}")
             print(f"{ic.PERGUNTA} {desafio['enunciado']}")
             
             tentativas = 3
             while tentativas > 0:
-                resposta = input(f"{ic.SETA} Digite 'dica' para ajuda ou sua resposta: ")
+                resposta = input(f"{ic.SETA} Digite 'dica' ou sua resposta: ")
                 
                 if resposta.lower() == 'dica':
                     print(f"{ic.LAMPADA} Dica: {desafio['dica']}")
-                    print(f"{ic.LIVRO} Exemplo:\n{desafio['codigo_exemplo']}")
+                    print(f"{ic.LIVRO} Código:\n{desafio['codigo']}")
                     continue
-                    
-                if resposta.isdigit() and int(resposta) in [5, 30, 120]:
-                    print(f"{ic.CONCLUIDO} Correto! +25 pontos")
-                    self.pontos += 25
-                    break
-                else:
-                    tentativas -= 1
-                    print(f"{ic.ERRADO} Tente novamente! Tentativas restantes: {tentativas}")
+                
+                try:
+                    if int(resposta) == desafio['resposta_esperada']:
+                        print(f"{ic.CONCLUIDO} Correto! +25 pontos")
+                        self.pontos += 25
+                        self.historico.registrar_acerto(desafio['conceito'], desafio['enunciado'])
+                        self.salvar_progresso()
+                        break
+                    else:
+                        tentativas -= 1
+                        self.historico.registrar_erro(
+                            desafio['conceito'],
+                            desafio['enunciado'],
+                            resposta,
+                            str(desafio['resposta_esperada'])
+                        )
+                        print(f"{ic.ERRADO} Incorreto! Tentativas: {tentativas}")
+                except ValueError:
+                    print(f"{ic.ERRADO} Digite um número!")
             
             if tentativas == 0:
-                print(f"{ic.LAMPADA} Reveja o conceito e tente depois!")
-                return
-
+                print(f"{ic.LAMPADA} Reveja o conceito!")
+    
     def ver_base_csv(self):
-        """Mostra o conteúdo do arquivo CSV"""
+        """Mostra conteúdo do CSV"""
         ic = self.icone
+        dados = self.gerenciador.ler_csv(self.arquivo_csv)
         
-        try:
-            with open(self.arquivo_csv, 'r', encoding='utf-8') as file:
-                print(f"\n{ic.ARQUIVO} CONTEÚDO DO ARQUIVO: {self.arquivo_csv}")
-                print(f"{ic.DIVISORIA_FINA}")
-                reader = csv.reader(file)
-                for i, linha in enumerate(reader):
-                    if i == 0:  # Cabeçalho
-                        print(f"{ic.LOUPE} {linha}")
-                    else:
-                        print(f"{i:2d}. {linha}")
-                print(f"{ic.DIVISORIA_FINA}")
-        except FileNotFoundError:
-            print(f"{ic.ERRADO} Arquivo CSV não encontrado!")
-
+        if dados:
+            print(f"\n{ic.ARQUIVO} BASE DE CONHECIMENTO")
+            print("="*70)
+            for i, linha in enumerate(dados):
+                if i == 0:
+                    print(f"{ic.LOUPE} {' | '.join(linha)}")
+                else:
+                    print(f"{i}. {' | '.join(linha)}")
+            print("="*70)
+        else:
+            print(f"{ic.ERRADO} CSV não encontrado!")
+    
     def teste_dominio(self):
-        """Teste final para avançar de nível"""
+        """Teste para avançar de nível"""
         ic = self.icone
         
         print(f"\n{ic.TROFEU} TESTE DE DOMÍNIO - Nível {self.nivel}")
         
-        if self.pontos < self.nivel * 50:
-            print(f"{ic.ERRADO} Precisa de {self.nivel * 50} pontos para o teste!")
+        pontos_necessarios = self.nivel * 50
+        if self.pontos < pontos_necessarios:
+            print(f"{ic.ERRADO} Precisa de {pontos_necessarios} pontos!")
             return
         
         perguntas = [
-            "Qual comando para criar loop infinito? (while True:)",
-            "Como verificar se número é par? (numero % 2 == 0)", 
-            "Qual função transforma string em número? (int())"
+            {"q": "Comando para loop infinito?", "a": ["while true", "true", "while"]},
+            {"q": "Verificar se número é par?", "a": ["% 2 == 0", "%", "par"]},
+            {"q": "Transformar string em número?", "a": ["int()", "int", "integer"]},
+            {"q": "Adicionar item à lista?", "a": ["append", ".append", "append()"]}
         ]
         
         acertos = 0
-        for pergunta in perguntas:
-            resposta = input(f"{ic.PERGUNTA} {pergunta.split('?')[0]}? ")
-            if any(palavra in resposta.lower() for palavra in pergunta.lower().split()[-3:]):
+        for p in perguntas:
+            resposta = input(f"{ic.PERGUNTA} {p['q']} ").lower()
+            if any(palavra in resposta for palavra in p['a']):
                 acertos += 1
                 print(f"{ic.CERTO} Correto!")
             else:
-                print(f"{ic.ERRADO} Resposta esperada: {pergunta.split('(')[1].split(')')[0]}")
+                print(f"{ic.ERRADO} Esperado: {p['a'][0]}")
         
-        if acertos >= 2:
+        if acertos >= 3:
             self.nivel += 1
-            print(f"{ic.CONCLUIDO}{ic.CONCLUIDO}{ic.CONCLUIDO} AVANÇOU PARA NÍVEL {self.nivel}! {ic.CONCLUIDO}{ic.CONCLUIDO}{ic.CONCLUIDO}")
-            print(f"{ic.FORCA} Sua base está ficando sólida!")
+            print(f"\n{ic.CONCLUIDO*3} NÍVEL {self.nivel}! {ic.CONCLUIDO*3}")
+            self.salvar_progresso()
         else:
-            print(f"{ic.FORCA} Continue praticando! A base leva tempo.")
-
+            print(f"{ic.FORCA} Continue praticando!")
+    
     def executar(self):
-        """Loop principal do sistema"""
+        """Loop principal"""
         ic = self.icone
         dados = self.carregar_dados()
         
-        print(f"{ic.FOGUETE} Sistema de Aprendizado Iniciado!")
-        print(f"{ic.MONSTRO} Vamos criar um MONSTRO da programação!")
+        print(f"{ic.FOGUETE} Sistema Iniciado!")
+        print(f"{ic.MONSTRO} Vamos dominar a programação!")
         
         while True:
             self.mostrar_menu()
-            opcao = input(f"{ic.SETA} Escolha uma opção: ")
+            opcao = input(f"{ic.SETA} Escolha: ")
             
             if opcao == "1":
                 self.estudar_conceitos(dados)
@@ -338,20 +495,24 @@ class SistemaAprendizado:
             elif opcao == "3":
                 print(f"\n{ic.LOUPE} PROGRESSO:")
                 print(f"{ic.ALVO} Nível: {self.nivel} | {ic.TROFEU} Pontos: {self.pontos}")
-                print(f"{ic.CERTO} Conceitos dominados: {', '.join(self.conceitos_dominados)}")
+                print(f"{ic.CERTO} Conceitos: {', '.join(self.conceitos_dominados)}")
             elif opcao == "4":
                 self.teste_dominio()
             elif opcao == "5":
-                print(f"{ic.SALVAR} Progresso salvo (em memória)")
+                self.salvar_progresso()
             elif opcao == "6":
                 self.ver_base_csv()
             elif opcao == "7":
-                print(f"{ic.SAIR} Até logo! Continue construindo sua base sólida! {ic.FOGUETE}")
+                self.historico.mostrar_relatorio()
+            elif opcao == "8":
+                self.salvar_progresso()
+                print(f"{ic.SAIR} Até logo! {ic.FOGUETE}")
                 break
             else:
                 print(f"{ic.ERRADO} Opção inválida!")
 
-# 🚀 INICIAR SISTEMA
+
+# 🚀 INICIAR
 if __name__ == "__main__":
     sistema = SistemaAprendizado()
     sistema.executar()

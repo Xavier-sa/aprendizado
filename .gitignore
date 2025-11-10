@@ -1,0 +1,19 @@
+# Ignorar dependências de Node.js
+node_modules/
+
+# Ignorar arquivos de build
+dist/
+build/
+
+# Ignorar arquivos temporários do sistema
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Ignorar variáveis de ambiente
+.env
+
+# Ignorar configurações do editor
+.vscode/
+.idea/
