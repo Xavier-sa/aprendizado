@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erro na Projeção</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .erro-container {
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .erro-header {
+            background: #e74c3c;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .erro-icone {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .erro-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .erro-conteudo {
+            padding: 40px;
+            text-align: center;
+        }
+
+        .erro-mensagem {
+            background: #fee;
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #721c24;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .dicas {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        .dicas h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .dicas ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .dicas li {
+            margin: 8px 0;
+        }
+
+        .acoes {
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 10px 5px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-voltar {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-ajuda {
+            background: #95a5a6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="erro-container">
+        <div class="erro-header">
+            <div class="erro-icone">⚠️</div>
+            <h1>Ops! Algo deu errado</h1>
+            <p>Não foi possível processar sua solicitação</p>
+        </div>
+
+        <div class="erro-conteudo">
+            <div class="erro-mensagem">
+                <strong>Erro:</strong> {{ mensagem }}
+            </div>
+
+            <div class="dicas">
+                <h3>O que você pode fazer:</h3>
+                <ul>
+                    <li>Verifique se todos os valores foram preenchidos corretamente</li>
+                    <li>Certifique-se de usar apenas números positivos</li>
+                    <li>Se seus gastos excedem a renda, revise seu orçamento</li>
+                    <li>Verifique se a parcela é suficiente para cobrir os juros</li>
+                    <li>Tente novamente com valores mais realistas</li>
+                </ul>
+            </div>
+
+            <div class="acoes">
+                <a href="/" class="btn btn-voltar">Voltar e Tentar Novamente</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

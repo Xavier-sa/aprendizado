@@ -1,0 +1,14 @@
+services:
+  rota-app:
+    build: .
+    container_name: sistema-rota
+
+    # Estes dois permitem usar input()
+    stdin_open: true
+    tty: true
+
+    # Isso garante que o Docker rode seu script como no terminal real
+    command: ["python", "main.py"]
+
+    # Permite reexecutar o container sempre que quiser
+    restart: unless-stopped
