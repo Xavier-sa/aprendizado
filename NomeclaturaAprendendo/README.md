@@ -18,7 +18,7 @@ Ela permite que qualquer pessoa:
 É simples e feita especialmente para quem está começando a aprender TI.
 
 
-## 📚 Rotas disponíveis (endereços da API)
+##  Rotas disponíveis (endereços da API)
 
 ### ▶ **1. Página inicial**
 
@@ -79,7 +79,7 @@ Retorno:
 
 ---
 
-## 📦 Estrutura do projeto
+##  Estrutura do projeto
 
 ```
 📁 projeto/
@@ -90,7 +90,7 @@ Retorno:
 
 ---
 
-## 🧑‍💻 Para que serve isso?
+## Para que serve isso?
 
 Esta API pode ser usada para:
 
