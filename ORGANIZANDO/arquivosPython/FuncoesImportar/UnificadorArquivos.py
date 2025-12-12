@@ -3,12 +3,18 @@ import os
 IGNORAR_PASTAS = {
     "__pycache__",
     ".git",
-    "node_modules"
+    "node_modules",
+    ".next"
 }
 
 IGNORAR_EXTENSOES = {
     ".pyc",
     ".pyo",
+    ".env",
+    ".dockerignore",
+    ".gitignore",
+    "package-lock.json",
+    "package.json"
 }
 
 def escolher_pasta():
