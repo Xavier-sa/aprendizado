@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +15,7 @@
             --sabado: #1abc9c;
             --domingo: #e67e22;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f8f9fa;
@@ -22,7 +23,7 @@
             padding: 20px;
             line-height: 1.6;
         }
-        
+
         h1 {
             text-align: center;
             color: #2c3e50;
@@ -30,7 +31,7 @@
             position: relative;
             padding-bottom: 15px;
         }
-        
+
         h1::after {
             content: "";
             position: absolute;
@@ -42,29 +43,29 @@
             background: linear-gradient(to right, var(--segunda), var(--terca), var(--quarta), var(--quinta), var(--sexta), var(--sabado), var(--domingo));
             border-radius: 2px;
         }
-        
+
         .cronograma {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 25px;
             margin-top: 20px;
         }
-        
+
         .dia {
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
             position: relative;
             overflow: hidden;
         }
-        
+
         .dia:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
-        
+
         .dia::before {
             content: "";
             position: absolute;
@@ -73,21 +74,41 @@
             width: 100%;
             height: 5px;
         }
-        
-        .segunda::before { background-color: var(--segunda); }
-        .terca::before { background-color: var(--terca); }
-        .quarta::before { background-color: var(--quarta); }
-        .quinta::before { background-color: var(--quinta); }
-        .sexta::before { background-color: var(--sexta); }
-        .sabado::before { background-color: var(--sabado); }
-        .domingo::before { background-color: var(--domingo); }
-        
+
+        .segunda::before {
+            background-color: var(--segunda);
+        }
+
+        .terca::before {
+            background-color: var(--terca);
+        }
+
+        .quarta::before {
+            background-color: var(--quarta);
+        }
+
+        .quinta::before {
+            background-color: var(--quinta);
+        }
+
+        .sexta::before {
+            background-color: var(--sexta);
+        }
+
+        .sabado::before {
+            background-color: var(--sabado);
+        }
+
+        .domingo::before {
+            background-color: var(--domingo);
+        }
+
         .dia h2 {
             margin-top: 0;
             color: #2c3e50;
             font-size: 1.5rem;
         }
-        
+
         .tema {
             display: inline-block;
             padding: 5px 10px;
@@ -96,25 +117,52 @@
             margin-bottom: 15px;
             font-size: 0.9rem;
         }
-        
-        .segunda .tema { background-color: rgba(231, 76, 60, 0.2); color: var(--segunda); }
-        .terca .tema { background-color: rgba(52, 152, 219, 0.2); color: var(--terca); }
-        .quarta .tema { background-color: rgba(46, 204, 113, 0.2); color: var(--quarta); }
-        .quinta .tema { background-color: rgba(243, 156, 18, 0.2); color: var(--quinta); }
-        .sexta .tema { background-color: rgba(155, 89, 182, 0.2); color: var(--sexta); }
-        .sabado .tema { background-color: rgba(26, 188, 156, 0.2); color: var(--sabado); }
-        .domingo .tema { background-color: rgba(230, 126, 34, 0.2); color: var(--domingo); }
-        
+
+        .segunda .tema {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--segunda);
+        }
+
+        .terca .tema {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: var(--terca);
+        }
+
+        .quarta .tema {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--quarta);
+        }
+
+        .quinta .tema {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: var(--quinta);
+        }
+
+        .sexta .tema {
+            background-color: rgba(155, 89, 182, 0.2);
+            color: var(--sexta);
+        }
+
+        .sabado .tema {
+            background-color: rgba(26, 188, 156, 0.2);
+            color: var(--sabado);
+        }
+
+        .domingo .tema {
+            background-color: rgba(230, 126, 34, 0.2);
+            color: var(--domingo);
+        }
+
         .dia ul {
             padding-left: 20px;
             margin-bottom: 20px;
         }
-        
+
         .dia li {
             margin-bottom: 8px;
             position: relative;
         }
-        
+
         .dia li::before {
             content: "•";
             color: inherit;
@@ -123,15 +171,35 @@
             width: 1em;
             margin-left: -1em;
         }
-        
-        .segunda li::before { color: var(--segunda); }
-        .terca li::before { color: var(--terca); }
-        .quarta li::before { color: var(--quarta); }
-        .quinta li::before { color: var(--quinta); }
-        .sexta li::before { color: var(--sexta); }
-        .sabado li::before { color: var(--sabado); }
-        .domingo li::before { color: var(--domingo); }
-        
+
+        .segunda li::before {
+            color: var(--segunda);
+        }
+
+        .terca li::before {
+            color: var(--terca);
+        }
+
+        .quarta li::before {
+            color: var(--quarta);
+        }
+
+        .quinta li::before {
+            color: var(--quinta);
+        }
+
+        .sexta li::before {
+            color: var(--sexta);
+        }
+
+        .sabado li::before {
+            color: var(--sabado);
+        }
+
+        .domingo li::before {
+            color: var(--domingo);
+        }
+
         .quiz-btn {
             background-color: #2c3e50;
             color: white;
@@ -144,11 +212,11 @@
             width: 100%;
             margin-top: 10px;
         }
-        
+
         .quiz-btn:hover {
             background-color: #1a252f;
         }
-        
+
         .quiz-container {
             display: none;
             margin-top: 15px;
@@ -157,16 +225,16 @@
             border-radius: 8px;
             border-left: 4px solid #2c3e50;
         }
-        
+
         .quiz-question {
             font-weight: bold;
             margin-bottom: 10px;
         }
-        
+
         .quiz-options {
             margin-bottom: 15px;
         }
-        
+
         .quiz-options label {
             display: block;
             margin-bottom: 8px;
@@ -175,11 +243,11 @@
             border-radius: 4px;
             transition: background-color 0.2s;
         }
-        
+
         .quiz-options label:hover {
             background-color: #ecf0f1;
         }
-        
+
         .quiz-submit {
             background-color: #27ae60;
             color: white;
@@ -190,11 +258,11 @@
             font-weight: bold;
             transition: background-color 0.3s;
         }
-        
+
         .quiz-submit:hover {
             background-color: #219653;
         }
-        
+
         .quiz-result {
             margin-top: 10px;
             font-weight: bold;
@@ -202,18 +270,18 @@
             padding: 10px;
             border-radius: 4px;
         }
-        
+
         .quiz-navigation {
             display: flex;
             justify-content: space-between;
             margin-top: 15px;
         }
-        
+
         .quiz-navigation button {
             padding: 5px 10px;
             font-size: 14px;
         }
-        
+
         .footer {
             margin-top: 50px;
             text-align: center;
@@ -222,7 +290,7 @@
             padding: 20px;
             border-top: 1px solid #ecf0f1;
         }
-        
+
         @media (max-width: 768px) {
             .cronograma {
                 grid-template-columns: 1fr;
@@ -230,14 +298,15 @@
         }
     </style>
 </head>
+
 <body>
     <h1>Cronograma de Estudos - Wellington Xavier</h1>
     <div class="cronograma" id="cronograma"></div>
-    
+
     <div class="footer">
         Atualizado automaticamente para o ano <span id="ano"></span>
     </div>
-    
+
     <script>
         const cronograma = [
             {
@@ -354,60 +423,187 @@
                         ],
                         answer: 2,
                         explanation: "git push é usado para enviar commits locais para um repositório remoto."
-                    }
-                ]
-            },
-            {
-                dia: "Sábado",
-                tema: "Projeto Prático",
-                tarefas: [
-                    "Desenvolver um sistema real",
-                    "Melhorar projeto já existente"
-                ],
-                quizzes: [
+                    },
                     {
-                        question: "Qual etapa vem primeiro no desenvolvimento?",
-                        options: [
-                            "Codificação",
-                            "Testes",
-                            "Planejamento",
-                            "Implantação"
-                        ],
+                        question: "Qual comando envia commits para o repositório remoto?",
+                        options: ["git add", "git commit", "git push", "git pull"],
                         answer: 2,
-                        explanation: "O planejamento é a etapa inicial crucial antes de qualquer desenvolvimento."
-                    }
-                ]
-            },
-            {
-                dia: "Domingo",
-                tema: "Revisão + Portfólio",
-                tarefas: [
-                    "Revisar estudos da semana",
-                    "Atualizar portfólio e GitHub"
-                ],
-                quizzes: [
+                        explanation: "git push é usado para enviar commits locais para um repositório remoto."
+                    },
                     {
-                        question: "Por que é importante atualizar o portfólio?",
+                        question: "Qual comando inicializa um novo repositório Git?",
+                        options: ["git start", "git init", "git new", "git repo"],
+                        answer: 1,
+                        explanation: "git init cria um novo repositório Git no diretório atual."
+                    },
+                    {
+                        question: "Qual comando clona um repositório remoto?",
+                        options: ["git copy <url>", "git clone <url>", "git pull <url>", "git fetch <url>"],
+                        answer: 1,
+                        explanation: "git clone baixa o histórico completo e cria um repositório local."
+                    },
+                    {
+                        question: "Qual comando mostra o estado atual da árvore de trabalho (arquivos modificados, staged etc.)?",
+                        options: ["git diff", "git status", "git show", "git log"],
+                        answer: 1,
+                        explanation: "git status exibe arquivos modificados, staged e não versionados."
+                    },
+                    {
+                        question: "Qual comando prepara arquivos modificados para o commit?",
+                        options: ["git stage", "git add", "git push", "git prepare"],
+                        answer: 1,
+                        explanation: "git add adiciona arquivos à área de stage para o próximo commit."
+                    },
+                    {
+                        question: "Qual comando cria um novo branch e já faz checkout nele?",
+                        options: ["git checkout <branch>", "git branch <branch>", "git checkout -b <branch>", "git new-branch <branch>"],
+                        answer: 2,
+                        explanation: "git checkout -b <branch> cria o branch e muda para ele imediatamente."
+                    },
+                    {
+                        question: "Qual comando une o histórico de um branch no branch atual?",
+                        options: ["git merge <branch>", "git rebase <branch>", "git join <branch>", "git pull <branch>"],
+                        answer: 0,
+                        explanation: "git merge combina o histórico do branch indicado ao branch atual."
+                    },
+                    {
+                        question: "Qual comando reescreve commits aplicando-os sobre outra base (linearizando o histórico)?",
+                        options: ["git reset", "git merge", "git rebase", "git cherry-pick"],
+                        answer: 2,
+                        explanation: "git rebase move seus commits para o topo de outra base, deixando o histórico linear."
+                    },
+                    {
+                        question: "Qual comando guarda temporariamente mudanças não commitadas e limpa a árvore de trabalho?",
+                        options: ["git keep", "git stash", "git store", "git temp"],
+                        answer: 1,
+                        explanation: "git stash salva mudanças não commitadas em uma pilha temporária."
+                    },
+                    {
+                        question: "Qual comando mostra o histórico de commits?",
+                        options: ["git log", "git history", "git commits", "git show-log"],
+                        answer: 0,
+                        explanation: "git log lista os commits com autor, data e mensagem."
+                    },
+                    {
+                        question: "Qual comando mostra as diferenças entre a árvore de trabalho e a área de stage (ou entre commits)?",
+                        options: ["git status", "git show", "git diff", "git blame"],
+                        answer: 2,
+                        explanation: "git diff exibe diferenças entre versões de arquivos."
+                    },
+                    {
+                        question: "Qual comando desfaz um commit criando um novo commit inverso (sem reescrever o histórico)?",
+                        options: ["git reset --hard", "git revert <hash>", "git undo <hash>", "git rollback <hash>"],
+                        answer: 1,
+                        explanation: "git revert cria um novo commit que desfaz as mudanças do commit informado."
+                    },
+                    {
+                        question: "Qual comando move o ponteiro HEAD e a branch para outro commit, podendo descartar histórico local?",
+                        options: ["git revert", "git reset", "git restore", "git checkout"],
+                        answer: 1,
+                        explanation: "git reset altera o ponteiro do HEAD e pode modificar o índice e a árvore de trabalho."
+                    },
+                    {
+                        question: "Qual comando adiciona uma nova origem remota chamada origin?",
                         options: [
-                            "Para mostrar evolução",
-                            "Para impressionar recrutadores",
-                            "Para documentar aprendizado",
-                            "Todas as anteriores"
+                            "git remote add origin <url>",
+                            "git origin add <url>",
+                            "git add remote origin <url>",
+                            "git remote set-url origin <url>"
                         ],
+                        answer: 0,
+                        explanation: "git remote add origin <url> adiciona um repositório remoto apelidado de origin."
+                    },
+                    {
+                        question: "Qual comando baixa os objetos do remoto, mas não integra ao seu branch atual?",
+                        options: ["git pull", "git push", "git clone", "git fetch"],
                         answer: 3,
-                        explanation: "Um portfólio atualizado serve para todos esses propósitos e mais."
+                        explanation: "git fetch sincroniza referências remotas sem fazer merge ou rebase automaticamente."
+                    },
+                    {
+                        question: "Qual comando baixa e integra (merge) as mudanças remotas no branch atual?",
+                        options: ["git fetch", "git pull", "git rebase", "git merge"],
+                        answer: 1,
+                        explanation: "git pull é um git fetch seguido de um merge (por padrão)."
+                    },
+                    {
+                        question: "Qual comando aplica um commit específico em cima do branch atual?",
+                        options: ["git apply <hash>", "git cherry-pick <hash>", "git pick <hash>", "git merge <hash>"],
+                        answer: 1,
+                        explanation: "git cherry-pick copia um commit específico para o branch atual."
+                    },
+                    {
+                        question: "Qual arquivo lista padrões de arquivos e pastas para o Git ignorar?",
+                        options: [".gitkeep", ".gitignore", ".gitconfig", ".gitexclude"],
+                        answer: 1,
+                        explanation: "O arquivo .gitignore define o que o Git deve ignorar no versionamento."
+                    },
+                    {
+                        question: "Qual comando mostra quem alterou cada linha de um arquivo e em qual commit?",
+                        options: ["git blame <arquivo>", "git who <arquivo>", "git authors <arquivo>", "git log -p <arquivo>"],
+                        answer: 0,
+                        explanation: "git blame anota cada linha com o commit e autor responsável."
+                    },
+                    {
+                        question: "Qual comando mostra o histórico de referências (inclusive movimentos de HEAD) para recuperação?",
+                        options: ["git reflog", "git relog", "git headlog", "git log --reflog"],
+                        answer: 0,
+                        explanation: "git reflog registra mudanças no HEAD e permite recuperar commits perdidos."
                     }
                 ]
-            }
+
+                
+         },   
+        {
+            dia: "Sábado",
+                tema: "Projeto Prático",
+                    tarefas: [
+                        "Desenvolver um sistema real",
+                        "Melhorar projeto já existente"
+                    ],
+                        quizzes: [
+                            {
+                                question: "Qual etapa vem primeiro no desenvolvimento?",
+                                options: [
+                                    "Codificação",
+                                    "Testes",
+                                    "Planejamento",
+                                    "Implantação"
+                                ],
+                                answer: 2,
+                                explanation: "O planejamento é a etapa inicial crucial antes de qualquer desenvolvimento."
+                            }
+                        ]
+        },
+        {
+            dia: "Domingo",
+                tema: "Revisão + Portfólio",
+                    tarefas: [
+                        "Revisar estudos da semana",
+                        "Atualizar portfólio e GitHub"
+                    ],
+                        quizzes: [
+                            {
+                                question: "Por que é importante atualizar o portfólio?",
+                                options: [
+                                    "Para mostrar evolução",
+                                    "Para impressionar recrutadores",
+                                    "Para documentar aprendizado",
+                                    "Todas as anteriores"
+                                ],
+                                answer: 3,
+                                explanation: "Um portfólio atualizado serve para todos esses propósitos e mais."
+                            }
+                        ]
+        }
         ];
 
         // Cria os elementos do cronograma
         const container = document.getElementById("cronograma");
-        
+
         cronograma.forEach((dia, diaIndex) => {
             const div = document.createElement("div");
             div.className = `dia ${dia.dia.toLowerCase().split('-')[0]}`;
-            
+
             div.innerHTML = `
                 <h2>${dia.dia}</h2>
                 <div class="tema">${dia.tema}</div>
@@ -418,19 +614,19 @@
                     <div id="quiz-content-${diaIndex}"></div>
                 </div>
             `;
-            
+
             container.appendChild(div);
-            
+
             // Adiciona eventos para o quiz
             const quizBtn = div.querySelector('.quiz-btn');
             const quizContainer = div.querySelector('.quiz-container');
             const quizContent = div.querySelector(`#quiz-content-${diaIndex}`);
-            
+
             let currentQuizIndex = 0;
-            
+
             function renderQuiz() {
                 const quiz = dia.quizzes[currentQuizIndex];
-                
+
                 quizContent.innerHTML = `
                     <div class="quiz-question">${quiz.question}</div>
                     <div class="quiz-options">
@@ -452,13 +648,13 @@
                     </div>
                     ` : ''}
                 `;
-                
+
                 const submitBtn = quizContent.querySelector('.quiz-submit');
                 const resultDiv = quizContent.querySelector(`#quiz-result-${diaIndex}`);
-                
+
                 submitBtn.addEventListener('click', () => {
                     const selectedOption = quizContent.querySelector(`input[name="quiz-${diaIndex}"]:checked`);
-                    
+
                     if (!selectedOption) {
                         resultDiv.textContent = "Por favor, selecione uma opção!";
                         resultDiv.style.color = "#e74c3c";
@@ -466,10 +662,10 @@
                         resultDiv.style.display = "block";
                         return;
                     }
-                    
+
                     const userAnswer = parseInt(selectedOption.value);
                     const correctAnswer = quiz.answer;
-                    
+
                     if (userAnswer === correctAnswer) {
                         resultDiv.innerHTML = `✅ Correto! ${quiz.explanation}`;
                         resultDiv.style.color = "#27ae60";
@@ -479,15 +675,15 @@
                         resultDiv.style.color = "#e74c3c";
                         resultDiv.style.backgroundColor = "#fde8e8";
                     }
-                    
+
                     resultDiv.style.display = "block";
                 });
-                
+
                 // Adiciona navegação entre quizzes se houver mais de um
                 if (dia.quizzes.length > 1) {
                     const prevBtn = quizContent.querySelector('.quiz-prev');
                     const nextBtn = quizContent.querySelector('.quiz-next');
-                    
+
                     if (prevBtn) {
                         prevBtn.addEventListener('click', () => {
                             if (currentQuizIndex > 0) {
@@ -496,7 +692,7 @@
                             }
                         });
                     }
-                    
+
                     if (nextBtn) {
                         nextBtn.addEventListener('click', () => {
                             if (currentQuizIndex < dia.quizzes.length - 1) {
@@ -507,30 +703,31 @@
                     }
                 }
             }
-            
+
             quizBtn.addEventListener('click', () => {
                 currentQuizIndex = 0;
                 renderQuiz();
                 quizContainer.style.display = quizContainer.style.display === 'block' ? 'none' : 'block';
-                quizBtn.textContent = quizContainer.style.display === 'block' ? 
+                quizBtn.textContent = quizContainer.style.display === 'block' ?
                     'Ocultar Quiz' : 'Testar Conhecimento (Quiz)';
             });
         });
-        
+
         // Atualiza o ano automaticamente
         document.getElementById("ano").textContent = new Date().getFullYear();
-        
+
         // Notificação ao carregar a página
         window.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
             const day = now.getDay(); // 0 (Domingo) a 6 (Sábado)
-            
+
             if (day >= 1 && day <= 5) { // Dias úteis
                 setTimeout(() => {
-                    alert(`⚡️ Bom dia, Xavier! Hoje é ${cronograma[day-1].dia} - Hora de estudar ${cronograma[day-1].tema}!`);
+                    alert(`⚡️ Bom dia, Xavier! Hoje é ${cronograma[day - 1].dia} - Hora de estudar ${cronograma[day - 1].tema}!`);
                 }, 1000);
             }
         });
     </script>
 </body>
+
 </html>

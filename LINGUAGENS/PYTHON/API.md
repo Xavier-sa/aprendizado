@@ -1,0 +1,1 @@
+API (Application Programming Interface) é uma aplicação desenvolvida para disponibilizar dados ou funcionalidades de forma padronizada, com o objetivo de atender necessidades de um negócio. Atua como uma solução para problemas específicos, obedecendo a um contrato definido (regras, protocolos e formatos), garantindo integração consistente e eficiente entre sistemas.
