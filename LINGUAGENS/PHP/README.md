@@ -1,7 +1,3 @@
-Perfeito, sensei! 🥷 Vamos simplificar de verdade:
-
----
-
 ### **PDO::FETCH_ASSOC – Resumo Ninja**
 
 1. **O que é:**
