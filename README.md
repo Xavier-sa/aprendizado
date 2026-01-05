@@ -6,7 +6,7 @@ Aqui, o foco está no **processo diário**, não no destino.
 
 ---
 
-## 🗂️ Proposta
+🗂️ Proposta
 
 A ideia central é simples:
 
@@ -19,7 +19,7 @@ O aprendizado acontece em ciclos, revisões e experimentações.
 
 ---
 
-## ⚙️ Organização
+⚙️ Organização
 
 - O repositório pode crescer ou permanecer minimalista
 - Arquivos podem ser criados, alterados ou removidos
@@ -30,7 +30,7 @@ Não existe forma “certa” de organizar, apenas a que funciona no momento.
 
 ---
 
-## 🧪 Filosofia
+🧪 Filosofia
 
 - Aprender fazendo  
 - Errar sem receio  
@@ -41,7 +41,7 @@ Cada dia representa uma oportunidade de contato com o estudo, independentemente 
 
 ---
 
-## 🕰️ Compromisso
+🕰️ Compromisso
 
 O único compromisso real é com a **frequência**.
 
@@ -51,7 +51,7 @@ Mesmo tentativas incompletas contam.
 
 ---
 
-## 🗃️ Observação Final
+🗃️ Observação Final
 
 Este repositório não é um portfólio.  
 Não é um curso.  
