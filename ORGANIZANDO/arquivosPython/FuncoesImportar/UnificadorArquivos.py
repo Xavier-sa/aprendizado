@@ -46,7 +46,7 @@ def coletar_arquivos(caminho_base):
 
 def gerar_unico_txt(caminho_base, arquivos):
     """Gera o arquivo final unificado."""
-    nome_saida = "ProjetoUnificado.txt"
+    nome_saida = "./xavierbackup.txt"
     caminho_saida = os.path.join(caminho_base, nome_saida)
 
     with open(caminho_saida, "w", encoding="utf-8") as saida:
