@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Roteiro Inteligente</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .roteiro {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .dia {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    .dia h2 {
+      margin-bottom: 10px;
+      color: #2b6cb0;
+    }
+
+    .resumo {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .atividade {
+      display: flex;
+      justify-content: space-between;
+      background: #f9fafc;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hora {
+      font-weight: bold;
+      color: #2b6cb0;
+    }
+
+    .categoria {
+      font-size: 12px;
+      color: #888;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #3b82f6, #14b8a6);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🌍 Roteiro Inteligente</h1>
+
+<button onclick="gerar()">Gerar Roteiro</button>
+
+<div id="app" class="roteiro"></div>
+
+<script>
+// ==========================================
+// MOCK
+// ==========================================
+const pontosDisponiveis = [
+  { id: 1, nome: 'Cachoeira do Córrego', categoria: 'Natureza', tempo_estimado: '3h' },
+  { id: 2, nome: 'Museu do Pantanal', categoria: 'Cultural', tempo_estimado: '2h' },
+  { id: 3, nome: 'Restaurante Sabor Local', categoria: 'Gastronomia', tempo_estimado: '1.5h' },
+  { id: 4, nome: 'Trilha do Mirante', categoria: 'Natureza', tempo_estimado: '4h' },
+  { id: 5, nome: 'Praça Central', categoria: 'Cultural', tempo_estimado: '1h' },
+  { id: 6, nome: 'Passeio de Barco', categoria: 'Aventura', tempo_estimado: '2.5h' },
+  { id: 7, nome: 'Feira de Artesanato', categoria: 'Cultural', tempo_estimado: '2h' },
+  { id: 8, nome: 'Parque das Araras', categoria: 'Natureza', tempo_estimado: '3h' },
+  { id: 9, nome: 'Pizzaria Noturna', categoria: 'Gastronomia', tempo_estimado: '2h' },
+  { id: 10, nome: 'Mergulho Fluvial', categoria: 'Aventura', tempo_estimado: '4h' }
+];
+
+// ==========================================
+// HELPERS
+// ==========================================
+function parseTempo(t) {
+  return parseFloat(t.replace('h', ''));
+}
+
+function gerarHorario(index) {
+  const horarios = ['08:00', '10:00', '13:00', '15:00', '18:00'];
+  return horarios[index] || 'Livre';
+}
+
+function calcularScore(local, interesses) {
+  let score = 0;
+  if (interesses.includes(local.categoria)) score += 10;
+  score += parseTempo(local.tempo_estimado);
+  return score;
+}
+
+// ==========================================
+// MOTOR
+// ==========================================
+function gerarRoteiroInteligente({ dias, interesses, ritmo }) {
+
+  let horasPorDia = 8;
+  if (ritmo === 'Lento') horasPorDia = 5;
+  if (ritmo === 'Intenso') horasPorDia = 10;
+
+  const lista = [...pontosDisponiveis].sort((a, b) =>
+    calcularScore(b, interesses) - calcularScore(a, interesses)
+  );
+
+  const usados = new Set();
+  const roteiro = [];
+
+  for (let dia = 1; dia <= dias; dia++) {
+    let tempoRestante = horasPorDia;
+    const atividades = [];
+
+    for (let local of lista) {
+      const duracao = parseTempo(local.tempo_estimado);
+
+      if (!usados.has(local.id) && duracao <= tempoRestante) {
+        atividades.push({
+          ...local,
+          horario: gerarHorario(atividades.length)
+        });
+
+        usados.add(local.id);
+        tempoRestante -= duracao;
+      }
+    }
+
+    roteiro.push({
+      dia,
+      horas: horasPorDia - tempoRestante,
+      atividades
+    });
+  }
+
+  return roteiro;
+}
+
+// ==========================================
+// RENDER
+// ==========================================
+function render(roteiro) {
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+
+  roteiro.forEach(dia => {
+    const div = document.createElement('div');
+    div.className = 'dia';
+
+    div.innerHTML = `
+      <h2>Dia ${dia.dia}</h2>
+      <div class="resumo">⏱ ${dia.horas} horas planejadas</div>
+    `;
+
+    dia.atividades.forEach(at => {
+      const el = document.createElement('div');
+      el.className = 'atividade';
+
+      el.innerHTML = `
+        <div class="info">
+          <span class="hora">${at.horario}</span>
+          <strong>${at.nome}</strong>
+          <span class="categoria">${at.categoria} • ${at.tempo_estimado}</span>
+        </div>
+      `;
+
+      div.appendChild(el);
+    });
+
+    app.appendChild(div);
+  });
+}
+
+// ==========================================
+// EXECUÇÃO
+// ==========================================
+function gerar() {
+  const roteiro = gerarRoteiroInteligente({
+    dias: 2,
+    interesses: ['Natureza', 'Gastronomia'],
+    ritmo: 'Normal'
+  });
+
+  render(roteiro);
+}
+</script>
+
+</body>
+</html>
