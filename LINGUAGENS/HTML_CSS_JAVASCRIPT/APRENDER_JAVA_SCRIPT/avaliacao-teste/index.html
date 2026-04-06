@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Avaliação Técnica</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #ffffff;
+            --bg2: #f5f5f5;
+            --bg3: #eaeaea;
+            --border: #e0e0e0;
+            --border2: #cccccc;
+            --text: #1a1a1a;
+            --text2: #666666;
+            --text3: #999999;
+            --info-bg: #e3f2fd;
+            --info-txt: #1976d2;
+            --success-bg: #e8f5e9;
+            --success-txt: #2e7d32;
+            --warn-bg: #fff3e0;
+            --warn-txt: #ed6c02;
+            --danger-bg: #ffebee;
+            --danger-txt: #d32f2f;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'SF Mono', Monaco, Consolas, monospace;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        body {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            color: var(--text);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+        .app-header {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .header-content {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .logo h1 { font-size: 24px; color: var(--text); margin-bottom: 5px; }
+        .subtitle { color: var(--text2); font-size: 12px; }
+        .header-stats { display: flex; gap: 20px; background: var(--bg2); padding: 10px 20px; border-radius: var(--border-radius-md); }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-label { font-size: 11px; color: var(--text3); }
+        .stat-value { font-size: 18px; font-weight: 600; color: var(--text); }
+        .app-main { max-width: 800px; margin: 0 auto; }
+        .app-footer {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            text-align: center;
+            color: var(--text2);
+            font-size: 12px;
+        }
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .setup-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+        .setup-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+        .field input, .field select, .field textarea {
+            width: 100%; padding: 10px 12px; font-size: 14px;
+            background: var(--bg2); border: 1px solid var(--border2);
+            border-radius: var(--border-radius-md); color: var(--text);
+            font-family: var(--font-sans);
+            transition: all 0.2s;
+        }
+        .field input:focus, .field select:focus, .field textarea:focus {
+            outline: none;
+            border-color: var(--info-txt);
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+        }
+        .field textarea { resize: vertical; min-height: 60px; }
+        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+        .chip {
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer;
+            border: 1px solid var(--border2); background: var(--bg2); color: var(--text2);
+            transition: all 0.2s;
+        }
+        .chip:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
+        .chip.selected { background: var(--info-bg); color: var(--info-txt); border-color: var(--info-txt); }
+        .btn-primary {
+            width: 100%; padding: 12px; font-size: 14px; font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none;
+            border-radius: var(--border-radius-md); cursor: pointer; margin-top: 8px;
+            font-family: var(--font-sans);
+            transition: all 0.2s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary {
+            padding: 8px 16px; font-size: 13px; font-weight: 500;
+            background: transparent; color: var(--text);
+            border: 1px solid var(--border2);
+            border-radius: var(--border-radius-md); cursor: pointer;
+            font-family: var(--font-sans);
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { background: var(--bg2); transform: translateY(-1px); }
+        .progress-wrap { margin-bottom: 1.25rem; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+        .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 3px; transition: width 0.3s; }
+        .question-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+        .q-meta { font-size: 11px; color: var(--text3); margin-bottom: 12px; display: flex; gap: 8px; }
+        .q-text { font-size: 16px; font-weight: 500; margin-bottom: 1.5rem; line-height: 1.5; }
+        .option {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px; border-radius: var(--border-radius-md);
+            border: 1px solid var(--border); margin-bottom: 8px; cursor: pointer;
+            transition: all 0.2s; background: var(--bg2);
+        }
+        .option:hover { border-color: var(--border2); transform: translateX(4px); }
+        .option.selected { background: var(--info-bg); border-color: var(--info-txt); }
+        .option.selected .opt-label { color: var(--info-txt); }
+        .opt-label { font-size: 14px; flex: 1; color: var(--text); }
+        .opt-marker {
+            width: 24px; height: 24px; border-radius: 50%;
+            border: 1px solid var(--border2); flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 600; color: var(--text2); background: var(--bg);
+        }
+        .option.selected .opt-marker { background: var(--info-txt); color: white; border-color: var(--info-txt); }
+        .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
+        .q-counter { font-size: 13px; font-weight: 500; color: var(--text2); }
+        .result-header { text-align: center; padding: 2rem; background: white; border-radius: var(--border-radius-lg); margin-bottom: 1rem; }
+        .score-big { font-size: 64px; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nivel-badge { display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-top: 12px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 1rem 0; }
+        .metric-card { background: var(--bg2); border-radius: var(--border-radius-md); padding: 16px; text-align: center; }
+        .metric-card .val { font-size: 24px; font-weight: 700; }
+        .metric-card .lbl { font-size: 11px; color: var(--text2); margin-top: 4px; }
+        .tech-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .tech-row:last-child { border-bottom: none; }
+        .tech-bar-wrap { flex: 1; margin: 0 12px; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+        .tech-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; }
+        .ranking-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--border-radius-md); background: var(--bg2); margin-bottom: 8px; transition: all 0.2s; }
+        .ranking-item:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+        .rank-num { font-size: 20px; font-weight: 700; min-width: 40px; color: var(--text2); }
+        .rank-num.first { color: #ffd700; text-shadow: 0 0 2px rgba(0,0,0,0.2); }
+        .rank-info { flex: 1; }
+        .rank-name { font-weight: 600; font-size: 15px; }
+        .rank-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
+        .rank-pts { font-size: 18px; font-weight: 700; }
+        .loading-wrap { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-lg); }
+        .dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--text2); margin: 0 3px; animation: bounce 1.4s infinite; }
+        .dots span:nth-child(2) { animation-delay: 0.2s; }
+        .dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce { 0%,80%,100%{transform:scale(0.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
+        .alert { padding: 12px 16px; border-radius: var(--border-radius-md); font-size: 13px; margin-bottom: 12px; }
+        .alert-warn { background: var(--warn-bg); color: var(--warn-txt); border-left: 3px solid var(--warn-txt); }
+        .alert-info { background: var(--info-bg); color: var(--info-txt); border-left: 3px solid var(--info-txt); }
+        .section-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header-content { flex-direction: column; text-align: center; }
+            .row2 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-header">
+        <div class="header-content">
+            <div class="logo">
+                <h1>🎯 Sistema de Avaliação Técnica</h1>
+                <p class="subtitle">Recrutamento e Seleção com IA</p>
+            </div>
+            <div class="header-stats" id="header-stats" style="display: none;">
+                <div class="stat-item"><span class="stat-label">Vaga:</span><span class="stat-value" id="header-vaga"></span></div>
+                <div class="stat-item"><span class="stat-label">Nível:</span><span class="stat-value" id="header-nivel"></span></div>
+                <div class="stat-item"><span class="stat-label">Candidatos:</span><span class="stat-value" id="header-candidatos">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-main">
+        <!-- TELA 1: SETUP -->
+        <div id="screen-setup" class="screen active">
+            <div class="setup-card">
+                <h2>⚙️ Configuração da Seleção</h2>
+                <div class="row2">
+                    <div class="field"><label>👤 Nome do aplicador</label><input id="s-aplicador" placeholder="ex: Ana Souza" /></div>
+                    <div class="field"><label>📊 Vagas disponíveis</label><input id="s-vagas" type="number" min="1" max="20" value="5" /></div>
+                </div>
+                <div class="field"><label>💼 Vaga disputada</label><input id="s-vaga" placeholder="ex: Desenvolvedor Front-end Júnior" /></div>
+                <div class="field">
+                    <label>🎯 Nível esperado</label>
+                    <div class="chip-group" id="chips-nivel">
+                        <div class="chip" onclick="toggleChip(this,'nivel')">júnior</div>
+                        <div class="chip" onclick="toggleChip(this,'nivel')">pleno</div>
+                        <div class="chip" onclick="toggleChip(this,'nivel')">sênior</div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>🛠️ Tecnologias</label>
+                    <div class="chip-group" id="chips-tech">
+                        <div class="chip" onclick="toggleChipMulti(this,'tech')">HTML</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'tech')">CSS</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'tech')">JavaScript</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'tech')">React</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'tech')">Node.js</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'tech')">Python</div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>🌐 Idiomas</label>
+                    <div class="chip-group" id="chips-idioma">
+                        <div class="chip" onclick="toggleChipMulti(this,'idioma')">português</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'idioma')">inglês</div>
+                        <div class="chip" onclick="toggleChipMulti(this,'idioma')">espanhol</div>
+                    </div>
+                </div>
+                <div class="row2">
+                    <div class="field"><label>📝 Quantidade de questões</label><select id="s-nq"><option value="5">5 questões</option><option value="10" selected>10 questões</option><option value="15">15 questões</option></select></div>
+                    <div class="field"><label>🎓 Foco</label><select id="s-foco"><option value="teoria">teoria</option><option value="pratica" selected>prática</option><option value="misto">misto</option></select></div>
+                </div>
+                <div class="field"><label>📌 Observações</label><textarea id="s-obs" placeholder="ex: foco em boas práticas..."></textarea></div>
+                <button class="btn-primary" onclick="gerarQuestoes()">🚀 Gerar Banco de Questões</button>
+            </div>
+        </div>
+
+        <!-- TELA 2: LOADING -->
+        <div id="screen-loading-q" class="screen">
+            <div class="loading-wrap">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <p style="margin-top: 12px; color: var(--text2);" id="loading-msg">gerando questões personalizadas...</p>
+            </div>
+        </div>
+
+        <!-- TELA 3: FORM CANDIDATO -->
+        <div id="screen-candidato-form" class="screen">
+            <div class="setup-card">
+                <h2>📋 Identificação do Candidato</h2>
+                <div class="field"><label>👤 Nome completo</label><input id="c-nome-input" placeholder="nome do candidato" /></div>
+                <div class="field"><label>🌐 Idioma</label><div class="chip-group" id="chips-c-idioma"></div></div>
+                <div id="alert-limite" class="alert alert-warn" style="display:none;">⚠️ Limite de candidatos atingido!</div>
+                <div id="alert-dup" class="alert alert-warn" style="display:none;">⚠️ Este nome já foi registrado!</div>
+                <button class="btn-primary" onclick="iniciarCandidato()">🎯 Iniciar Teste</button>
+                <button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="showRanking()">📊 Ver Ranking Parcial</button>
+            </div>
+        </div>
+
+        <!-- TELA 4: QUESTIONÁRIO -->
+        <div id="screen-candidato" class="screen">
+            <div class="progress-wrap"><div class="progress-label"><span id="p-q-label">questão 1 de 10</span><span id="p-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div></div>
+            <div id="quiz-area"></div>
+            <div class="nav-row"><span class="q-counter" id="q-counter"></span><button class="btn-primary" style="width:auto;padding:8px 24px;" onclick="responder()">Próxima →</button></div>
+        </div>
+
+        <!-- TELA 5: RESULTADO -->
+        <div id="screen-result" class="screen">
+            <div class="result-header"><div style="font-size: 13px; color: var(--text2); margin-bottom: 4px;" id="r-nome"></div><div class="score-big" id="r-score">0</div><div style="font-size: 13px;">acertos de <span id="r-total-q"></span> questões</div><div class="nivel-badge" id="r-nivel-badge">júnior</div></div>
+            <div class="metrics-grid" id="r-metrics"></div>
+            <div class="setup-card"><div class="section-title">📊 Desempenho por Tecnologia</div><div id="r-tech-breakdown"></div></div>
+            <div style="display:flex;gap:8px;margin-top:1rem;"><button class="btn-secondary" style="flex:1;" onclick="showCandidatoForm()">👥 Próximo Candidato</button><button class="btn-primary" style="flex:1;" onclick="showRanking()">🏆 Ver Ranking →</button></div>
+        </div>
+
+        <!-- TELA 6: RANKING -->
+        <div id="screen-ranking" class="screen">
+            <div id="ranking-info" class="alert alert-info" style="margin-bottom:1rem;"></div>
+            <div id="ranking-list"></div>
+            <div style="margin-top:1rem;display:flex;gap:8px;"><button class="btn-secondary" style="flex:1;" onclick="showCandidatoForm()">👤 + Candidato</button><button class="btn-primary" style="flex:1;" onclick="exportarJSON()">💾 Exportar JSON</button><button class="btn-secondary" style="flex:1;" onclick="novaSelecao()">🔄 Nova Seleção</button></div>
+        </div>
+    </div>
+
+    <div class="app-footer">
+        <p>© 2024 - Sistema de Avaliação Técnica | Versão 1.0.0</p>
+    </div>
+
+    <script>
+        // Estado global
+        let config = {};
+        let banco = [];
+        let candidatos = [];
+        let sessaoAtual = { nome: '', idx: 0, respostas: [], acertos: 0, porTech: {}, inicio: 0, selecionado: null };
+        let chips = { nivel: [], tech: [], idioma: [] };
+        let chipsC = { idioma: '' };
+
+        // Banco de questões real
+        const questoesReais = {
+            HTML: [
+                { enunciado: "Qual tag HTML é utilizada para criar um link (hyperlink)?", opcoes: ["&lt;link&gt;", "&lt;a&gt;", "&lt;href&gt;", "&lt;url&gt;"], correta: 1, explicacao: "A tag &lt;a&gt; (anchor) é usada para criar links." },
+                { enunciado: "Qual atributo HTML5 valida um campo de email?", opcoes: ["type='email'", "validate='email'", "format='email'", "input='email'"], correta: 0, explicacao: "type='email' faz validação automática." }
+            ],
+            CSS: [
+                { enunciado: "Qual propriedade CSS controla o espaçamento interno?", opcoes: ["margin", "padding", "border", "spacing"], correta: 1, explicacao: "Padding cria espaço interno." }
+            ],
+            JavaScript: [
+                { enunciado: "Como declarar uma variável constante em JavaScript?", opcoes: ["var x = 10;", "let x = 10;", "const x = 10;", "constant x = 10;"], correta: 2, explicacao: "const declara variáveis que não podem ser reatribuídas." },
+                { enunciado: "Qual método converte JSON string em objeto?", opcoes: ["JSON.stringify()", "JSON.parse()", "JSON.convert()", "JSON.object()"], correta: 1, explicacao: "JSON.parse() converte string JSON em objeto." }
+            ],
+            React: [
+                { enunciado: "Qual hook é usado para gerenciar estado?", opcoes: ["useEffect", "useState", "useContext", "useReducer"], correta: 1, explicacao: "useState é o hook fundamental para estado local." }
+            ],
+            'Node.js': [
+                { enunciado: "Qual módulo Node.js é usado para arquivos?", opcoes: ["http", "fs", "path", "os"], correta: 1, explicacao: "fs (File System) é para operações de arquivo." }
+            ],
+            Python: [
+                { enunciado: "Qual a saída de print(type(10))?", opcoes: ["&lt;class 'int'&gt;", "&lt;class 'float'&gt;", "&lt;class 'str'&gt;", "&lt;class 'number'&gt;"], correta: 0, explicacao: "Inteiros são da classe 'int'." }
+            ]
+        };
+
+        function toggleChip(el, group) {
+            document.querySelectorAll('#chips-' + group + ' .chip').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            chips[group] = [el.textContent.trim()];
+        }
+
+        function toggleChipMulti(el, group) {
+            el.classList.toggle('selected');
+            chips[group] = Array.from(document.querySelectorAll('#chips-' + group + ' .chip.selected')).map(c => c.textContent.trim());
+        }
+
+        function show(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (config && config.vaga && document.getElementById('header-stats')) {
+                document.getElementById('header-stats').style.display = 'flex';
+                document.getElementById('header-vaga').textContent = config.vaga;
+                document.getElementById('header-nivel').textContent = config.nivel;
+                document.getElementById('header-candidatos').textContent = candidatos.length;
+            }
+        }
+
+        async function gerarQuestoes() {
+            const aplicador = document.getElementById('s-aplicador').value.trim();
+            const vaga = document.getElementById('s-vaga').value.trim();
+            const vagasCount = parseInt(document.getElementById('s-vagas').value);
+            
+            if (!aplicador || !vaga) { alert('Preencha nome do aplicador e vaga.'); return; }
+            if (!chips.nivel.length) { alert('Selecione o nível esperado.'); return; }
+            if (!chips.tech.length) { alert('Selecione ao menos uma tecnologia.'); return; }
+            if (!chips.idioma.length) { alert('Selecione ao menos um idioma.'); return; }
+
+            config = { aplicador, vaga, nivel: chips.nivel[0], techs: chips.tech, idiomas: chips.idioma, nq: parseInt(document.getElementById('s-nq').value), foco: document.getElementById('s-foco').value, obs: document.getElementById('s-obs').value.trim(), vagas: vagasCount };
+
+            show('screen-loading-q');
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            banco = [];
+            let idCounter = 1;
+            for (let tech of config.techs) {
+                const questoesTech = questoesReais[tech] || questoesReais.JavaScript;
+                for (let q of questoesTech) {
+                    if (banco.length < config.nq) {
+                        banco.push({ id: idCounter++, tech: tech, tipo: config.foco === 'pratica' ? 'pratica' : 'teoria', dificuldade: config.nivel === 'júnior' ? 'facil' : 'medio', enunciado: q.enunciado, codigo: null, opcoes: [...q.opcoes], correta: q.correta, explicacao: q.explicacao });
+                    }
+                }
+            }
+            
+            const cIdiomaWrap = document.getElementById('chips-c-idioma');
+            cIdiomaWrap.innerHTML = '';
+            config.idiomas.forEach((id, i) => {
+                const c = document.createElement('div');
+                c.className = 'chip' + (i === 0 ? ' selected' : '');
+                c.textContent = id;
+                c.onclick = function() {
+                    document.querySelectorAll('#chips-c-idioma .chip').forEach(x => x.classList.remove('selected'));
+                    this.classList.add('selected');
+                    chipsC.idioma = this.textContent.trim();
+                };
+                cIdiomaWrap.appendChild(c);
+            });
+            chipsC.idioma = config.idiomas[0];
+            show('screen-candidato-form');
+        }
+
+        function showCandidatoForm() {
+            document.getElementById('alert-limite').style.display = 'none';
+            document.getElementById('alert-dup').style.display = 'none';
+            document.getElementById('c-nome-input').value = '';
+            show('screen-candidato-form');
+        }
+
+        function iniciarCandidato() {
+            const nome = document.getElementById('c-nome-input').value.trim();
+            if (!nome) { alert('Digite o nome.'); return; }
+            if (candidatos.find(c => c.nome.toLowerCase() === nome.toLowerCase())) { document.getElementById('alert-dup').style.display = 'block'; return; }
+            if (candidatos.length >= config.vagas * 3) { document.getElementById('alert-limite').style.display = 'block'; return; }
+            
+            sessaoAtual = { nome: nome, idioma: chipsC.idioma, idx: 0, respostas: [], acertos: 0, porTech: {}, inicio: Date.now(), selecionado: null };
+            show('screen-candidato');
+            renderQuestao();
+        }
+
+        function renderQuestao() {
+            if (!banco.length || sessaoAtual.idx >= banco.length) return;
+            const q = banco[sessaoAtual.idx];
+            const total = banco.length;
+            const pct = Math.round((sessaoAtual.idx / total) * 100);
+            document.getElementById('p-q-label').textContent = `questão ${sessaoAtual.idx + 1} de ${total}`;
+            document.getElementById('p-pct').textContent = pct + '%';
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('q-counter').textContent = `${sessaoAtual.acertos} acerto${sessaoAtual.acertos !== 1 ? 's' : ''}`;
+
+            let html = `<div class="question-card"><div class="q-meta"><span>${q.tech}</span><span>${q.tipo}</span><span>${q.dificuldade}</span></div><div class="q-text">${q.enunciado}</div>`;
+            const letras = ['A', 'B', 'C', 'D'];
+            q.opcoes.forEach((op, i) => { html += `<div class="option" id="opt-${i}" onclick="selectOpt(${i})"><div class="opt-marker">${letras[i]}</div><div class="opt-label">${op}</div></div>`; });
+            html += `</div>`;
+            document.getElementById('quiz-area').innerHTML = html;
+            sessaoAtual.selecionado = null;
+        }
+
+        function selectOpt(i) {
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+            document.getElementById('opt-' + i).classList.add('selected');
+            sessaoAtual.selecionado = i;
+        }
+
+        function responder() {
+            if (sessaoAtual.selecionado === null) { alert('Selecione uma alternativa.'); return; }
+            const q = banco[sessaoAtual.idx];
+            const correto = sessaoAtual.selecionado === q.correta;
+            if (correto) sessaoAtual.acertos++;
+            if (!sessaoAtual.porTech[q.tech]) sessaoAtual.porTech[q.tech] = { acertos: 0, total: 0 };
+            if (correto) sessaoAtual.porTech[q.tech].acertos++;
+            sessaoAtual.porTech[q.tech].total++;
+            sessaoAtual.respostas.push({ qid: q.id, tech: q.tech, selecionado: sessaoAtual.selecionado, correta: q.correta, correto });
+            sessaoAtual.idx++;
+            if (sessaoAtual.idx < banco.length) renderQuestao();
+            else finalizarCandidato();
+        }
+
+        function nivelCalc(pct) {
+            if (pct < 40) return { label: 'abaixo do perfil', color: 'danger' };
+            if (pct < 60) return { label: 'júnior', color: 'warn' };
+            if (pct < 80) return { label: 'pleno', color: 'info' };
+            return { label: 'sênior', color: 'success' };
+        }
+
+        function finalizarCandidato() {
+            const pct = Math.round((sessaoAtual.acertos / banco.length) * 100);
+            const nv = nivelCalc(pct);
+            const duracao = Math.round((Date.now() - sessaoAtual.inicio) / 60000);
+            candidatos.push({ nome: sessaoAtual.nome, idioma: sessaoAtual.idioma, acertos: sessaoAtual.acertos, total: banco.length, pct, nivel: nv.label, porTech: sessaoAtual.porTech, duracao, respostas: sessaoAtual.respostas, timestamp: new Date().toISOString() });
+            document.getElementById('r-nome').textContent = sessaoAtual.nome;
+            document.getElementById('r-score').textContent = sessaoAtual.acertos;
+            document.getElementById('r-total-q').textContent = banco.length;
+            document.getElementById('r-nivel-badge').textContent = nv.label;
+            document.getElementById('r-metrics').innerHTML = `<div class="metric-card"><div class="val">${pct}%</div><div class="lbl">aproveitamento</div></div><div class="metric-card"><div class="val">${duracao}min</div><div class="lbl">duração</div></div><div class="metric-card"><div class="val">${banco.length - sessaoAtual.acertos}</div><div class="lbl">erros</div></div>`;
+            let techHtml = '';
+            Object.entries(sessaoAtual.porTech).forEach(([tech, v]) => { const tp = Math.round((v.acertos / v.total) * 100); techHtml += `<div class="tech-row"><span style="min-width:90px;">${tech}</span><div class="tech-bar-wrap"><div class="tech-bar" style="width:${tp}%"></div></div><span>${v.acertos}/${v.total} (${tp}%)</span></div>`; });
+            document.getElementById('r-tech-breakdown').innerHTML = techHtml;
+            show('screen-result');
+        }
+
+        function showRanking() {
+            const sorted = [...candidatos].sort((a, b) => b.pct - a.pct);
+            document.getElementById('ranking-info').textContent = `${candidatos.length} candidato(s) avaliado(s) • vaga: ${config.vaga} • aplicador: ${config.aplicador}`;
+            let html = '';
+            sorted.forEach((c, i) => { html += `<div class="ranking-item"><div class="rank-num ${i === 0 ? 'first' : ''}">${i + 1}º</div><div class="rank-info"><div class="rank-name">${c.nome}</div><div class="rank-meta">${c.nivel} · ${c.duracao}min · ${c.idioma}</div></div><div style="text-align:right;"><div class="rank-pts">${c.pct}%</div><div style="font-size:11px;">${c.acertos}/${c.total}</div></div></div>`; });
+            document.getElementById('ranking-list').innerHTML = html;
+            show('screen-ranking');
+        }
+
+        function exportarJSON() {
+            const data = { meta: { exportado_em: new Date().toISOString(), aplicador: config.aplicador, vaga: config.vaga, nivel_esperado: config.nivel, tecnologias: config.techs, total_questoes: banco.length, total_candidatos: candidatos.length }, candidatos: [...candidatos].sort((a, b) => b.pct - a.pct), banco_questoes: banco.map(q => ({ id: q.id, tech: q.tech, enunciado: q.enunciado })) };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `selecao_${config.vaga.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function novaSelecao() {
+            if (confirm('Iniciar nova seleção? Os dados serão perdidos.')) { candidatos = []; banco = []; config = {}; chips = { nivel: [], tech: [], idioma: [] }; show('screen-setup'); }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('#chips-nivel .chip')?.click();
+            document.querySelectorAll('#chips-idioma .chip').forEach(c => { if (c.textContent === 'português') c.classList.add('selected'); });
+            chips.idioma = ['português'];
+            ['HTML', 'CSS', 'JavaScript'].forEach(tech => { document.querySelectorAll('#chips-tech .chip').forEach(c => { if (c.textContent === tech) c.classList.add('selected'); }); });
+            chips.tech = ['HTML', 'CSS', 'JavaScript'];
+        });
+    </script>
+</body>
+</html>
