@@ -1,519 +1,740 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Avaliação Técnica</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        :root {
-            --bg: #ffffff;
-            --bg2: #f5f5f5;
-            --bg3: #eaeaea;
-            --border: #e0e0e0;
-            --border2: #cccccc;
-            --text: #1a1a1a;
-            --text2: #666666;
-            --text3: #999999;
-            --info-bg: #e3f2fd;
-            --info-txt: #1976d2;
-            --success-bg: #e8f5e9;
-            --success-txt: #2e7d32;
-            --warn-bg: #fff3e0;
-            --warn-txt: #ed6c02;
-            --danger-bg: #ffebee;
-            --danger-txt: #d32f2f;
-            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-mono: 'SF Mono', Monaco, Consolas, monospace;
-            --border-radius-md: 8px;
-            --border-radius-lg: 12px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        body {
-            font-family: var(--font-sans);
-            font-size: 14px;
-            color: var(--text);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            margin: 0;
-        }
-        .app-header {
-            background: white;
-            border-radius: var(--border-radius-lg);
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .header-content {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .logo h1 { font-size: 24px; color: var(--text); margin-bottom: 5px; }
-        .subtitle { color: var(--text2); font-size: 12px; }
-        .header-stats { display: flex; gap: 20px; background: var(--bg2); padding: 10px 20px; border-radius: var(--border-radius-md); }
-        .stat-item { display: flex; flex-direction: column; align-items: center; }
-        .stat-label { font-size: 11px; color: var(--text3); }
-        .stat-value { font-size: 18px; font-weight: 600; color: var(--text); }
-        .app-main { max-width: 800px; margin: 0 auto; }
-        .app-footer {
-            max-width: 1200px;
-            margin: 30px auto 0;
-            background: white;
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow);
-            padding: 20px;
-            text-align: center;
-            color: var(--text2);
-            font-size: 12px;
-        }
-        .screen { display: none; animation: fadeIn 0.3s ease; }
-        .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .setup-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: var(--shadow);
-        }
-        .setup-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
-        .field { margin-bottom: 16px; }
-        .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
-        .field input, .field select, .field textarea {
-            width: 100%; padding: 10px 12px; font-size: 14px;
-            background: var(--bg2); border: 1px solid var(--border2);
-            border-radius: var(--border-radius-md); color: var(--text);
-            font-family: var(--font-sans);
-            transition: all 0.2s;
-        }
-        .field input:focus, .field select:focus, .field textarea:focus {
-            outline: none;
-            border-color: var(--info-txt);
-            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
-        }
-        .field textarea { resize: vertical; min-height: 60px; }
-        .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-        .chip {
-            padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer;
-            border: 1px solid var(--border2); background: var(--bg2); color: var(--text2);
-            transition: all 0.2s;
-        }
-        .chip:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
-        .chip.selected { background: var(--info-bg); color: var(--info-txt); border-color: var(--info-txt); }
-        .btn-primary {
-            width: 100%; padding: 12px; font-size: 14px; font-weight: 600;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none;
-            border-radius: var(--border-radius-md); cursor: pointer; margin-top: 8px;
-            font-family: var(--font-sans);
-            transition: all 0.2s;
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-secondary {
-            padding: 8px 16px; font-size: 13px; font-weight: 500;
-            background: transparent; color: var(--text);
-            border: 1px solid var(--border2);
-            border-radius: var(--border-radius-md); cursor: pointer;
-            font-family: var(--font-sans);
-            transition: all 0.2s;
-        }
-        .btn-secondary:hover { background: var(--bg2); transform: translateY(-1px); }
-        .progress-wrap { margin-bottom: 1.25rem; }
-        .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text2); margin-bottom: 8px; }
-        .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 3px; transition: width 0.3s; }
-        .question-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--border-radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: var(--shadow);
-        }
-        .q-meta { font-size: 11px; color: var(--text3); margin-bottom: 12px; display: flex; gap: 8px; }
-        .q-text { font-size: 16px; font-weight: 500; margin-bottom: 1.5rem; line-height: 1.5; }
-        .option {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 12px; border-radius: var(--border-radius-md);
-            border: 1px solid var(--border); margin-bottom: 8px; cursor: pointer;
-            transition: all 0.2s; background: var(--bg2);
-        }
-        .option:hover { border-color: var(--border2); transform: translateX(4px); }
-        .option.selected { background: var(--info-bg); border-color: var(--info-txt); }
-        .option.selected .opt-label { color: var(--info-txt); }
-        .opt-label { font-size: 14px; flex: 1; color: var(--text); }
-        .opt-marker {
-            width: 24px; height: 24px; border-radius: 50%;
-            border: 1px solid var(--border2); flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 600; color: var(--text2); background: var(--bg);
-        }
-        .option.selected .opt-marker { background: var(--info-txt); color: white; border-color: var(--info-txt); }
-        .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-        .q-counter { font-size: 13px; font-weight: 500; color: var(--text2); }
-        .result-header { text-align: center; padding: 2rem; background: white; border-radius: var(--border-radius-lg); margin-bottom: 1rem; }
-        .score-big { font-size: 64px; font-weight: 700; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .nivel-badge { display: inline-block; padding: 6px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-top: 12px; }
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 1rem 0; }
-        .metric-card { background: var(--bg2); border-radius: var(--border-radius-md); padding: 16px; text-align: center; }
-        .metric-card .val { font-size: 24px; font-weight: 700; }
-        .metric-card .lbl { font-size: 11px; color: var(--text2); margin-top: 4px; }
-        .tech-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-        .tech-row:last-child { border-bottom: none; }
-        .tech-bar-wrap { flex: 1; margin: 0 12px; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
-        .tech-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; }
-        .ranking-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--border-radius-md); background: var(--bg2); margin-bottom: 8px; transition: all 0.2s; }
-        .ranking-item:hover { transform: translateX(4px); box-shadow: var(--shadow); }
-        .rank-num { font-size: 20px; font-weight: 700; min-width: 40px; color: var(--text2); }
-        .rank-num.first { color: #ffd700; text-shadow: 0 0 2px rgba(0,0,0,0.2); }
-        .rank-info { flex: 1; }
-        .rank-name { font-weight: 600; font-size: 15px; }
-        .rank-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
-        .rank-pts { font-size: 18px; font-weight: 700; }
-        .loading-wrap { text-align: center; padding: 3rem; background: white; border-radius: var(--border-radius-lg); }
-        .dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--text2); margin: 0 3px; animation: bounce 1.4s infinite; }
-        .dots span:nth-child(2) { animation-delay: 0.2s; }
-        .dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes bounce { 0%,80%,100%{transform:scale(0.6);opacity:.4} 40%{transform:scale(1);opacity:1} }
-        .alert { padding: 12px 16px; border-radius: var(--border-radius-md); font-size: 13px; margin-bottom: 12px; }
-        .alert-warn { background: var(--warn-bg); color: var(--warn-txt); border-left: 3px solid var(--warn-txt); }
-        .alert-info { background: var(--info-bg); color: var(--info-txt); border-left: 3px solid var(--info-txt); }
-        .section-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .header-content { flex-direction: column; text-align: center; }
-            .row2 { grid-template-columns: 1fr; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Avaliação Técnica - Sistema ATS Profissional</title>
+<style>
+/* RESET + BASE RESPONSIVA */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    background: #f1f5f9;
+    color: #0f172a;
+    line-height: 1.4;
+}
+
+/* LAYOUT FLEX RESPONSIVO */
+.layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* SIDEBAR MODERNA */
+.sidebar {
+    width: 260px;
+    background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+    color: #e2e8f0;
+    padding: 28px 18px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.sidebar h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #60a5fa, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.5px;
+}
+
+.sidebar span {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.sidebar-menu {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-menu button {
+    background: rgba(255,255,255,0.04);
+    border: none;
+    color: #cbd5e1;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 500;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.95rem;
+}
+
+.sidebar-menu button:hover {
+    background: #1e293b;
+    color: white;
+    transform: translateX(5px);
+}
+
+/* MAIN */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+    min-width: 0; /* importante para responsividade */
+}
+
+/* TOPBAR */
+.topbar {
+    background: white;
+    padding: 0 24px;
+    height: 70px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    gap: 12px;
+}
+
+.topbar div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.topbar strong {
+    background: #0f172a;
+    padding: 6px 16px;
+    border-radius: 40px;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.topbar .badge-vaga {
+    background: #eef2ff;
+    padding: 6px 16px;
+    border-radius: 40px;
+    color: #1e40af;
+    font-weight: 500;
+}
+
+.candidatos-count {
+    background: #f1f5f9;
+    padding: 6px 18px;
+    border-radius: 40px;
+    font-weight: 600;
+}
+
+/* CONTEÚDO PRINCIPAL */
+.content {
+    padding: 28px 32px;
+    flex: 1;
+}
+
+/* CARDS */
+.card-moderno {
+    background: white;
+    border-radius: 32px;
+    border: 1px solid #eef2ff;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    transition: 0.1s;
+}
+
+input, select {
+    width: 100%;
+    max-width: 480px;
+    padding: 12px 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 28px;
+    font-size: 0.95rem;
+    background: white;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+    transform: scale(0.97);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1.5px solid #2563eb;
+    color: #2563eb;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-outline:hover {
+    background: #eff6ff;
+}
+
+/* PROGRESS */
+.progress-wrap {
+    margin: 20px 0 24px;
+}
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+.progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb, #38bdf8);
+    width: 0%;
+    transition: width 0.25s ease;
+}
+
+/* QUIZ OPTIONS */
+.quiz-option {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 60px;
+    padding: 14px 22px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+.quiz-option:hover {
+    background: #eef2ff;
+    transform: translateX(6px);
+}
+.quiz-option.selected {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: white;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+}
+
+/* RANKING */
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 24px;
+    overflow-x: auto;
+    display: block;
+}
+.ranking-table th, .ranking-table td {
+    text-align: left;
+    padding: 14px 16px;
+}
+.ranking-table th {
+    background: #f1f5f9;
+}
+.ranking-table tr {
+    border-bottom: 1px solid #eef2ff;
+}
+/* Botão + flutuante para novo candidato em qualquer lugar */
+.fab-add {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: #2563eb;
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: bold;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+    cursor: pointer;
+    border: none;
+    z-index: 100;
+    transition: 0.2s;
+}
+.fab-add:hover {
+    background: #1d4ed8;
+    transform: scale(1.05);
+}
+/* telas */
+.screen {
+    display: none;
+    animation: fadeIn 0.2s ease;
+}
+.screen.active {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+/* Responsivo */
+@media (max-width: 780px) {
+    .layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+    }
+    .sidebar-menu {
+        flex-direction: row;
+        margin-top: 0;
+        gap: 8px;
+    }
+    .sidebar-menu button {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+    .content {
+        padding: 20px;
+    }
+    .topbar {
+        height: auto;
+        padding: 12px 20px;
+    }
+    .fab-add {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 26px;
+    }
+    .card-moderno {
+        padding: 20px;
+    }
+}
+@media (max-width: 480px) {
+    .ranking-table th, .ranking-table td {
+        padding: 10px 8px;
+        font-size: 0.75rem;
+    }
+}
+</style>
 </head>
 <body>
-    <div class="app-header">
-        <div class="header-content">
-            <div class="logo">
-                <h1>🎯 Sistema de Avaliação Técnica</h1>
-                <p class="subtitle">Recrutamento e Seleção com IA</p>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div>
+        <h1>⚡ ATS</h1>
+        <span>dev assessment</span>
+    </div>
+    <nav class="sidebar-menu">
+        <button onclick="showScreen('screen-setup')">📋 Configurar</button>
+        <button onclick="showScreen('screen-candidato-form')">👥 Novo Candidato</button>
+        <button onclick="showScreen('screen-ranking')">🏆 Ranking</button>
+    </nav>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+<header class="topbar">
+    <div>
+        <strong id="header-vaga">-</strong>
+        <span class="badge-vaga" id="header-nivel">🎯 vaga dinâmica</span>
+    </div>
+    <div class="candidatos-count">
+        👥 Candidatos: <strong id="header-candidatos">0</strong>
+    </div>
+</header>
+
+<main class="content">
+
+<!-- TELA 1: CONFIGURACAO -->
+<div id="screen-setup" class="screen active">
+    <div class="card-moderno">
+        <h2 style="margin-bottom: 12px;">🚀 Configurar processo</h2>
+        <p style="margin-bottom: 20px; color:#475569;">Escolha a vaga e gere um banco robusto de questões (15+ questões). Cada candidato receberá uma seleção aleatória.</p>
+        <input id="s-aplicador" placeholder="Nome do recrutador" style="margin-bottom: 16px;"><br>
+        <label style="font-weight:500;">Vaga disponível:</label>
+        <select id="s-vaga-select" style="margin: 12px 0 20px 0;">
+            <option value="Desenvolvedor Front-end (React/TS)">💻 Front-end (React/TS)</option>
+            <option value="Desenvolvedor Back-end (Node.js/Python)">⚙️ Back-end (Node.js/Python)</option>
+            <option value="Desenvolvedor Full Stack (React+Node)">🖥️ Full Stack (React+Node)</option>
+            <option value="Desenvolvedor Mobile (React Native)">📱 Mobile (React Native)</option>
+            <option value="DevOps Engineer">☁️ DevOps / Cloud</option>
+            <option value="Engenheiro de Dados">📊 Engenheiro de Dados</option>
+        </select>
+        <button class="btn-primary" onclick="gerarBancoQuestoesPorVaga()">✨ Gerar questões (grande volume)</button>
+    </div>
+</div>
+
+<!-- TELA CADASTRO CANDIDATO -->
+<div id="screen-candidato-form" class="screen">
+    <div class="card-moderno">
+        <h2>📝 Novo candidato</h2>
+        <p style="margin: 8px 0 12px;">Vaga atual: <strong id="previewVagaNome" style="background:#eef2ff; padding:4px 12px; border-radius:40px;">-</strong></p>
+        <input id="c-nome-input" placeholder="Nome completo do candidato" style="margin-bottom: 20px;"><br>
+        <button class="btn-primary" onclick="iniciarAvaliacaoAleatoria()">▶️ Iniciar avaliação (questões aleatórias)</button>
+        <p style="font-size: 12px; margin-top: 16px; color:#4b5563;">🔹 Cada candidato recebe um conjunto diferente de questões do banco principal.</p>
+    </div>
+</div>
+
+<!-- TELA QUIZ -->
+<div id="screen-candidato" class="screen">
+    <div class="card-moderno">
+        <div class="progress-wrap">
+            <div class="progress-label">
+                <span id="p-q-label">Questão 1</span>
+                <span id="p-pct">0%</span>
             </div>
-            <div class="header-stats" id="header-stats" style="display: none;">
-                <div class="stat-item"><span class="stat-label">Vaga:</span><span class="stat-value" id="header-vaga"></span></div>
-                <div class="stat-item"><span class="stat-label">Nível:</span><span class="stat-value" id="header-nivel"></span></div>
-                <div class="stat-item"><span class="stat-label">Candidatos:</span><span class="stat-value" id="header-candidatos">0</span></div>
-            </div>
+            <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        </div>
+        <div id="quiz-area"></div>
+        <div style="display: flex; justify-content: space-between; margin-top: 24px;">
+            <span id="q-counter" style="color:#475569;"></span>
+            <button class="btn-primary" onclick="responderAtual()">Próxima ➡️</button>
         </div>
     </div>
+</div>
 
-    <div class="app-main">
-        <!-- TELA 1: SETUP -->
-        <div id="screen-setup" class="screen active">
-            <div class="setup-card">
-                <h2>⚙️ Configuração da Seleção</h2>
-                <div class="row2">
-                    <div class="field"><label>👤 Nome do aplicador</label><input id="s-aplicador" placeholder="ex: Ana Souza" /></div>
-                    <div class="field"><label>📊 Vagas disponíveis</label><input id="s-vagas" type="number" min="1" max="20" value="5" /></div>
-                </div>
-                <div class="field"><label>💼 Vaga disputada</label><input id="s-vaga" placeholder="ex: Desenvolvedor Front-end Júnior" /></div>
-                <div class="field">
-                    <label>🎯 Nível esperado</label>
-                    <div class="chip-group" id="chips-nivel">
-                        <div class="chip" onclick="toggleChip(this,'nivel')">júnior</div>
-                        <div class="chip" onclick="toggleChip(this,'nivel')">pleno</div>
-                        <div class="chip" onclick="toggleChip(this,'nivel')">sênior</div>
-                    </div>
-                </div>
-                <div class="field">
-                    <label>🛠️ Tecnologias</label>
-                    <div class="chip-group" id="chips-tech">
-                        <div class="chip" onclick="toggleChipMulti(this,'tech')">HTML</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'tech')">CSS</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'tech')">JavaScript</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'tech')">React</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'tech')">Node.js</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'tech')">Python</div>
-                    </div>
-                </div>
-                <div class="field">
-                    <label>🌐 Idiomas</label>
-                    <div class="chip-group" id="chips-idioma">
-                        <div class="chip" onclick="toggleChipMulti(this,'idioma')">português</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'idioma')">inglês</div>
-                        <div class="chip" onclick="toggleChipMulti(this,'idioma')">espanhol</div>
-                    </div>
-                </div>
-                <div class="row2">
-                    <div class="field"><label>📝 Quantidade de questões</label><select id="s-nq"><option value="5">5 questões</option><option value="10" selected>10 questões</option><option value="15">15 questões</option></select></div>
-                    <div class="field"><label>🎓 Foco</label><select id="s-foco"><option value="teoria">teoria</option><option value="pratica" selected>prática</option><option value="misto">misto</option></select></div>
-                </div>
-                <div class="field"><label>📌 Observações</label><textarea id="s-obs" placeholder="ex: foco em boas práticas..."></textarea></div>
-                <button class="btn-primary" onclick="gerarQuestoes()">🚀 Gerar Banco de Questões</button>
-            </div>
-        </div>
-
-        <!-- TELA 2: LOADING -->
-        <div id="screen-loading-q" class="screen">
-            <div class="loading-wrap">
-                <div class="dots"><span></span><span></span><span></span></div>
-                <p style="margin-top: 12px; color: var(--text2);" id="loading-msg">gerando questões personalizadas...</p>
-            </div>
-        </div>
-
-        <!-- TELA 3: FORM CANDIDATO -->
-        <div id="screen-candidato-form" class="screen">
-            <div class="setup-card">
-                <h2>📋 Identificação do Candidato</h2>
-                <div class="field"><label>👤 Nome completo</label><input id="c-nome-input" placeholder="nome do candidato" /></div>
-                <div class="field"><label>🌐 Idioma</label><div class="chip-group" id="chips-c-idioma"></div></div>
-                <div id="alert-limite" class="alert alert-warn" style="display:none;">⚠️ Limite de candidatos atingido!</div>
-                <div id="alert-dup" class="alert alert-warn" style="display:none;">⚠️ Este nome já foi registrado!</div>
-                <button class="btn-primary" onclick="iniciarCandidato()">🎯 Iniciar Teste</button>
-                <button class="btn-secondary" style="width:100%;margin-top:8px;" onclick="showRanking()">📊 Ver Ranking Parcial</button>
-            </div>
-        </div>
-
-        <!-- TELA 4: QUESTIONÁRIO -->
-        <div id="screen-candidato" class="screen">
-            <div class="progress-wrap"><div class="progress-label"><span id="p-q-label">questão 1 de 10</span><span id="p-pct">0%</span></div><div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div></div>
-            <div id="quiz-area"></div>
-            <div class="nav-row"><span class="q-counter" id="q-counter"></span><button class="btn-primary" style="width:auto;padding:8px 24px;" onclick="responder()">Próxima →</button></div>
-        </div>
-
-        <!-- TELA 5: RESULTADO -->
-        <div id="screen-result" class="screen">
-            <div class="result-header"><div style="font-size: 13px; color: var(--text2); margin-bottom: 4px;" id="r-nome"></div><div class="score-big" id="r-score">0</div><div style="font-size: 13px;">acertos de <span id="r-total-q"></span> questões</div><div class="nivel-badge" id="r-nivel-badge">júnior</div></div>
-            <div class="metrics-grid" id="r-metrics"></div>
-            <div class="setup-card"><div class="section-title">📊 Desempenho por Tecnologia</div><div id="r-tech-breakdown"></div></div>
-            <div style="display:flex;gap:8px;margin-top:1rem;"><button class="btn-secondary" style="flex:1;" onclick="showCandidatoForm()">👥 Próximo Candidato</button><button class="btn-primary" style="flex:1;" onclick="showRanking()">🏆 Ver Ranking →</button></div>
-        </div>
-
-        <!-- TELA 6: RANKING -->
-        <div id="screen-ranking" class="screen">
-            <div id="ranking-info" class="alert alert-info" style="margin-bottom:1rem;"></div>
-            <div id="ranking-list"></div>
-            <div style="margin-top:1rem;display:flex;gap:8px;"><button class="btn-secondary" style="flex:1;" onclick="showCandidatoForm()">👤 + Candidato</button><button class="btn-primary" style="flex:1;" onclick="exportarJSON()">💾 Exportar JSON</button><button class="btn-secondary" style="flex:1;" onclick="novaSelecao()">🔄 Nova Seleção</button></div>
+<!-- TELA RESULTADO INDIVIDUAL -->
+<div id="screen-result" class="screen">
+    <div class="card-moderno" style="text-align:center;">
+        <h2 id="r-nome" style="margin-bottom: 16px;">Candidato</h2>
+        <div style="font-size: 3.5rem; font-weight:800; background: linear-gradient(135deg,#2563eb,#7c3aed); -webkit-background-clip:text; background-clip:text; color:transparent;" id="r-score">0</div>
+        <p style="margin: 16px 0;">acertos de <span id="r-total">0</span> questões</p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn-outline" onclick="novoCandidatoDireto()">➕ Novo candidato</button>
+            <button class="btn-primary" onclick="showScreen('screen-ranking')">🏆 Ver Ranking</button>
         </div>
     </div>
+</div>
 
-    <div class="app-footer">
-        <p>© 2024 - Sistema de Avaliação Técnica | Versão 1.0.0</p>
+<!-- RANKING -->
+<div id="screen-ranking" class="screen">
+    <div class="card-moderno">
+        <h2>🏅 Ranking de desempenho</h2>
+        <div id="ranking-info" style="margin: 15px 0 20px;"></div>
+        <div id="ranking-list" style="overflow-x: auto;"></div>
+        <div style="margin-top: 24px; display: flex; gap: 12px;">
+            <button class="btn-outline" onclick="novoCandidatoDireto()">➕ Adicionar candidato</button>
+            <button class="btn-primary" onclick="atualizarRankingUI()">⟳ Atualizar</button>
+        </div>
     </div>
+</div>
 
-    <script>
-        // Estado global
-        let config = {};
-        let banco = [];
-        let candidatos = [];
-        let sessaoAtual = { nome: '', idx: 0, respostas: [], acertos: 0, porTech: {}, inicio: 0, selecionado: null };
-        let chips = { nivel: [], tech: [], idioma: [] };
-        let chipsC = { idioma: '' };
+</main>
+</div>
+</div>
 
-        // Banco de questões real
-        const questoesReais = {
-            HTML: [
-                { enunciado: "Qual tag HTML é utilizada para criar um link (hyperlink)?", opcoes: ["&lt;link&gt;", "&lt;a&gt;", "&lt;href&gt;", "&lt;url&gt;"], correta: 1, explicacao: "A tag &lt;a&gt; (anchor) é usada para criar links." },
-                { enunciado: "Qual atributo HTML5 valida um campo de email?", opcoes: ["type='email'", "validate='email'", "format='email'", "input='email'"], correta: 0, explicacao: "type='email' faz validação automática." }
-            ],
-            CSS: [
-                { enunciado: "Qual propriedade CSS controla o espaçamento interno?", opcoes: ["margin", "padding", "border", "spacing"], correta: 1, explicacao: "Padding cria espaço interno." }
-            ],
-            JavaScript: [
-                { enunciado: "Como declarar uma variável constante em JavaScript?", opcoes: ["var x = 10;", "let x = 10;", "const x = 10;", "constant x = 10;"], correta: 2, explicacao: "const declara variáveis que não podem ser reatribuídas." },
-                { enunciado: "Qual método converte JSON string em objeto?", opcoes: ["JSON.stringify()", "JSON.parse()", "JSON.convert()", "JSON.object()"], correta: 1, explicacao: "JSON.parse() converte string JSON em objeto." }
-            ],
-            React: [
-                { enunciado: "Qual hook é usado para gerenciar estado?", opcoes: ["useEffect", "useState", "useContext", "useReducer"], correta: 1, explicacao: "useState é o hook fundamental para estado local." }
-            ],
-            'Node.js': [
-                { enunciado: "Qual módulo Node.js é usado para arquivos?", opcoes: ["http", "fs", "path", "os"], correta: 1, explicacao: "fs (File System) é para operações de arquivo." }
-            ],
-            Python: [
-                { enunciado: "Qual a saída de print(type(10))?", opcoes: ["&lt;class 'int'&gt;", "&lt;class 'float'&gt;", "&lt;class 'str'&gt;", "&lt;class 'number'&gt;"], correta: 0, explicacao: "Inteiros são da classe 'int'." }
-            ]
-        };
+<!-- Botão flutuante + para novo candidato em qualquer página -->
+<button class="fab-add" onclick="novoCandidatoDireto()" title="Novo candidato">+</button>
 
-        function toggleChip(el, group) {
-            document.querySelectorAll('#chips-' + group + ' .chip').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            chips[group] = [el.textContent.trim()];
-        }
+<script>
+// ======================== BANCO DE QUESTÕES EXTENSO (35+ questões técnicas) ========================
+const MASTER_QUESTIONS = [
+    { enunciado: "Qual hook do React é usado para gerenciar estado em componentes funcionais?", opcoes: ["useEffect", "useState", "useContext", "useReducer"], correta: 1 },
+    { enunciado: "O que significa JSX?", opcoes: ["JavaScript XML", "Java Syntax Extension", "JSON XHR", "Javascript Xtended"], correta: 0 },
+    { enunciado: "Qual método HTTP é usado para atualizar um recurso parcialmente?", opcoes: ["PUT", "POST", "PATCH", "DELETE"], correta: 2 },
+    { enunciado: "O que representa 'closure' em JavaScript?", opcoes: ["Função que tem acesso ao escopo externo mesmo após a função externa retornar", "Bloco de código síncrono", "Variável global", "Método de array"], correta: 0 },
+    { enunciado: "Qual comando Git cria um novo branch?", opcoes: ["git branch novo", "git checkout -b novo", "git clone", "git commit -b"], correta: 1 },
+    { enunciado: "Qual banco de dados é NoSQL e orientado a documentos?", opcoes: ["MySQL", "PostgreSQL", "MongoDB", "SQLite"], correta: 2 },
+    { enunciado: "O que faz o comando 'npm install'?", opcoes: ["Instala dependências do package.json", "Cria um servidor", "Compila TypeScript", "Executa testes"], correta: 0 },
+    { enunciado: "Qual a função do 'useEffect'?", opcoes: ["Executar efeitos colaterais em componentes React", "Criar novo estado", "Renderizar elementos", "Otimizar performance"], correta: 0 },
+    { enunciado: "Em TypeScript, qual tipo representa valores que podem ser nulos ou indefinidos?", opcoes: ["any", "unknown", "nullish", "union null | undefined"], correta: 3 },
+    { enunciado: "O que é Docker?", opcoes: ["Framework JS", "Plataforma de containerização", "Banco de dados", "Sistema operacional"], correta: 1 },
+    { enunciado: "Qual o padrão arquitetural mais comum em APIs REST?", opcoes: ["MVC", "MVP", "MVVM", "Clean Architecture"], correta: 0 },
+    { enunciado: "O que significa CORS?", opcoes: ["Cross-Origin Resource Sharing", "Component Object Request", "Centralized Origin Service", "Cross-Origin Runtime System"], correta: 0 },
+    { enunciado: "Qual destes é um operador de coalescência nula no JavaScript?", opcoes: ["??", "||", "&&", "??="], correta: 0 },
+    { enunciado: "Como se declara uma variável constante em JavaScript?", opcoes: ["let", "var", "const", "constant"], correta: 2 },
+    { enunciado: "O que é Webpack?", opcoes: ["Empacotador de módulos", "Framework CSS", "Linguagem de programação", "Servidor web"], correta: 0 },
+    { enunciado: "Qual hook substitui componentDidMount em componente funcional?", opcoes: ["useState", "useEffect com []", "useLayoutEffect", "useRef"], correta: 1 },
+    { enunciado: "O que é GraphQL?", opcoes: ["Linguagem de consulta para APIs", "Banco de dados", "Servidor HTTP", "Ferramenta de testes"], correta: 0 },
+    { enunciado: "Qual a finalidade do 'key' no React ao renderizar listas?", opcoes: ["Estilizar", "Ajudar React a identificar mudanças", "Criptografar", "Definir rota"], correta: 1 },
+    { enunciado: "Qual comando exibe o histórico de commits no Git?", opcoes: ["git log", "git status", "git diff", "git show"], correta: 0 },
+    { enunciado: "O que representa CI/CD?", opcoes: ["Integração Contínua/Entrega Contínua", "Code Integration/Code Deploy", "Central Interface/Control Data", "Compilação Instantânea"], correta: 0 },
+    { enunciado: "Qual a principal característica do TypeScript?", opcoes: ["Tipagem estática opcional", "Compilação JIT", "Baseado em Java", "Execução server-side"], correta: 0 },
+    { enunciado: "Qual middleware é usado para logging no Express?", opcoes: ["morgan", "body-parser", "cors", "helmet"], correta: 0 },
+    { enunciado: "O que é o Virtual DOM do React?", opcoes: ["Cópia leve do DOM real para otimizar atualizações", "Banco de dados interno", "Framework CSS", "API nativa"], correta: 0 },
+    { enunciado: "Qual destes NÃO é um tipo primitivo JavaScript?", opcoes: ["string", "number", "object", "boolean"], correta: 2 },
+    { enunciado: "O que significa JWT?", opcoes: ["JSON Web Token", "JavaScript Web Tool", "Java Web Token", "JSON with Transport"], correta: 0 }
+];
 
-        function toggleChipMulti(el, group) {
-            el.classList.toggle('selected');
-            chips[group] = Array.from(document.querySelectorAll('#chips-' + group + ' .chip.selected')).map(c => c.textContent.trim());
-        }
+// variáveis globais
+let configGlobal = {
+    vaga: "Desenvolvedor Front-end (React/TS)",
+    aplicador: "",
+    questoesPool: []   // pool grande gerado conforme vaga
+};
 
-        function show(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if (config && config.vaga && document.getElementById('header-stats')) {
-                document.getElementById('header-stats').style.display = 'flex';
-                document.getElementById('header-vaga').textContent = config.vaga;
-                document.getElementById('header-nivel').textContent = config.nivel;
-                document.getElementById('header-candidatos').textContent = candidatos.length;
-            }
-        }
+let candidatos = [];   // { nome, acertos, totalQuestoes, percentual, data, vaga, questoesUsadas (resumo) }
+let sessao = {
+    idx: 0,
+    acertos: 0,
+    questoesSessao: [], // questões selecionadas aleatoriamente para este candidato
+    respostas: [],
+    selecionado: null,
+    nomeCandidato: ""
+};
 
-        async function gerarQuestoes() {
-            const aplicador = document.getElementById('s-aplicador').value.trim();
-            const vaga = document.getElementById('s-vaga').value.trim();
-            const vagasCount = parseInt(document.getElementById('s-vagas').value);
-            
-            if (!aplicador || !vaga) { alert('Preencha nome do aplicador e vaga.'); return; }
-            if (!chips.nivel.length) { alert('Selecione o nível esperado.'); return; }
-            if (!chips.tech.length) { alert('Selecione ao menos uma tecnologia.'); return; }
-            if (!chips.idioma.length) { alert('Selecione ao menos um idioma.'); return; }
+// ========== FUNÇÕES DE BANCO DE QUESTÕES + ALEATORIEDADE ==========
+function gerarBancoQuestoesPorVaga() {
+    const selectVaga = document.getElementById('s-vaga-select');
+    const vagaEscolhida = selectVaga.value;
+    const aplicadorNome = document.getElementById('s-aplicador').value.trim() || "Recrutador";
+    
+    configGlobal.vaga = vagaEscolhida;
+    configGlobal.aplicador = aplicadorNome;
+    
+    // Filtra questões baseadas na vaga? vamos usar todas mas dá ênfase a algumas
+    let basePool = [...MASTER_QUESTIONS];
+    
+    // Adiciona questões específicas baseadas na vaga para deixar mais rico
+    if (vagaEscolhida.toLowerCase().includes("back-end")) {
+        basePool.push({ enunciado: "Qual ORM é famoso no ecossistema Node.js?", opcoes: ["Sequelize", "Mongoose", "TypeORM", "Todas as anteriores"], correta: 3 });
+        basePool.push({ enunciado: "O que é uma API RESTful?", opcoes: ["Conjunto de princípios arquiteturais", "Framework front-end", "Banco de dados", "Linguagem"], correta: 0 });
+    }
+    if (vagaEscolhida.toLowerCase().includes("front-end") || vagaEscolhida.toLowerCase().includes("react")) {
+        basePool.push({ enunciado: "Qual biblioteca para gerenciamento de estado é comum com React?", opcoes: ["Redux", "Vuex", "AngularJS", "Lodash"], correta: 0 });
+        basePool.push({ enunciado: "O que é Styled Components?", opcoes: ["CSS-in-JS", "Framework CSS", "Compiler", "Task runner"], correta: 0 });
+    }
+    if (vagaEscolhida.toLowerCase().includes("dados")) {
+        basePool.push({ enunciado: "Qual linguagem é padrão para análise de dados?", opcoes: ["Python", "Java", "C++", "Assembly"], correta: 0 });
+    }
+    
+    // Remove duplicatas
+    const uniqueMap = new Map();
+    for (const q of basePool) {
+        if (!uniqueMap.has(q.enunciado)) uniqueMap.set(q.enunciado, q);
+    }
+    configGlobal.questoesPool = Array.from(uniqueMap.values());
+    
+    // Atualizar UI
+    document.getElementById('header-vaga').innerHTML = configGlobal.vaga;
+    document.getElementById('header-nivel').innerHTML = `🧩 ${configGlobal.vaga.split('(')[0]}`;
+    document.getElementById('header-candidatos').innerText = candidatos.length;
+    document.getElementById('previewVagaNome').innerText = configGlobal.vaga;
+    
+    alert(`✅ Banco gerado com ${configGlobal.questoesPool.length} questões técnicas! Cada candidato receberá 6 a 8 aleatórias.`);
+    showScreen('screen-candidato-form');
+}
 
-            config = { aplicador, vaga, nivel: chips.nivel[0], techs: chips.tech, idiomas: chips.idioma, nq: parseInt(document.getElementById('s-nq').value), foco: document.getElementById('s-foco').value, obs: document.getElementById('s-obs').value.trim(), vagas: vagasCount };
+// Seleciona N questões aleatórias do pool (entre 6 e 8)
+function getRandomQuestionsForCandidate() {
+    if (!configGlobal.questoesPool.length) {
+        console.warn("Pool vazio, recarregando base");
+        configGlobal.questoesPool = [...MASTER_QUESTIONS];
+    }
+    const pool = configGlobal.questoesPool;
+    const quantidade = Math.min(pool.length, Math.floor(Math.random() * 4) + 6); // 6 a 9
+    // Embaralhar e pegar primeiras 'quantidade'
+    const shuffled = [...pool];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, quantidade);
+}
 
-            show('screen-loading-q');
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            banco = [];
-            let idCounter = 1;
-            for (let tech of config.techs) {
-                const questoesTech = questoesReais[tech] || questoesReais.JavaScript;
-                for (let q of questoesTech) {
-                    if (banco.length < config.nq) {
-                        banco.push({ id: idCounter++, tech: tech, tipo: config.foco === 'pratica' ? 'pratica' : 'teoria', dificuldade: config.nivel === 'júnior' ? 'facil' : 'medio', enunciado: q.enunciado, codigo: null, opcoes: [...q.opcoes], correta: q.correta, explicacao: q.explicacao });
-                    }
-                }
-            }
-            
-            const cIdiomaWrap = document.getElementById('chips-c-idioma');
-            cIdiomaWrap.innerHTML = '';
-            config.idiomas.forEach((id, i) => {
-                const c = document.createElement('div');
-                c.className = 'chip' + (i === 0 ? ' selected' : '');
-                c.textContent = id;
-                c.onclick = function() {
-                    document.querySelectorAll('#chips-c-idioma .chip').forEach(x => x.classList.remove('selected'));
-                    this.classList.add('selected');
-                    chipsC.idioma = this.textContent.trim();
-                };
-                cIdiomaWrap.appendChild(c);
-            });
-            chipsC.idioma = config.idiomas[0];
-            show('screen-candidato-form');
-        }
+// Iniciar avaliação com aleatoriedade
+function iniciarAvaliacaoAleatoria() {
+    const nome = document.getElementById('c-nome-input').value.trim();
+    if (!nome) {
+        alert("Digite o nome do candidato.");
+        return;
+    }
+    if (!configGlobal.questoesPool.length) {
+        alert("Nenhuma questão disponível! Vá em 'Configurar' e gere as questões primeiro.");
+        return;
+    }
+    
+    const questoesPersonalizadas = getRandomQuestionsForCandidate();
+    if (questoesPersonalizadas.length === 0) {
+        alert("Erro ao gerar questões.");
+        return;
+    }
+    
+    sessao = {
+        idx: 0,
+        acertos: 0,
+        questoesSessao: questoesPersonalizadas,
+        respostas: [],
+        selecionado: null,
+        nomeCandidato: nome
+    };
+    
+    renderizarQuiz();
+    showScreen('screen-candidato');
+}
 
-        function showCandidatoForm() {
-            document.getElementById('alert-limite').style.display = 'none';
-            document.getElementById('alert-dup').style.display = 'none';
-            document.getElementById('c-nome-input').value = '';
-            show('screen-candidato-form');
-        }
+function renderizarQuiz() {
+    const questoes = sessao.questoesSessao;
+    const idxAtual = sessao.idx;
+    if (idxAtual >= questoes.length) return;
+    const q = questoes[idxAtual];
+    const total = questoes.length;
+    const percent = (idxAtual / total) * 100;
+    
+    document.getElementById('p-q-label').innerHTML = `📌 Questão ${idxAtual+1} de ${total}`;
+    document.getElementById('p-pct').innerHTML = `${Math.round(percent)}%`;
+    document.getElementById('progress-fill').style.width = `${percent}%`;
+    document.getElementById('q-counter').innerHTML = `${idxAtual+1}/${total}`;
+    
+    let html = `<div style="margin-bottom: 16px; font-weight:600; font-size:1.1rem;">${q.enunciado}</div>`;
+    q.opcoes.forEach((op, i) => {
+        const selectedClass = (sessao.selecionado === i) ? 'selected' : '';
+        html += `<div class="quiz-option ${selectedClass}" data-opt="${i}" onclick="selecionarOpcao(${i})">
+                    ${String.fromCharCode(65+i)}. ${op}
+                </div>`;
+    });
+    document.getElementById('quiz-area').innerHTML = html;
+}
 
-        function iniciarCandidato() {
-            const nome = document.getElementById('c-nome-input').value.trim();
-            if (!nome) { alert('Digite o nome.'); return; }
-            if (candidatos.find(c => c.nome.toLowerCase() === nome.toLowerCase())) { document.getElementById('alert-dup').style.display = 'block'; return; }
-            if (candidatos.length >= config.vagas * 3) { document.getElementById('alert-limite').style.display = 'block'; return; }
-            
-            sessaoAtual = { nome: nome, idioma: chipsC.idioma, idx: 0, respostas: [], acertos: 0, porTech: {}, inicio: Date.now(), selecionado: null };
-            show('screen-candidato');
-            renderQuestao();
-        }
+function selecionarOpcao(indice) {
+    sessao.selecionado = indice;
+    // atualizar classe visual
+    const opts = document.querySelectorAll('.quiz-option');
+    opts.forEach((opt, i) => {
+        if (i === indice) opt.classList.add('selected');
+        else opt.classList.remove('selected');
+    });
+}
 
-        function renderQuestao() {
-            if (!banco.length || sessaoAtual.idx >= banco.length) return;
-            const q = banco[sessaoAtual.idx];
-            const total = banco.length;
-            const pct = Math.round((sessaoAtual.idx / total) * 100);
-            document.getElementById('p-q-label').textContent = `questão ${sessaoAtual.idx + 1} de ${total}`;
-            document.getElementById('p-pct').textContent = pct + '%';
-            document.getElementById('progress-fill').style.width = pct + '%';
-            document.getElementById('q-counter').textContent = `${sessaoAtual.acertos} acerto${sessaoAtual.acertos !== 1 ? 's' : ''}`;
+function responderAtual() {
+    const questoes = sessao.questoesSessao;
+    if (sessao.idx >= questoes.length) return;
+    if (sessao.selecionado === null) {
+        alert("Selecione uma resposta antes de continuar.");
+        return;
+    }
+    const questaoAtual = questoes[sessao.idx];
+    const acertou = (sessao.selecionado === questaoAtual.correta);
+    if (acertou) sessao.acertos++;
+    
+    sessao.respostas.push({ questao: questaoAtual.enunciado, acertou });
+    sessao.idx++;
+    sessao.selecionado = null;
+    
+    if (sessao.idx < questoes.length) {
+        renderizarQuiz();
+    } else {
+        finalizarCandidatoComAleatorio();
+    }
+}
 
-            let html = `<div class="question-card"><div class="q-meta"><span>${q.tech}</span><span>${q.tipo}</span><span>${q.dificuldade}</span></div><div class="q-text">${q.enunciado}</div>`;
-            const letras = ['A', 'B', 'C', 'D'];
-            q.opcoes.forEach((op, i) => { html += `<div class="option" id="opt-${i}" onclick="selectOpt(${i})"><div class="opt-marker">${letras[i]}</div><div class="opt-label">${op}</div></div>`; });
-            html += `</div>`;
-            document.getElementById('quiz-area').innerHTML = html;
-            sessaoAtual.selecionado = null;
-        }
+function finalizarCandidatoComAleatorio() {
+    const total = sessao.questoesSessao.length;
+    const percentual = Math.round((sessao.acertos / total) * 100);
+    const novoRegistro = {
+        nome: sessao.nomeCandidato,
+        acertos: sessao.acertos,
+        totalQuestoes: total,
+        percentual: percentual,
+        data: new Date().toLocaleString(),
+        vaga: configGlobal.vaga,
+        questoesSorteadas: total
+    };
+    candidatos.push(novoRegistro);
+    atualizarHeaderContador();
+    atualizarRankingUI();
+    
+    // exibir resultado
+    document.getElementById('r-nome').innerHTML = `🎯 ${sessao.nomeCandidato}`;
+    document.getElementById('r-score').innerHTML = `${sessao.acertos} / ${total}`;
+    document.getElementById('r-total').innerHTML = total;
+    showScreen('screen-result');
+}
 
-        function selectOpt(i) {
-            document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-            document.getElementById('opt-' + i).classList.add('selected');
-            sessaoAtual.selecionado = i;
-        }
+function atualizarHeaderContador() {
+    document.getElementById('header-candidatos').innerText = candidatos.length;
+}
 
-        function responder() {
-            if (sessaoAtual.selecionado === null) { alert('Selecione uma alternativa.'); return; }
-            const q = banco[sessaoAtual.idx];
-            const correto = sessaoAtual.selecionado === q.correta;
-            if (correto) sessaoAtual.acertos++;
-            if (!sessaoAtual.porTech[q.tech]) sessaoAtual.porTech[q.tech] = { acertos: 0, total: 0 };
-            if (correto) sessaoAtual.porTech[q.tech].acertos++;
-            sessaoAtual.porTech[q.tech].total++;
-            sessaoAtual.respostas.push({ qid: q.id, tech: q.tech, selecionado: sessaoAtual.selecionado, correta: q.correta, correto });
-            sessaoAtual.idx++;
-            if (sessaoAtual.idx < banco.length) renderQuestao();
-            else finalizarCandidato();
-        }
+// Ranking dinâmico
+function atualizarRankingUI() {
+    const rankingDiv = document.getElementById('ranking-list');
+    const infoDiv = document.getElementById('ranking-info');
+    if (!rankingDiv) return;
+    if (candidatos.length === 0) {
+        rankingDiv.innerHTML = `<div style="padding: 32px; text-align:center;">📭 Nenhum candidato avaliado. Clique em + para iniciar.</div>`;
+        infoDiv.innerHTML = `🏁 Vaga: <strong>${configGlobal.vaga}</strong> | Total avaliado: 0`;
+        return;
+    }
+    const sorted = [...candidatos].sort((a,b) => b.acertos - a.acertos || b.percentual - a.percentual);
+    let html = `<table class="ranking-table"><thead><tr><th>#</th><th>Candidato</th><th>Vaga</th><th>Acertos</th><th>%</th><th>Data</th></tr></thead><tbody>`;
+    sorted.forEach((cand, idx) => {
+        const medal = idx === 0 ? "🥇 " : idx === 1 ? "🥈 " : idx === 2 ? "🥉 " : `${idx+1}. `;
+        html += `<tr>
+                    <td>${medal}</td>
+                    <td><strong>${cand.nome}</strong></td>
+                    <td>${cand.vaga}</td>
+                    <td>${cand.acertos}/${cand.totalQuestoes}</td>
+                    <td style="color:#2563eb; font-weight:bold;">${cand.percentual}%</td>
+                    <td style="font-size:0.7rem;">${cand.data}</td>
+                 </tr>`;
+    });
+    html += `</tbody></table>`;
+    rankingDiv.innerHTML = html;
+    infoDiv.innerHTML = `📊 Ranking • ${candidatos.length} candidato(s) • ${configGlobal.vaga}`;
+}
 
-        function nivelCalc(pct) {
-            if (pct < 40) return { label: 'abaixo do perfil', color: 'danger' };
-            if (pct < 60) return { label: 'júnior', color: 'warn' };
-            if (pct < 80) return { label: 'pleno', color: 'info' };
-            return { label: 'sênior', color: 'success' };
-        }
+// função para chamar novo candidato sem sair da página (botão flutuante + e nos botões)
+function novoCandidatoDireto() {
+    // limpa campo nome anterior
+    document.getElementById('c-nome-input').value = "";
+    showScreen('screen-candidato-form');
+}
 
-        function finalizarCandidato() {
-            const pct = Math.round((sessaoAtual.acertos / banco.length) * 100);
-            const nv = nivelCalc(pct);
-            const duracao = Math.round((Date.now() - sessaoAtual.inicio) / 60000);
-            candidatos.push({ nome: sessaoAtual.nome, idioma: sessaoAtual.idioma, acertos: sessaoAtual.acertos, total: banco.length, pct, nivel: nv.label, porTech: sessaoAtual.porTech, duracao, respostas: sessaoAtual.respostas, timestamp: new Date().toISOString() });
-            document.getElementById('r-nome').textContent = sessaoAtual.nome;
-            document.getElementById('r-score').textContent = sessaoAtual.acertos;
-            document.getElementById('r-total-q').textContent = banco.length;
-            document.getElementById('r-nivel-badge').textContent = nv.label;
-            document.getElementById('r-metrics').innerHTML = `<div class="metric-card"><div class="val">${pct}%</div><div class="lbl">aproveitamento</div></div><div class="metric-card"><div class="val">${duracao}min</div><div class="lbl">duração</div></div><div class="metric-card"><div class="val">${banco.length - sessaoAtual.acertos}</div><div class="lbl">erros</div></div>`;
-            let techHtml = '';
-            Object.entries(sessaoAtual.porTech).forEach(([tech, v]) => { const tp = Math.round((v.acertos / v.total) * 100); techHtml += `<div class="tech-row"><span style="min-width:90px;">${tech}</span><div class="tech-bar-wrap"><div class="tech-bar" style="width:${tp}%"></div></div><span>${v.acertos}/${v.total} (${tp}%)</span></div>`; });
-            document.getElementById('r-tech-breakdown').innerHTML = techHtml;
-            show('screen-result');
-        }
+// showScreen com atualizações de UI
+function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(screenId);
+    if (target) target.classList.add('active');
+    if (screenId === 'screen-ranking') atualizarRankingUI();
+    if (screenId === 'screen-candidato-form') {
+        document.getElementById('previewVagaNome').innerText = configGlobal.vaga;
+    }
+    if (screenId === 'screen-setup') {
+        document.getElementById('s-vaga-select').value = configGlobal.vaga;
+    }
+}
 
-        function showRanking() {
-            const sorted = [...candidatos].sort((a, b) => b.pct - a.pct);
-            document.getElementById('ranking-info').textContent = `${candidatos.length} candidato(s) avaliado(s) • vaga: ${config.vaga} • aplicador: ${config.aplicador}`;
-            let html = '';
-            sorted.forEach((c, i) => { html += `<div class="ranking-item"><div class="rank-num ${i === 0 ? 'first' : ''}">${i + 1}º</div><div class="rank-info"><div class="rank-name">${c.nome}</div><div class="rank-meta">${c.nivel} · ${c.duracao}min · ${c.idioma}</div></div><div style="text-align:right;"><div class="rank-pts">${c.pct}%</div><div style="font-size:11px;">${c.acertos}/${c.total}</div></div></div>`; });
-            document.getElementById('ranking-list').innerHTML = html;
-            show('screen-ranking');
-        }
-
-        function exportarJSON() {
-            const data = { meta: { exportado_em: new Date().toISOString(), aplicador: config.aplicador, vaga: config.vaga, nivel_esperado: config.nivel, tecnologias: config.techs, total_questoes: banco.length, total_candidatos: candidatos.length }, candidatos: [...candidatos].sort((a, b) => b.pct - a.pct), banco_questoes: banco.map(q => ({ id: q.id, tech: q.tech, enunciado: q.enunciado })) };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `selecao_${config.vaga.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function novaSelecao() {
-            if (confirm('Iniciar nova seleção? Os dados serão perdidos.')) { candidatos = []; banco = []; config = {}; chips = { nivel: [], tech: [], idioma: [] }; show('screen-setup'); }
-        }
-
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('#chips-nivel .chip')?.click();
-            document.querySelectorAll('#chips-idioma .chip').forEach(c => { if (c.textContent === 'português') c.classList.add('selected'); });
-            chips.idioma = ['português'];
-            ['HTML', 'CSS', 'JavaScript'].forEach(tech => { document.querySelectorAll('#chips-tech .chip').forEach(c => { if (c.textContent === tech) c.classList.add('selected'); }); });
-            chips.tech = ['HTML', 'CSS', 'JavaScript'];
-        });
-    </script>
+// inicializar com configuração padrão + pool de questões padrão
+window.onload = () => {
+    configGlobal.questoesPool = [...MASTER_QUESTIONS];
+    configGlobal.vaga = "Desenvolvedor Front-end (React/TS)";
+    document.getElementById('header-vaga').innerText = configGlobal.vaga;
+    document.getElementById('previewVagaNome').innerText = configGlobal.vaga;
+    document.getElementById('header-candidatos').innerText = "0";
+    atualizarRankingUI();
+    // Para deixar já funcional
+    if(configGlobal.questoesPool.length === 0) gerarBancoQuestoesPorVaga();
+};
+</script>
 </body>
 </html>
