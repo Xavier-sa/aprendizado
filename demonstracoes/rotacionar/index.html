@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Roteiro Inteligente</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #eef3f9;
+}
+
+.container {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin-bottom: 30px;
+}
+
+.card-box {
+  background: #f3f4f6;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.2s;
+}
+
+.card.selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+/* BOTÕES */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: linear-gradient(90deg, #60a5fa, #2dd4bf);
+  color: white;
+}
+
+.secondary {
+  background: white;
+  border: 1px solid #ccc;
+}
+
+/* RESULTADO */
+.dia {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.atividade {
+  background: #f9fafc;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Gerador de Roteiro Inteligente</h1>
+  <p class="subtitle">Monte seu roteiro personalizado</p>
+
+  <div class="card-box" id="app"></div>
+</div>
+
+<script>
+// ======================
+// ESTADO GLOBAL
+// ======================
+let step = 1;
+let tempo = null;
+let interessesSel = [];
+let estilo = null;
+
+// ======================
+// DADOS
+// ======================
+const tempos = ["Meio dia","1 dia","2-3 dias","4-5 dias"];
+const interesses = ["Natureza","Gastronomia","Cultural","Aventura"];
+const estilos = ["Essencial","Completo","Imersivo"];
+
+// ======================
+// MOCK ROTEIRO
+// ======================
+function gerarRoteiro() {
+  return [
+    {
+      dia: 1,
+      atividades: [
+        { nome: "Cachoeira", hora: "08:00" },
+        { nome: "Restaurante", hora: "12:00" }
+      ]
+    },
+    {
+      dia: 2,
+      atividades: [
+        { nome: "Museu", hora: "09:00" },
+        { nome: "Passeio de barco", hora: "14:00" }
+      ]
+    }
+  ];
+}
+
+// ======================
+// RENDER
+// ======================
+function render() {
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  // STEP 1
+  if (step === 1) {
+    app.innerHTML = `
+      <h3>Tempo disponível</h3>
+      <div class="grid grid-4">
+        ${tempos.map((t,i)=>`
+          <div class="card ${tempo===i?'selected':''}" onclick="selectTempo(${i})">${t}</div>
+        `).join("")}
+      </div>
+
+      <h3>Interesses</h3>
+      <div class="grid grid-4">
+        ${interesses.map(i=>`
+          <div class="card ${interessesSel.includes(i)?'selected':''}" onclick="toggleInteresse('${i}')">${i}</div>
+        `).join("")}
+      </div>
+
+      <div class="actions">
+        <div></div>
+        <button class="primary" ${(!tempo && tempo!==0)||interessesSel.length===0?'disabled':''} onclick="next()">Próximo</button>
+      </div>
+    `;
+  }
+
+  // STEP 2
+  if (step === 2) {
+    app.innerHTML = `
+      <h3>Estilo da viagem</h3>
+      <div class="grid grid-3">
+        ${estilos.map((e,i)=>`
+          <div class="card ${estilo===i?'selected':''}" onclick="selectEstilo(${i})">${e}</div>
+        `).join("")}
+      </div>
+
+      <div class="actions">
+        <button class="secondary" onclick="back()">Voltar</button>
+        <button class="primary" ${estilo===null?'disabled':''} onclick="next()">Finalizar</button>
+      </div>
+    `;
+  }
+
+  // STEP 3
+  if (step === 3) {
+    const roteiro = gerarRoteiro();
+
+    app.innerHTML = `
+      <h3>Seu roteiro</h3>
+      ${roteiro.map(d=>`
+        <div class="dia">
+          <strong>Dia ${d.dia}</strong>
+          ${d.atividades.map(a=>`
+            <div class="atividade">${a.hora} - ${a.nome}</div>
+          `).join("")}
+        </div>
+      `).join("")}
+
+      <div class="actions">
+        <button class="primary" onclick="reset()">Gerar novo</button>
+      </div>
+    `;
+  }
+}
+
+// ======================
+// AÇÕES
+// ======================
+function selectTempo(i){ tempo=i; render(); }
+function toggleInteresse(i){
+  const idx = interessesSel.indexOf(i);
+  if(idx>-1) interessesSel.splice(idx,1);
+  else interessesSel.push(i);
+  render();
+}
+function selectEstilo(i){ estilo=i; render(); }
+
+function next(){ step++; render(); }
+function back(){ step--; render(); }
+function reset(){
+  step=1; tempo=null; interessesSel=[]; estilo=null;
+  render();
+}
+
+// INIT
+render();
+</script>
+
+</body>
+</html>

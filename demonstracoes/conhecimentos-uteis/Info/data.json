@@ -1,0 +1,73 @@
+{
+  "title": "Relatório — Aplicação Estática, SPA e Servidor",
+  "intro": "Pequeno relatório explicativo sobre os conceitos: Aplicação Estática, SPA (Single Page Application) e Servidor. Diferenças, usos e quando aplicar cada um.",
+  "sections": [
+    {
+      "id": "static",
+      "title": "Aplicação Estática (Static App)",
+      "definition": "É um site composto apenas por arquivos estáticos, como HTML, CSS, JavaScript e imagens. Esses arquivos são servidos diretamente ao navegador sem necessidade de processamento no servidor.",
+      "example": "Portfólio, landing page ou site React buildado (npm run build).",
+      "when_to_use": [
+        "Projetos sem back-end",
+        "Sites rápidos, leves e com conteúdo fixo",
+        "Hospedagem em serviços de páginas estáticas (Cloudflare Pages, GitHub Pages, Netlify)"
+      ],
+      "advantages": [
+        "Alta performance",
+        "Maior segurança",
+        "Custo baixo",
+        "Deploy simples"
+      ]
+    },
+    {
+      "id": "spa",
+      "title": "SPA — Single Page Application",
+      "definition": "Aplicação web de página única onde o conteúdo é carregado dinamicamente via JavaScript sem recarregar toda a página. Exemplos: React, Vue, Angular.",
+      "how_it_works": "O navegador carrega um único index.html; o JavaScript atualiza o conteúdo conforme a navegação do usuário.",
+      "when_to_use": [
+        "Aplicações interativas (dashboards, apps)",
+        "Quando deseja navegação fluida sem reload",
+        "Quando se integra frequentemente com APIs"
+      ],
+      "advantages": [
+        "Experiência fluida",
+        "Reutilização de componentes",
+        "Boa integração com APIs"
+      ],
+      "disadvantages": [
+        "SEO mais desafiador",
+        "Depende de JavaScript",
+        "Pode requerer backend separado"
+      ]
+    },
+    {
+      "id": "server",
+      "title": "Servidor (Server)",
+      "definition": "Ambiente que processa requisições, executa código de back-end (Node.js, PHP, Python, etc.) e entrega respostas ao cliente.",
+      "when_to_use": [
+        "Quando há lógica de negócio ou banco de dados",
+        "Autenticação e autorização",
+        "Processamento de uploads e integrações seguras"
+      ],
+      "advantages": [
+        "Trata dados dinâmicos",
+        "Controle de segurança e acesso",
+        "Integração direta com banco de dados"
+      ]
+    }
+  ],
+  "comparison": {
+    "headers": ["Tipo", "Exemplo", "Precisa de servidor?", "Ideal para"],
+    "rows": [
+      ["Estático", "HTML + CSS + JS", "Não", "Portfólios, blogs, páginas simples"],
+      ["SPA", "React / Vue / Angular", "Só para APIs (backend separado)", "Dashboards, sistemas web"],
+      ["Servidor", "Node / PHP / Python", "Sim", "Aplicações completas e dinâmicas"]
+    ]
+  },
+  "conclusion": [
+    "Cloudflare Pages ou GitHub Pages rodam sites estáticos e SPAs buildadas (frontend).",
+    "Hostinger (plano simples) suporta sites estáticos. Para Node.js é necessário VPS/Cloud.",
+    "Melhor prática: hospedar frontend (Hostinger, Netlify, Vercel) e usar Cloudflare para CDN, DNS e segurança."
+  ],
+  "notes": "Este relatório não considera feriados ou configurações específicas de SEO/SSR. Para SPAs que precisam de SEO, considerar SSR (Next.js) ou prerender."
+}

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Relatório — Estático / SPA / Servidor</title>
+  <link rel="stylesheet" href="style.css">
+ 
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">WX</div>
+      <div>
+        <h1>Relatório — Estático / SPA / Servidor <span class="tag">Resumo Técnico</span></h1>
+        <p class="lead">Conceitos, diferenças e recomendações práticas para hospedagem de aplicações web.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <main class="card" id="main">
+        <!-- Conteúdo dinâmico -->
+        <div class="section-title"><h2>Carregando relatório...</h2></div>
+      </main>
+
+      <aside class="card" id="side">
+        <div class="section-title"><h2>Resumo</h2></div>
+        <div id="summary"><p style="color:var(--muted)">Aguarde — carregando resumo...</p></div>
+      </aside>
+    </div>
+
+    <footer class="card" id="footer">
+      <div id="conclusion"></div>
+      <div style="margin-top:10px;color:var(--muted)">Arquivos: <code>data.json</code> + <code>index.html</code> — rode um servidor local para evitar bloqueios do fetch (ex.: <code>python -m http.server 8000</code>).</div>
+    </footer>
+  </div>
+
+  <script>
+    // Fallback JSON (caso fetch falhe)
+    const fallback = {
+      "title":"Relatório — Aplicação Estática, SPA e Servidor",
+      "intro":"Pequeno relatório explicativo sobre os conceitos: Aplicação Estática, SPA (Single Page Application) e Servidor.",
+      "sections":[
+        {"id":"static","title":"Aplicação Estática (Static App)","definition":"É um site composto apenas por arquivos estáticos...","example":"Portfólio, landing page ou site React buildado.","when_to_use":["Projetos sem back-end","Sites rápidos"],"advantages":["Alta performance","Segurança","Custo baixo"]},
+        {"id":"spa","title":"SPA — Single Page Application","definition":"Aplicação de página única...","how_it_works":"Carrega index.html e troca conteúdo via JS.","when_to_use":["Apps interativos"],"advantages":["Experiência fluida"],"disadvantages":["SEO desafiador"]},
+        {"id":"server","title":"Servidor (Server)","definition":"Ambiente que processa requisições e executa código backend.","when_to_use":["Autenticação","Banco de dados"],"advantages":["Trata dados dinâmicos"]}
+      ],
+      "comparison":{"headers":["Tipo","Exemplo","Precisa de servidor?","Ideal para"],"rows":[["Estático","HTML+CSS+JS","Não","Portfólios"],["SPA","React","Só APIs","Dashboards"],["Servidor","Node/PHP","Sim","Apps dinâmicos"]]},
+      "conclusion":["Cloudflare Pages roda sites estáticos e SPAs buildadas.","Hostinger (plano simples) suporta sites estáticos; para Node.js precisa VPS."],
+      "notes":"Considere SSR para SEO em SPAs."
+    };
+
+    async function loadData(){
+      try{
+        const res = await fetch('data.json', {cache: "no-store"});
+        if(!res.ok) throw new Error('Fetch retornou ' + res.status);
+        const data = await res.json();
+        render(data);
+      }catch(err){
+        console.warn('Fetch falhou, usando fallback:', err);
+        render(fallback);
+      }
+    }
+
+    function render(data){
+      const main = document.getElementById('main');
+      const side = document.getElementById('summary');
+      const footer = document.getElementById('conclusion');
+      main.innerHTML = '';
+
+      // Intro
+      const intro = document.createElement('div');
+      intro.innerHTML = `<div class="section-title"><h2>${escapeHtml(data.title)}</h2></div>
+        <p style="color:var(--muted)">${escapeHtml(data.intro)}</p>`;
+      main.appendChild(intro);
+
+      // Sections
+      data.sections.forEach(sec => {
+        const s = document.createElement('section');
+        s.style.marginTop = '12px';
+        let html = `<div class="section-title"><h2>${escapeHtml(sec.title)}</h2></div>`;
+        html += `<p style="color:var(--muted)">${escapeHtml(sec.definition||'')}</p>`;
+        if(sec.example) html += `<p><strong>Exemplo:</strong> ${escapeHtml(sec.example)}</p>`;
+        if(sec.how_it_works) html += `<p><strong>Como funciona:</strong> ${escapeHtml(sec.how_it_works)}</p>`;
+        if(sec.when_to_use) html += `<p><strong>Quando usar:</strong></p><ul>${sec.when_to_use.map(i=>`<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
+        if(sec.advantages) html += `<p><strong>Vantagens:</strong></p><ul>${sec.advantages.map(i=>`<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
+        if(sec.disadvantages) html += `<p><strong>Desvantagens:</strong></p><ul>${sec.disadvantages.map(i=>`<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
+        s.innerHTML = html;
+        main.appendChild(s);
+      });
+
+      // Comparison table
+      const comp = document.createElement('div');
+      comp.style.marginTop = '14px';
+      let tableHtml = `<div class="section-title"><h2>Comparativo Rápido</h2></div><table><thead><tr>${data.comparison.headers.map(h=>`<th>${escapeHtml(h)}</th>`).join('')}</tr></thead><tbody>`;
+      data.comparison.rows.forEach(r=>{
+        tableHtml += `<tr>${r.map(c=>`<td>${escapeHtml(c)}</td>`).join('')}</tr>`;
+      });
+      tableHtml += `</tbody></table>`;
+      comp.innerHTML = tableHtml;
+      main.appendChild(comp);
+
+      // Notes
+      if(data.notes){
+        const notes = document.createElement('div');
+        notes.style.marginTop = '12px';
+        notes.innerHTML = `<div class="section-title"><h2>Observações</h2></div><p style="color:var(--muted)">${escapeHtml(data.notes)}</p>`;
+        main.appendChild(notes);
+      }
+
+      // Side summary
+      side.innerHTML = '';
+      const sideList = document.createElement('div');
+      sideList.innerHTML = `<p style="color:var(--muted)"><strong>Principais pontos:</strong></p><ul>
+        <li>Sites estáticos: rápido, seguro e barato</li>
+        <li>SPA: interação fluida, pode precisar de backend</li>
+        <li>Servidor: necessário para lógica e banco de dados</li>
+        <li>Cloudflare = CDN & segurança; não substitui hospedagem</li>
+      </ul>`;
+      side.appendChild(sideList);
+
+      // Conclusion
+      footer.innerHTML = `<div class="section-title"><h2>Conclusão</h2></div><ul>${data.conclusion.map(c=>`<li style="color:var(--muted)">${escapeHtml(c)}</li>`).join('')}</ul>`;
+    }
+
+    // Simple escape to avoid HTML injection
+    function escapeHtml(str){
+      if(!str && str !== 0) return '';
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#39;');
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

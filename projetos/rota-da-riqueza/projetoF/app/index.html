@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano Financeiro do Casal - Sabedoria da Babilônia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a472a 0%, #2d5016 50%, #5a3a1a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #1a472a;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header .subtitle {
+            color: #2d5016;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .wisdom-quote {
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 5px solid #d4af37;
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .wisdom-quote p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border-top: 4px solid #d4af37;
+        }
+
+        .card h2 {
+            color: #1a472a;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .input-group.fixed input {
+            background: #f0f0f0;
+        }
+
+        .total-box {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .total-box .label {
+            font-weight: bold;
+            color: #1a472a;
+            margin-bottom: 5px;
+        }
+
+        .total-box .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .resultado-card {
+            background: linear-gradient(135deg, #2d5016, #1a472a);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .resultado-card h2 {
+            color: #d4af37;
+            border-bottom-color: #d4af37;
+        }
+
+        .saldo-display {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .saldo-positivo {
+            color: #4caf50;
+        }
+
+        .saldo-negativo {
+            color: #ff5252;
+        }
+
+        .regras-ouro {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .regras-ouro h3 {
+            color: #d4af37;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .regra-item {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .regra-numero {
+            background: #1a472a;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .regra-texto {
+            color: #1a472a;
+            font-weight: bold;
+        }
+
+        .diagnostico-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .diagnostico-section h2 {
+            color: #1a472a;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: start;
+            gap: 15px;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .metas-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .meta-card {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #4caf50;
+        }
+
+        .meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .meta-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1a472a;
+        }
+
+        .meta-valor {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d5016;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 25px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4caf50, #8bc34a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+
+        .tempo-estimado {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .acoes-recomendadas {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .acao-item {
+            background: linear-gradient(135deg, #fff9e6, #ffe6b3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .acao-titulo {
+            font-weight: bold;
+            color: #d68910;
+            margin-bottom: 5px;
+        }
+
+        .btn-calcular {
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
+            color: #1a472a;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-calcular:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .saldo-display {
+                font-size: 2rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💰 Plano Financeiro do Casal</h1>
+            <p class="subtitle">"O ouro chega alegremente e em quantidades crescentes para quem guarda pelo menos um décimo de seus ganhos para criar um patrimônio para seu futuro"</p>
+        </div>
+
+        <!-- Sabedoria da Babilônia -->
+        <div class="wisdom-quote">
+            <p><strong>📜 As 7 Lições de Arkad - O Homem Mais Rico da Babilônia:</strong></p>
+            <p>1️⃣ Poupe no mínimo 10% de tudo que ganhar</p>
+            <p>2️⃣ Controle seus gastos - não confunda despesas necessárias com desejos</p>
+            <p>3️⃣ Multiplique seu ouro - faça seu dinheiro trabalhar para você</p>
+            <p>4️⃣ Proteja seu tesouro de perdas - evite investimentos arriscados</p>
+            <p>5️⃣ Faça de sua casa um investimento lucrativo</p>
+            <p>6️⃣ Garanta uma renda para o futuro</p>
+            <p>7️⃣ Aumente sua capacidade de ganhar - invista em você mesmo</p>
+        </div>
+
+        <!-- Formulário de Rendas e Despesas -->
+        <div class="grid">
+            <!-- Rendas -->
+            <div class="card">
+                <h2>💵 Rendas do Casal</h2>
+                <div class="input-group">
+                    <label for="renda1">Salário Cônjuge 1 (R$):</label>
+                    <input type="number" id="renda1" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="renda2">Salário Cônjuge 2 (R$):</label>
+                    <input type="number" id="renda2" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="rendaExtra">Rendas Extras (R$):</label>
+                    <input type="number" id="rendaExtra" value="0" min="0" step="0.01">
+                </div>
+                <div class="total-box">
+                    <div class="label">Total de Renda Mensal</div>
+                    <div class="value" id="totalRenda">R$ 0,00</div>
+                </div>
+            </div>
+
+            <!-- Despesas com Aluguel -->
+            <div class="card">
+                <h2>🏠 Despesas do Aluguel (Moradia Atual)</h2>
+                <div class="input-group fixed">
+                    <label for="aluguel">Aluguel (R$):</label>
+                    <input type="number" id="aluguel" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="aguaAluguel">Água Aluguel (R$):</label>
+                    <input type="number" id="aguaAluguel" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="luzAluguel">Luz Aluguel (R$):</label>
+                    <input type="number" id="luzAluguel" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="internetAluguel">Internet Aluguel (R$):</label>
+                    <input type="number" id="internetAluguel" value="0" min="0" step="0.01">
+                </div>
+                <div class="total-box">
+                    <div class="label">Subtotal Aluguel</div>
+                    <div class="value" id="subtotalAluguel">R$ 0,00</div>
+                </div>
+            </div>
+
+            <!-- Despesas com Imóvel Próprio -->
+            <div class="card">
+                <h2>🏡 Despesas do Imóvel Próprio (Investimento)</h2>
+                <div class="input-group fixed">
+                    <label for="prestacaoImovel">Prestação/Financiamento (R$):</label>
+                    <input type="number" id="prestacaoImovel" value="1000" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="carneImovel">Carnê Imóvel (R$):</label>
+                    <input type="number" id="carneImovel" value="100" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="aguaImovel">Água Imóvel (R$):</label>
+                    <input type="number" id="aguaImovel" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="luzImovel">Luz Imóvel (R$):</label>
+                    <input type="number" id="luzImovel" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group fixed">
+                    <label for="internetImovel">Internet Imóvel (R$):</label>
+                    <input type="number" id="internetImovel" value="0" min="0" step="0.01">
+                </div>
+                <div class="total-box">
+                    <div class="label">Subtotal Imóvel</div>
+                    <div class="value" id="subtotalImovel">R$ 1.100,00</div>
+                </div>
+            </div>
+
+            <!-- Despesas com Veículos -->
+            <div class="card">
+                <h2>🚗 Despesas com Veículos</h2>
+                <div class="input-group">
+                    <label for="combustivel1">Combustível Veículo 1 (R$):</label>
+                    <input type="number" id="combustivel1" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="combustivel2">Combustível Veículo 2 (R$):</label>
+                    <input type="number" id="combustivel2" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="prestacaoVeiculo">Prestação Veículo (R$):</label>
+                    <input type="number" id="prestacaoVeiculo" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="seguroVeiculo">Seguro/IPVA (mensal) (R$):</label>
+                    <input type="number" id="seguroVeiculo" value="0" min="0" step="0.01">
+                </div>
+                <div class="total-box">
+                    <div class="label">Subtotal Veículos</div>
+                    <div class="value" id="subtotalVeiculos">R$ 0,00</div>
+                </div>
+            </div>
+
+            <!-- Outras Despesas -->
+            <div class="card">
+                <h2>🛒 Outras Despesas Essenciais</h2>
+                <div class="input-group fixed">
+                    <label for="alimentacao">Alimentação (R$):</label>
+                    <input type="number" id="alimentacao" value="700" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="saude">Saúde/Remédios (R$):</label>
+                    <input type="number" id="saude" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="educacao">Educação/Cursos (R$):</label>
+                    <input type="number" id="educacao" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="lazer">Lazer/Entretenimento (R$):</label>
+                    <input type="number" id="lazer" value="0" min="0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="outrasFixas">Outras Despesas Fixas (R$):</label>
+                    <input type="number" id="outrasFixas" value="0" min="0" step="0.01">
+                </div>
+                <div class="total-box">
+                    <div class="label">Subtotal Outras</div>
+                    <div class="value" id="subtotalOutras">R$ 700,00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultado e Regras de Ouro -->
+        <div class="card full-width resultado-card">
+            <h2>📊 Análise Financeira - Regra de Arkad</h2>
+            <div class="saldo-display saldo-positivo" id="saldoDisplay">R$ 0,00</div>
+            <p style="font-size: 1.2rem; margin-bottom: 20px;">Disponível para Investimentos e Patrimônio</p>
+            
+            <button class="btn-calcular" onclick="calcularPlanoFinanceiro()">🔮 Gerar Plano de Ação Completo</button>
+            
+            <div class="regras-ouro">
+                <h3>⚖️ Distribuição Ideal Segundo a Sabedoria da Babilônia</h3>
+                <div class="regra-item">
+                    <div class="regra-numero">10%</div>
+                    <div class="regra-texto">Para VOCÊ (Poupança/Reserva de Emergência) - <span id="valor10">R$ 0,00</span></div>
+                </div>
+                <div class="regra-item">
+                    <div class="regra-numero">20%</div>
+                    <div class="regra-texto">Para CRESCIMENTO (Investimentos/Patrimônio) - <span id="valor20">R$ 0,00</span></div>
+                </div>
+                <div class="regra-item">
+                    <div class="regra-numero">70%</div>
+                    <div class="regra-texto">Para VIVER (Despesas Essenciais) - <span id="valor70">R$ 0,00</span></div>
+                </div>
+                <p style="text-align: center; margin-top: 15px; color: #555; font-style: italic;">
+                    Total de Despesas Atuais: <strong id="despesasTotais">R$ 0,00</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Diagnóstico -->
+        <div class="diagnostico-section hidden" id="diagnosticoSection">
+            <h2>🔍 Diagnóstico Financeiro Detalhado</h2>
+            <div id="diagnosticoConteudo"></div>
+        </div>
+
+        <!-- Metas -->
+        <div class="metas-section hidden" id="metasSection">
+            <h2>🎯 Metas de Patrimônio</h2>
+            
+            <div class="meta-card">
+                <div class="meta-header">
+                    <div class="meta-title">🏡 Imóvel de R$ 300.000</div>
+                    <div class="meta-valor">R$ 300.000</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressImovel" style="width: 0%">0%</div>
+                </div>
+                <div class="tempo-estimado" id="tempoImovel">Calculando...</div>
+                <p style="margin-top: 10px; color: #555;" id="descricaoImovel"></p>
+            </div>
+
+            <div class="meta-card">
+                <div class="meta-header">
+                    <div class="meta-title">🚗 Veículo de R$ 100.000</div>
+                    <div class="meta-valor">R$ 100.000</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressVeiculo" style="width: 0%">0%</div>
+                </div>
+                <div class="tempo-estimado" id="tempoVeiculo">Calculando...</div>
+                <p style="margin-top: 10px; color: #555;" id="descricaoVeiculo"></p>
+            </div>
+
+            <div class="meta-card">
+                <div class="meta-header">
+                    <div class="meta-title">💰 Reserva de Emergência (6 meses)</div>
+                    <div class="meta-valor" id="valorReserva">R$ 0</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressReserva" style="width: 0%">0%</div>
+                </div>
+                <div class="tempo-estimado" id="tempoReserva">Calculando...</div>
+                <p style="margin-top: 10px; color: #555;">Essencial antes de investir em ativos maiores</p>
+            </div>
+        </div>
+
+        <!-- Ações Recomendadas -->
+        <div class="acoes-recomendadas hidden" id="acoesSection">
+            <h2>💡 Plano de Ação Personalizado</h2>
+            <div id="acoesConteudo"></div>
+        </div>
+    </div>
+
+    <script>
+        // Função para formatar valores em reais
+        const formatarMoeda = (valor) => {
+            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+
+        // Função para calcular meses até meta
+        const calcularMeses = (valorMeta, valorMensal) => {
+            if (valorMensal <= 0) return Infinity;
+            return Math.ceil(valorMeta / valorMensal);
+        };
+
+        // Função para converter meses em anos e meses
+        const formatarTempo = (meses) => {
+            if (meses === Infinity) return "Impossível com saldo atual";
+            if (meses < 0) return "Meta já atingida";
+            
+            const anos = Math.floor(meses / 12);
+            const mesesRestantes = meses % 12;
+            
+            if (anos === 0) return `${meses} ${meses === 1 ? 'mês' : 'meses'}`;
+            if (mesesRestantes === 0) return `${anos} ${anos === 1 ? 'ano' : 'anos'}`;
+            return `${anos} ${anos === 1 ? 'ano' : 'anos'} e ${mesesRestantes} ${mesesRestantes === 1 ? 'mês' : 'meses'}`;
+        };
+
+        // Função principal de cálculo
+        const calcularPlanoFinanceiro = () => {
+            // Coleta de Rendas
+            const renda1 = parseFloat(document.getElementById('renda1').value) || 0;
+            const renda2 = parseFloat(document.getElementById('renda2').value) || 0;
+            const rendaExtra = parseFloat(document.getElementById('rendaExtra').value) || 0;
+            const totalRenda = renda1 + renda2 + rendaExtra;
+
+            // Coleta de Despesas - Aluguel
+            const aluguel = parseFloat(document.getElementById('aluguel').value) || 0;
+            const aguaAluguel = parseFloat(document.getElementById('aguaAluguel').value) || 0;
+            const luzAluguel = parseFloat(document.getElementById('luzAluguel').value) || 0;
+            const internetAluguel = parseFloat(document.getElementById('internetAluguel').value) || 0;
+            const subtotalAluguel = aluguel + aguaAluguel + luzAluguel + internetAluguel;
+
+            // Despesas - Imóvel
+            const prestacaoImovel = parseFloat(document.getElementById('prestacaoImovel').value) || 0;
+            const carneImovel = parseFloat(document.getElementById('carneImovel').value) || 0;
+            const aguaImovel = parseFloat(document.getElementById('aguaImovel').value) || 0;
+            const luzImovel = parseFloat(document.getElementById('luzImovel').value) || 0;
+            const internetImovel = parseFloat(document.getElementById('internetImovel').value) || 0;
+            const subtotalImovel = prestacaoImovel + carneImovel + aguaImovel + luzImovel + internetImovel;
+
+            // Despesas - Veículos
+            const combustivel1 = parseFloat(document.getElementById('combustivel1').value) || 0;
+            const combustivel2 = parseFloat(document.getElementById('combustivel2').value) || 0;
+            const prestacaoVeiculo = parseFloat(document.getElementById('prestacaoVeiculo').value) || 0;
+            const seguroVeiculo = parseFloat(document.getElementById('seguroVeiculo').value) || 0;
+            const subtotalVeiculos = combustivel1 + combustivel2 + prestacaoVeiculo + seguroVeiculo;
+
+            // Outras Despesas
+            const alimentacao = parseFloat(document.getElementById('alimentacao').value) || 0;
+            const saude = parseFloat(document.getElementById('saude').value) || 0;
+            const educacao = parseFloat(document.getElementById('educacao').value) || 0;
+            const lazer = parseFloat(document.getElementById('lazer').value) || 0;
+            const outrasFixas = parseFloat(document.getElementById('outrasFixas').value) || 0;
+            const subtotalOutras = alimentacao + saude + educacao + lazer + outrasFixas;
+
+            // Totais
+            const totalDespesas = subtotalAluguel + subtotalImovel + subtotalVeiculos + subtotalOutras;
+            const saldoFinal = totalRenda - totalDespesas;
+
+            // Regra 10-20-70
+            const valor10 = totalRenda * 0.10;
+            const valor20 = totalRenda * 0.20;
+            const valor70 = totalRenda * 0.70;
+
+            // Atualizar interface
+            document.getElementById('totalRenda').textContent = formatarMoeda(totalRenda);
+            document.getElementById('subtotalAluguel').textContent = formatarMoeda(subtotalAluguel);
+            document.getElementById('subtotalImovel').textContent = formatarMoeda(subtotalImovel);
+            document.getElementById('subtotalVeiculos').textContent = formatarMoeda(subtotalVeiculos);
+            document.getElementById('subtotalOutras').textContent = formatarMoeda(subtotalOutras);
+            document.getElementById('despesasTotais').textContent = formatarMoeda(totalDespesas);
+            
+            const saldoDisplay = document.getElementById('saldoDisplay');
+            saldoDisplay.textContent = formatarMoeda(saldoFinal);
+            saldoDisplay.className = saldoFinal >= 0 ? 'saldo-display saldo-positivo' : 'saldo-display saldo-negativo';
+
+            document.getElementById('valor10').textContent = formatarMoeda(valor10);
+            document.getElementById('valor20').textContent = formatarMoeda(valor20);
+            document.getElementById('valor70').textContent = formatarMoeda(valor70);
+
+            // Gerar Diagnóstico
+            gerarDiagnostico(totalRenda, totalDespesas, saldoFinal, valor10, valor20, valor70);
+
+            // Calcular Metas
+            calcularMetas(saldoFinal, totalDespesas, valor20);
+
+            // Gerar Ações Recomendadas
+            gerarAcoes(totalRenda, totalDespesas, saldoFinal, valor70, subtotalAluguel, subtotalImovel, subtotalVeiculos);
+
+            // Mostrar seções
+            document.getElementById('diagnosticoSection').classList.remove('hidden');
+            document.getElementById('metasSection').classList.remove('hidden');
+            document.getElementById('acoesSection').classList.remove('hidden');
+
+            // Scroll suave para o diagnóstico
+            document.getElementById('diagnosticoSection').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // Função para gerar diagnóstico
+        const gerarDiagnostico = (totalRenda, totalDespesas, saldoFinal, valor10, valor20, valor70) => {
+            const diagnostico = document.getElementById('diagnosticoConteudo');
+            let html = '';
+
+            const percentualGasto = (totalDespesas / totalRenda) * 100;
+
+            // Análise do saldo
+            if (saldoFinal < 0) {
+                html += `
+                    <div class="alert alert-danger">
+                        <div style="font-size: 2rem;">⚠️</div>
+                        <div>
+                            <strong>ALERTA CRÍTICO:</strong> Suas despesas estão ${formatarMoeda(Math.abs(saldoFinal))} acima da sua renda!
+                            Você está gastando ${percentualGasto.toFixed(1)}% da sua renda. É urgente cortar gastos ou aumentar a renda.
+                        </div>
+                    </div>
+                `;
+            } else if (saldoFinal < valor10) {
+                html += `
+                    <div class="alert alert-warning">
+                        <div style="font-size: 2rem;">⚠️</div>
+                        <div>
+                            <strong>ATENÇÃO:</strong> Seu saldo de ${formatarMoeda(saldoFinal)} é menor que 10% da sua renda (${formatarMoeda(valor10)}).
+                            Você está gastando ${percentualGasto.toFixed(1)}% da sua renda. Arkad recomenda manter pelo menos 10% para poupança.
+                        </div>
+                    </div>
+                `;
+            } else if (saldoFinal < valor20) {
+                html += `
+                    <div class="alert alert-info">
+                        <div style="font-size: 2rem;">📊</div>
+                        <div>
+                            <strong>BOM INÍCIO:</strong> Você está poupando ${((saldoFinal / totalRenda) * 100).toFixed(1)}% da renda.
+                            Para acelerar seu patrimônio, busque poupar pelo menos 20% (${formatarMoeda(valor20)}).
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="alert alert-success">
+                        <div style="font-size: 2rem;">✅</div>
+                        <div>
+                            <strong>EXCELENTE!</strong> Você está poupando ${((saldoFinal / totalRenda) * 100).toFixed(1)}% da renda!
+                            Está acima da meta de 20% recomendada. Continue assim e seu patrimônio crescerá rapidamente.
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Análise por categoria
+            html += `<h3 style="margin-top: 30px; color: #1a472a;">📊 Análise por Categoria:</h3>`;
+
+            const categorias = [
+                { nome: 'Moradia (Aluguel)', valor: parseFloat(document.getElementById('aluguel').value) || 0, ideal: totalRenda * 0.30 },
+                { nome: 'Imóvel Próprio', valor: parseFloat(document.getElementById('prestacaoImovel').value) + parseFloat(document.getElementById('carneImovel').value), ideal: totalRenda * 0.25 },
+                { nome: 'Transporte/Veículos', valor: parseFloat(document.getElementById('combustivel1').value) + parseFloat(document.getElementById('combustivel2').value) + parseFloat(document.getElementById('prestacaoVeiculo').value) + parseFloat(document.getElementById('seguroVeiculo').value), ideal: totalRenda * 0.15 },
+                { nome: 'Alimentação', valor: parseFloat(document.getElementById('alimentacao').value) || 0, ideal: totalRenda * 0.15 }
+            ];
+
+            categorias.forEach(cat => {
+                if (cat.valor > 0) {
+                    const percentual = (cat.valor / totalRenda) * 100;
+                    const percentualIdeal = (cat.ideal / totalRenda) * 100;
+                    const status = cat.valor > cat.ideal ? 'warning' : 'success';
+                    const icone = cat.valor > cat.ideal ? '⚠️' : '✅';
+                    
+                    html += `
+                        <div class="alert alert-${status}">
+                            <div style="font-size: 1.5rem;">${icone}</div>
+                            <div>
+                                <strong>${cat.nome}:</strong> ${formatarMoeda(cat.valor)} (${percentual.toFixed(1)}% da renda)<br>
+                                <small>Ideal: até ${formatarMoeda(cat.ideal)} (${percentualIdeal.toFixed(1)}%)</small>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            diagnostico.innerHTML = html;
+        };
+
+        // Função para calcular e exibir metas
+        const calcularMetas = (saldoFinal, totalDespesas, valor20) => {
+            // Meta de Reserva de Emergência (6 meses de despesas)
+            const reservaEmergencia = totalDespesas * 6;
+            document.getElementById('valorReserva').textContent = formatarMoeda(reservaEmergencia);
+
+            // Usar 50% do saldo para reserva, 50% para patrimônio
+            const paraReserva = saldoFinal > 0 ? saldoFinal * 0.5 : 0;
+            const paraPatrimonio = saldoFinal > 0 ? saldoFinal * 0.5 : 0;
+
+            // Reserva de Emergência
+            const mesesReserva = calcularMeses(reservaEmergencia, paraReserva);
+            document.getElementById('tempoReserva').textContent = `⏱️ Tempo estimado: ${formatarTempo(mesesReserva)}`;
+            const progressReserva = Math.min((paraReserva * 12) / reservaEmergencia * 100, 100);
+            document.getElementById('progressReserva').style.width = progressReserva + '%';
+            document.getElementById('progressReserva').textContent = progressReserva.toFixed(0) + '%';
+
+            // Imóvel de R$ 300.000 (entrada de 20% = R$ 60.000)
+            const entradaImovel = 60000;
+            const financiamentoImovel = 240000;
+            const prestacaoImovel80 = 1800; // Estimativa para 80% financiado
+            
+            const mesesEntradaImovel = calcularMeses(entradaImovel, paraPatrimonio);
+            document.getElementById('tempoImovel').textContent = `⏱️ Tempo para entrada (20%): ${formatarTempo(mesesEntradaImovel)}`;
+            document.getElementById('descricaoImovel').textContent = `Entrada de ${formatarMoeda(entradaImovel)} + prestações de ~${formatarMoeda(prestacaoImovel80)}/mês por 15 anos`;
+            const progressImovel = Math.min((paraPatrimonio * 12) / entradaImovel * 100, 100);
+            document.getElementById('progressImovel').style.width = progressImovel + '%';
+            document.getElementById('progressImovel').textContent = progressImovel.toFixed(0) + '%';
+
+            // Veículo de R$ 100.000 (entrada de 30% = R$ 30.000)
+            const entradaVeiculo = 30000;
+            const financiamentoVeiculo = 70000;
+            const prestacaoVeiculo70 = 1750; // Estimativa para 70% financiado em 48 meses
+            
+            const mesesEntradaVeiculo = calcularMeses(entradaVeiculo, paraPatrimonio);
+            document.getElementById('tempoVeiculo').textContent = `⏱️ Tempo para entrada (30%): ${formatarTempo(mesesEntradaVeiculo)}`;
+            document.getElementById('descricaoVeiculo').textContent = `Entrada de ${formatarMoeda(entradaVeiculo)} + prestações de ~${formatarMoeda(prestacaoVeiculo70)}/mês por 4 anos`;
+            const progressVeiculo = Math.min((paraPatrimonio * 12) / entradaVeiculo * 100, 100);
+            document.getElementById('progressVeiculo').style.width = progressVeiculo + '%';
+            document.getElementById('progressVeiculo').textContent = progressVeiculo.toFixed(0) + '%';
+        };
+
+        // Função para gerar ações recomendadas
+        const gerarAcoes = (totalRenda, totalDespesas, saldoFinal, valor70, subtotalAluguel, subtotalImovel, subtotalVeiculos) => {
+            const acoes = document.getElementById('acoesConteudo');
+            let html = '<h3 style="color: #1a472a; margin-bottom: 20px;">🎯 Ações Prioritárias Baseadas nas Lições da Babilônia:</h3>';
+
+            // Prioridade 1: Situação crítica
+            if (saldoFinal < 0) {
+                html += `
+                    <div class="acao-item" style="border-left-color: #dc3545;">
+                        <div class="acao-titulo">🚨 URGENTE - Cortar Gastos Imediatamente</div>
+                        <p>Você está gastando mais do que ganha. Ações imediatas:</p>
+                        <ul>
+                            <li>Cancele assinaturas e serviços não essenciais</li>
+                            <li>Reduza gastos com lazer temporariamente</li>
+                            <li>Busque renegociar dívidas e contas</li>
+                            <li>Considere vender itens não utilizados</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Prioridade 2: Aumentar renda
+            if (totalRenda < 5000) {
+                html += `
+                    <div class="acao-item">
+                        <div class="acao-titulo">📈 Aumentar Capacidade de Ganhar (Lição 7 de Arkad)</div>
+                        <p>Com renda de ${formatarMoeda(totalRenda)}, aumentar ganhos acelerará muito suas metas:</p>
+                        <ul>
+                            <li>Invista em cursos e qualificação profissional</li>
+                            <li>Busque promoções ou novos empregos com salário melhor</li>
+                            <li>Desenvolva habilidades que o mercado valoriza</li>
+                            <li>Considere trabalhos extras ou freelance nos finais de semana</li>
+                            <li><strong>Meta:</strong> Aumentar renda em pelo menos 20% nos próximos 12 meses</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Prioridade 3: Reserva de emergência
+            if (saldoFinal > 0) {
+                html += `
+                    <div class="acao-item">
+                        <div class="acao-titulo">🛡️ Construir Reserva de Emergência PRIMEIRO</div>
+                        <p>Antes de comprar imóvel ou carro, proteja seu futuro:</p>
+                        <ul>
+                            <li><strong>Meta:</strong> ${formatarMoeda(totalDespesas * 6)} (6 meses de despesas)</li>
+                            <li>Guarde em conta que rende 100% do CDI (Nubank, Inter, etc.)</li>
+                            <li>Use para emergências médicas, desemprego, ou despesas inesperadas</li>
+                            <li>NÃO toque neste dinheiro exceto em verdadeiras emergências</li>
+                            <li><strong>Destine ${formatarMoeda(saldoFinal * 0.5)}/mês</strong> até completar</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Prioridade 4: Análise de moradia
+            if (subtotalAluguel > valor70 * 0.3) {
+                html += `
+                    <div class="acao-item">
+                        <div class="acao-titulo">🏠 Otimizar Gastos com Moradia</div>
+                        <p>Seu aluguel está alto (${((subtotalAluguel/totalRenda)*100).toFixed(1)}% da renda):</p>
+                        <ul>
+                            <li>Ideal: no máximo 30% da renda (${formatarMoeda(valor70 * 0.3)})</li>
+                            <li>Considere mudança para local mais econômico temporariamente</li>
+                            <li>Ou busque dividir custos com outra pessoa</li>
+                            <li>Economize a diferença para entrada do imóvel próprio</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Prioridade 5: Análise de veículos
+            if (subtotalVeiculos > valor70 * 0.15) {
+                html += `
+                    <div class="acao-item">
+                        <div class="acao-titulo">🚗 Reduzir Gastos com Transporte</div>
+                        <p>Gastos com veículos estão altos (${((subtotalVeiculos/totalRenda)*100).toFixed(1)}% da renda):</p>
+                        <ul>
+                            <li>Ideal: no máximo 15% da renda (${formatarMoeda(valor70 * 0.15)})</li>
+                            <li>Considere vender veículo financiado e comprar usado à vista</li>
+                            <li>Use transporte público ou carona compartilhada quando possível</li>
+                            <li>Um carro de ${formatarMoeda(100000)} só faz sentido com renda acima de ${formatarMoeda(100000 * 2 / 12)}</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Estratégia para imóvel
+            html += `
+                <div class="acao-item" style="background: linear-gradient(135deg, #d4edda, #c3e6cb);">
+                    <div class="acao-titulo" style="color: #155724;">🏡 Estratégia para Imóvel de R$ 300.000</div>
+                    <p><strong>Plano Realista:</strong></p>
+                    <ul>
+                        <li><strong>Fase 1:</strong> Junte ${formatarMoeda(60000)} para entrada (20%)</li>
+                        <li><strong>Fase 2:</strong> Financie ${formatarMoeda(240000)} em 15 anos (~${formatarMoeda(1800)}/mês)</li>
+                        <li><strong>Vantagem:</strong> Enquanto paga aluguel, está "perdendo" dinheiro. Prestação vira patrimônio!</li>
+                        <li><strong>Após reserva de emergência,</strong> destine todo saldo para entrada do imóvel</li>
+                        <li><strong>Evite:</strong> Comprar imóvel SEM reserva de emergência (risco de perder tudo)</li>
+                    </ul>
+                </div>
+            `;
+
+            // Estratégia para veículo
+            html += `
+                <div class="acao-item" style="background: linear-gradient(135deg, #fff3cd, #ffe8a1);">
+                    <div class="acao-titulo" style="color: #856404;">🚗 Estratégia para Veículo de R$ 100.000</div>
+                    <p><strong>Recomendação de Arkad:</strong></p>
+                    <ul>
+                        <li><strong>Priorize o IMÓVEL antes do carro de luxo!</strong> Casa gera patrimônio, carro perde valor.</li>
+                        <li>Se precisar de carro agora: compre usado de ${formatarMoeda(30000)} à vista</li>
+                        <li>Um carro de ${formatarMoeda(100000)} só após: ter imóvel próprio + renda acima de ${formatarMoeda(10000)}</li>
+                        <li>Carro perde 20% do valor no 1º ano. Imóvel valoriza em média 5% ao ano.</li>
+                        <li><strong>Diferença entre sábio e tolo:</strong> Sábio constrói patrimônio primeiro, depois ostenta.</li>
+                    </ul>
+                </div>
+            `;
+
+            // Investimentos
+            if (saldoFinal > totalRenda * 0.2) {
+                html += `
+                    <div class="acao-item" style="background: linear-gradient(135deg, #d1ecf1, #bee5eb);">
+                        <div class="acao-titulo" style="color: #0c5460;">💰 Multiplique Seu Ouro (Lição 3 de Arkad)</div>
+                        <p>Você tem boa capacidade de poupança. Faça seu dinheiro trabalhar:</p>
+                        <ul>
+                            <li><strong>Reserva:</strong> CDB/Tesouro Selic (liquidez diária, 100% CDI)</li>
+                            <li><strong>Entrada imóvel:</strong> CDB com vencimento planejado (mais de 100% CDI)</li>
+                            <li><strong>Longo prazo:</strong> Tesouro IPCA+ ou Fundos Imobiliários</li>
+                            <li><strong>EVITE:</strong> Day trade, criptomoedas especulativas, "dicas de investimento"</li>
+                            <li><strong>Regra de Arkad:</strong> Invista apenas onde seu capital está protegido</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            // Plano 90 dias
+            html += `
+                <div class="acao-item" style="background: linear-gradient(135deg, #e2d4f5, #d4bfea); border-left-color: #6f42c1;">
+                    <div class="acao-titulo" style="color: #4a2c70;">📅 Plano de Ação - Próximos 90 Dias</div>
+                    <p><strong>Semana 1-2:</strong></p>
+                    <ul>
+                        <li>Analise TODOS os gastos dos últimos 3 meses</li>
+                        <li>Identifique e corte 3 gastos desnecessários</li>
+                        <li>Abra conta digital que rende 100% CDI</li>
+                    </ul>
+                    <p><strong>Semana 3-4:</strong></p>
+                    <ul>
+                        <li>Configure transferência automática de 10% do salário para poupança</li>
+                        <li>Renegocie contas (internet, telefone, etc.)</li>
+                        <li>Pesquise cursos para aumentar renda</li>
+                    </ul>
+                    <p><strong>Mês 2-3:</strong></p>
+                    <ul>
+                        <li>Mantenha disciplina com as transferências automáticas</li>
+                        <li>Não toque no dinheiro poupado</li>
+                        <li>Busque fontes de renda extra</li>
+                        <li>Reavalie este plano mensalmente</li>
+                    </ul>
+                </div>
+            `;
+
+            // Citações motivacionais
+            html += `
+                <div class="acao-item" style="background: linear-gradient(135deg, #d4af37, #f4d03f); border-left-color: #d4af37;">
+                    <div class="acao-titulo" style="color: #1a472a;">💎 Sabedoria Final de Arkad</div>
+                    <p style="font-style: italic; color: #2d5016; font-size: 1.1rem;">
+                        "A riqueza, como uma árvore, cresce de uma semente pequena. O primeiro cobre que você economizar é a semente que fará crescer a árvore de sua riqueza. Quanto mais cedo você plantar essa semente, mais cedo a árvore crescerá. E quanto mais fielmente você a regar e cuidar dela com poupanças consistentes, mais cedo você poderá se abrigar à sua sombra."
+                    </p>
+                    <p style="margin-top: 15px; font-weight: bold; color: #1a472a;">
+                        O segredo não é quanto você ganha, mas quanto você guarda e multiplica. Disciplina e paciência transformarão seu futuro financeiro!
+                    </p>
+                </div>
+            `;
+
+            acoes.innerHTML = html;
+        };
+
+        // Adicionar listeners para cálculo automático
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    // Atualizar apenas os subtotais em tempo real
+                    const renda1 = parseFloat(document.getElementById('renda1').value) || 0;
+                    const renda2 = parseFloat(document.getElementById('renda2').value) || 0;
+                    const rendaExtra = parseFloat(document.getElementById('rendaExtra').value) || 0;
+                    document.getElementById('totalRenda').textContent = formatarMoeda(renda1 + renda2 + rendaExtra);
+
+                    const aluguel = parseFloat(document.getElementById('aluguel').value) || 0;
+                    const aguaAluguel = parseFloat(document.getElementById('aguaAluguel').value) || 0;
+                    const luzAluguel = parseFloat(document.getElementById('luzAluguel').value) || 0;
+                    const internetAluguel = parseFloat(document.getElementById('internetAluguel').value) || 0;
+                    document.getElementById('subtotalAluguel').textContent = formatarMoeda(aluguel + aguaAluguel + luzAluguel + internetAluguel);
+
+                    const prestacaoImovel = parseFloat(document.getElementById('prestacaoImovel').value) || 0;
+                    const carneImovel = parseFloat(document.getElementById('carneImovel').value) || 0;
+                    const aguaImovel = parseFloat(document.getElementById('aguaImovel').value) || 0;
+                    const luzImovel = parseFloat(document.getElementById('luzImovel').value) || 0;
+                    const internetImovel = parseFloat(document.getElementById('internetImovel').value) || 0;
+                    document.getElementById('subtotalImovel').textContent = formatarMoeda(prestacaoImovel + carneImovel + aguaImovel + luzImovel + internetImovel);
+
+                    const combustivel1 = parseFloat(document.getElementById('combustivel1').value) || 0;
+                    const combustivel2 = parseFloat(document.getElementById('combustivel2').value) || 0;
+                    const prestacaoVeiculo = parseFloat(document.getElementById('prestacaoVeiculo').value) || 0;
+                    const seguroVeiculo = parseFloat(document.getElementById('seguroVeiculo').value) || 0;
+                    document.getElementById('subtotalVeiculos').textContent = formatarMoeda(combustivel1 + combustivel2 + prestacaoVeiculo + seguroVeiculo);
+
+                    const alimentacao = parseFloat(document.getElementById('alimentacao').value) || 0;
+                    const saude = parseFloat(document.getElementById('saude').value) || 0;
+                    const educacao = parseFloat(document.getElementById('educacao').value) || 0;
+                    const lazer = parseFloat(document.getElementById('lazer').value) || 0;
+                    const outrasFixas = parseFloat(document.getElementById('outrasFixas').value) || 0;
+                    document.getElementById('subtotalOutras').textContent = formatarMoeda(alimentacao + saude + educacao + lazer + outrasFixas);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

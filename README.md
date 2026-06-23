@@ -20,6 +20,7 @@ Para uma avaliacao rapida, comece por estes pontos:
 | Estudos academicos | `estudos/estacio/`, `estudos/senac/`, `estudos/modelagem-banco-dados/` | Materiais e exercicios de formacao. |
 | Laboratorios | `laboratorios/` | Testes pequenos, automacoes e experimentos preservados. |
 | Documentacao de apoio | `documentos/` | Anotacoes e planos de evolucao. |
+| Auditoria de branches | `documentos/auditoria-branches.md` | Diagnostico das branches remotas e reaproveitamento seguro de conteudos. |
 
 ## Linha de Evolucao
 
@@ -41,6 +42,8 @@ projetos/            projetos aplicados ou sistemas em evolucao
 laboratorios/        experimentos pequenos e utilitarios
 estudos/             cursos, desafios, fundamentos e anotacoes de estudo
 ```
+
+Branches antigas foram analisadas antes de qualquer merge direto. O conteudo essencial foi reaproveitado dentro dessa estrutura para preservar a historia de evolucao sem quebrar a organizacao atual.
 
 ## Acessibilidade
 

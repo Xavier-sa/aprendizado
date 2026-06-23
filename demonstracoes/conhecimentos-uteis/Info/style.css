@@ -1,0 +1,139 @@
+:root {
+    --bg: #0b1020;
+    --card: #0f1724;
+    --muted: #9aa4b2;
+    --accent: #4fc3f7;
+    --accent2: #ff5252;
+    --glass: rgba(255, 255, 255, 0.03);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(180deg, var(--bg), #070812);
+    color: #dbe6f3
+}
+
+.container {
+    max-width: 980px;
+    margin: 36px auto;
+    padding: 24px
+}
+
+header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 18px
+}
+
+.logo {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #071226;
+    box-shadow: 0 6px 18px rgba(79, 195, 247, .08)
+}
+
+h1 {
+    margin: 0;
+    font-size: 20px
+}
+
+p.lead {
+    color: var(--muted);
+    margin: 6px 0 18px
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 18px
+}
+
+.card {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(2, 6, 23, .6)
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px
+}
+
+h2 {
+    margin: 0;
+    font-size: 16px
+}
+
+ul {
+    margin: 8px 0 0 18px;
+    color: var(--muted)
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px
+}
+
+th,
+td {
+    padding: 8px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+    text-align: left;
+    font-size: 13px
+}
+
+th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 12px
+}
+
+pre {
+    background: var(--glass);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    overflow: auto
+}
+
+footer {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center
+}
+
+.tag {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px 8px;
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+    margin-left: 8px
+}
+
+@media(max-width:900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .logo {
+        width: 48px;
+        height: 48px
+    }
+}
