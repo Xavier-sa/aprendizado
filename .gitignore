@@ -5,6 +5,10 @@ node_modules/
 dist/
 build/
 
+# Ignorar cache Python
+__pycache__/
+*.pyc
+
 # Ignorar arquivos temporários do sistema
 *.log
 *.tmp
