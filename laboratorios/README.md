@@ -4,8 +4,8 @@ Experimentos pequenos, utilitarios e provas de conceito ficam aqui. Eles mostram
 
 | Pasta | Conteudo |
 | --- | --- |
-| `python-lab/` | Scripts Python de estudo, terminal, validacao e automacao. |
-| `cpp-lab/` | Exercicios e arquivos C++ avulsos. |
+| `laboratorio-python/` | Scripts Python de estudo, terminal, validacao e automacao. |
+| `laboratorio-cpp/` | Exercicios e arquivos C++ avulsos. |
 
 ## Padrao de Nome
 

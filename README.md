@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/branding/developer-xavier.svg" alt="Developer Xavier - aprendizado documentado, codigo em evolucao e pratica constante" width="100%">
+  <img src="recursos/identidade-visual/banner-developer-xavier.svg" alt="Developer Xavier - aprendizado documentado, codigo em evolucao e pratica constante" width="100%">
 </p>
 
 # Xavier | Biografia de Evolucao em Desenvolvimento
@@ -14,12 +14,12 @@ Para uma avaliacao rapida, comece por estes pontos:
 
 | Area | Caminho | O que observar |
 | --- | --- | --- |
-| Portfolio biografico | `demos/portfolio/` | Pagina visual sobre a jornada, tecnologias e projetos. |
-| Projetos aplicados | `projects/` | Evolucao para aplicacoes com regras, telas, banco e organizacao. |
-| Exercicios e desafios | `studies/codesignal/`, `studies/linguagens/`, `studies/w3school/` | Fundamentos, repeticao deliberada e pratica de sintaxe. |
-| Estudos academicos | `studies/estacio/`, `studies/senac/`, `studies/bd-modelagem/` | Materiais e exercicios de formacao. |
-| Scripts de laboratorio | `scripts/` | Testes pequenos, automacoes e experimentos preservados. |
-| Documentacao de apoio | `docs/` | Anotacoes e planos de evolucao. |
+| Portfolio biografico | `demonstracoes/portfolio-biografico/` | Pagina visual sobre a jornada, tecnologias e projetos. |
+| Projetos aplicados | `projetos/` | Evolucao para aplicacoes com regras, telas, banco e organizacao. |
+| Exercicios e desafios | `estudos/codesignal/`, `estudos/linguagens/`, `estudos/w3school/` | Fundamentos, repeticao deliberada e pratica de sintaxe. |
+| Estudos academicos | `estudos/estacio/`, `estudos/senac/`, `estudos/modelagem-banco-dados/` | Materiais e exercicios de formacao. |
+| Laboratorios | `laboratorios/` | Testes pequenos, automacoes e experimentos preservados. |
+| Documentacao de apoio | `documentos/` | Anotacoes e planos de evolucao. |
 
 ## Linha de Evolucao
 
@@ -31,15 +31,15 @@ Para uma avaliacao rapida, comece por estes pontos:
 
 ## Padrao de Organizacao
 
-Este repositorio passou a usar nomes em ingles ou portugues simples, sempre em minusculas quando possivel, com separacao por hifen para documentos e snake_case para scripts Python.
+Este repositorio passou a usar nomes em portugues do Brasil sempre que o nome nao for uma tecnologia, marca ou convencao tecnica conhecida. As pastas usam letras minusculas, sem acentos e com hifen quando houver mais de uma palavra.
 
 ```text
-assets/              imagens e arquivos visuais usados na documentacao
-demos/               paginas e demonstracoes navegaveis
-docs/                notas, planos e material de contexto
-projects/            projetos aplicados ou sistemas em evolucao
-scripts/             experimentos pequenos e utilitarios
-studies/             cursos, desafios, fundamentos e anotacoes de estudo
+recursos/            imagens e arquivos visuais usados na documentacao
+demonstracoes/       paginas e demonstracoes navegaveis
+documentos/          notas, planos e material de contexto
+projetos/            projetos aplicados ou sistemas em evolucao
+laboratorios/        experimentos pequenos e utilitarios
+estudos/             cursos, desafios, fundamentos e anotacoes de estudo
 ```
 
 ## Acessibilidade
@@ -54,11 +54,11 @@ Diretrizes do repositorio:
 - Manter links e caminhos escritos de forma textual.
 - Documentar interfaces futuras com foco em teclado, leitores de tela e daltonismo.
 
-Mais detalhes estao em `ACCESSIBILITY.md`.
+Mais detalhes estao em `ACESSIBILIDADE.md`.
 
 ## Contribuicao
 
-Este e um repositorio pessoal de evolucao, mas sugestoes tecnicas sao bem-vindas. Antes de propor mudancas, leia `CONTRIBUTING.md` para manter o historico de aprendizado preservado.
+Este e um repositorio pessoal de evolucao, mas sugestoes tecnicas sao bem-vindas. Antes de propor mudancas, leia `CONTRIBUINDO.md` para manter o historico de aprendizado preservado.
 
 ## Licenca
 

@@ -27,6 +27,6 @@ Use mensagens objetivas, por exemplo:
 
 ```text
 docs: melhora guia de organizacao
-refactor: move scripts soltos para laboratorio
+refactor: move arquivos soltos para laboratorios
 fix: corrige caminho de importacao do logo
 ```

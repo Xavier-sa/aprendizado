@@ -9,12 +9,12 @@ Esta pasta concentra cursos, desafios, anotacoes e fundamentos. A proposta e sep
 | CodeSignal | `codesignal/` | Desafios de logica com testes. |
 | Estacio | `estacio/` | Materiais e exercicios academicos. |
 | Senac | `senac/` | Aulas, webapps e exercicios. |
-| Banco de dados | `bd-modelagem/` | Modelagem, SQL e materiais de apoio. |
-| Git e terminal | `git/`, `github/`, `versionando/`, `windows-terminal/`, `cmd-treino/` | Comandos, versionamento e pratica de terminal. |
+| Banco de dados | `modelagem-banco-dados/` | Modelagem, SQL e materiais de apoio. |
+| Git e terminal | `git/`, `github/`, `versionando/`, `terminal-windows/`, `treino-cmd/` | Comandos, versionamento e pratica de terminal. |
 | Rotina semanal | `semanal/` | Exercicios organizados por dias e temas. |
 
 ## Padrao
 
 - Use nomes descritivos para novos arquivos.
 - Prefira documentos em Markdown para explicar contexto.
-- Quando um estudo virar projeto com fluxo proprio, mova para `projects/`.
+- Quando um estudo virar projeto com fluxo proprio, mova para `projetos/`.

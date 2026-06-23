@@ -5,7 +5,7 @@ Esta pasta concentra projetos aplicados, sistemas pequenos e experimentos que ja
 | Projeto | Caminho | Leitura sugerida |
 | --- | --- | --- |
 | Fiado | `fiado/` | Evolucao de uma ideia em PHP e Python com banco e telas. |
-| Calculadora financeira | `calc-financa/` | Controle financeiro com dados, login e painel. |
+| Calculadora financeira | `calculadora-financeira/` | Controle financeiro com dados, login e painel. |
 | Blog MVC PHP | `blog-mvc-php/` | Estrutura com models, controllers, views e configuracao. |
 | Psico ABA | `psico-aba/` | Projeto PHP com autenticacao, portal e agentes de apoio. |
 | Dio Magazine | `dio-magazine/` | Estudos e scripts ligados a leitura de CSV e pratica Python. |
