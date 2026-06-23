@@ -1,6 +1,0 @@
-flutter create contador
-
-
-dir contador 
-
-cd contador

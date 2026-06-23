@@ -1,3 +1,0 @@
-function functionName() {
-    code
-    }

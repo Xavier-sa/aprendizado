@@ -1,1 +1,0 @@
-Senhor=int(input("nome"))

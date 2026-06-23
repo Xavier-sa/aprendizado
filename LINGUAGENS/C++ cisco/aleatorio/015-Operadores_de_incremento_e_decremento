@@ -1,3 +1,0 @@
-int sheep_counter;
-
-sheep_counter = 0;
