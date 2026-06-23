@@ -1,0 +1,40 @@
+                Início
+                   |
+       +-----------+------------+
+       |                        |
+   HTA - Análise         GOMS - Análise
+   Hierárquica de        Baseada em
+   Tarefas               Conhecimento
+       |                        |
+1. Definir objetivos       1. Identificar Goals
+2. Obter consenso          2. Definir Operators
+3. Levantar fontes         3. Criar Methods
+4. Criar decomposição      4. Definir Selection Rules
+   (diagrama/tabela)           (quando há mais de um método)
+5. Validar com usuários         |
+6. Identificar operações        V
+7. Testar desempenho     ✔ Foco: Usuário experiente
+       |
+       V
+✔ Foco: Estruturação de tarefas
+✔ Útil p/ tarefas complexas
+
+       +--------------------------+
+       |                          |
+       |   CTT - ConcurTaskTrees  |
+       | (Árvores de Tarefas)     |
+       |                          |
+       +-----------+--------------+
+                   |
+     1. Definir tipos de tarefas:
+        - Usuário
+        - Sistema
+        - Interativas
+        - Abstratas
+     2. Modelar relações entre tarefas
+        (hierarquia e concorrência)
+     3. Usar estrutura em árvore
+                   |
+                   V
+        ✔ Foco: Representação gráfica de fluxo
+        ✔ Suporte à modelagem e avaliação de interface

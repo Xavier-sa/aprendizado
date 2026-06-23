@@ -1,0 +1,7 @@
+Olá! Minha trajetória na área de tecnologia começou de forma inesperada, por meio de um concurso promovido pela FAPEC, que me proporcionou uma bolsa para cursar o Técnico em Desenvolvimento de Sistemas no SENAC Hub (MS). Durante as aulas, descobri um grande interesse pela área de desenvolvimento, o que me motivou a continuar estudando e a buscar uma transição de carreira.
+
+Atualmente, trabalho em escala 12x36, o que me permite conciliar o trabalho com os estudos. Estou cursando o Técnico em Desenvolvimento e também o curso de Desenvolvimento Full Stack pela Estácio, com foco em construir uma base sólida para atuar profissionalmente na área de tecnologia.
+
+Tenho graduação em Gestão Pública, CNH categoria D, e uma trajetória profissional diversa, que inclui experiências como coletor de lixo, porteiro, orientador em Ecoponto e até mesmo em rotinas administrativas como Jovem Aprendiz (Mirim). Essas experiências me tornaram uma pessoa disciplinada, resiliente e com forte capacidade de adaptação. Também desenvolvi habilidades em atendimento ao público e orientação ao cliente, que acredito serem valiosas para qualquer equipe.
+
+Busco uma oportunidade de estágio para colocar em prática os conhecimentos que venho adquirindo e contribuir ativamente com os desafios da empresa. Estou comprometido com o aprendizado contínuo e pronto para colaborar com dedicação, responsabilidade e vontade de crescer na área de desenvolvimento.

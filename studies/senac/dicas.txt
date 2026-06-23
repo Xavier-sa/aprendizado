@@ -1,0 +1,8 @@
+tabela ternaria N x N
+
+
+recebe e acrescenta os atributos,
+gera a ternaria
+
+
+https://app.diagrams.net/?splash=0#G17JA5MZ64OzzV6KIPKoRfCOf3QqcWApj4#%7B"pageId"%3A"BFsLmCRuHWvryuqqZMtZ"%7D

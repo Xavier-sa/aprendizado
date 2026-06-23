@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <link rel="stylesheet" href="../assets/css/style.css">
+  <body>
+    <h2>Contador</h2>
+    <p id="contador">0</p>
+    <button onclick="incrementar()">+</button>
+    <button onclick="zerar()">Zerar</button>
+
+    <script>
+      let valor = 0;
+
+      function incrementar() {
+        valor++;
+        document.getElementById("contador").innerText = valor;
+      }
+
+      function zerar() {
+        valor = 0;
+        document.getElementById("contador").innerText = valor;
+      }
+    </script>
+  </body>
+</html>

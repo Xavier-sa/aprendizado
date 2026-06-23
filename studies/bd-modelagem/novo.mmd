@@ -1,0 +1,426 @@
+
+## APURAÇÃO ELEITORAL
+
+*
+
+```
+[LOCALIDADE] (1:N) [ZONA_ELEITORAL] (1:N) [SECAO] (1:N) [VOTO]
+[PARTIDO] (1:N) [CANDIDATO]
+[ELEITOR] (1:1) [VOTO]
+[CANDIDATO] (1:N) [VOTO]
+[SECAO] (1:N) [ELEITOR]
+
+Entidades e atributos:
+
+LOCALIDADE (
+  id_localidade (PK),
+  nome,
+  uf
+)
+
+ZONA_ELEITORAL (
+  id_zona (PK),
+  id_localidade (FK),
+  nome,
+  endereco
+)
+
+SECAO (
+  id_secao (PK),
+  id_zona (FK),
+  numero,
+  local_votacao
+)
+
+PARTIDO (
+  id_partido (PK),
+  sigla,
+  nome,
+  numero
+)
+
+CANDIDATO (
+  id_candidato (PK),
+  id_partido (FK),
+  nome,
+  cpf,
+  cargo,
+  numero
+)
+
+ELEITOR (
+  id_eleitor (PK),
+  id_secao (FK),
+  nome,
+  cpf,
+  titulo_eleitor
+)
+
+VOTO (
+  id_voto (PK),
+  id_secao (FK),
+  id_eleitor (FK) NULL, -- pode ser nulo para preservar sigilo
+  id_candidato (FK) NULL, -- pode ser nulo para votos brancos/nulos
+  data_hora,
+  tipo_voto (branco/nulo/valido)
+```
+
+**Integridades referenciais:**
+- Uma Zona Eleitoral pertence a uma única Localidade (obrigatório)
+- Uma Seção pertence a uma única Zona Eleitoral (obrigatório)
+- Um Candidato pertence a um único Partido (obrigatório)
+- Um Eleitor está vinculado a uma única Seção (obrigatório)
+- Um Voto é registrado em uma única Seção (obrigatório)
+- Um Voto pode estar vinculado a um Eleitor (opcional - para preservar sigilo)
+- Um Voto pode estar vinculado a um Candidato (opcional - para votos brancos/nulos)
+
+## CONCURSO PÚBLICO
+
+**DER para o sistema de concurso público:**
+
+```
+[DEPARTAMENTO] (1:N) [CARGO_DEPARTAMENTO]
+[CONCURSO] (1:N) [CARGO_CONCURSO]
+[CANDIDATO] (1:N) [INSCRICAO]
+[ETAPA] (1:N) [PARTICIPACAO_ETAPA]
+[CARGO] (1:N) [CARGO_DEPARTAMENTO]
+[CARGO] (1:N) [CARGO_CONCURSO]
+[INSCRICAO] (1:1) [PARTICIPACAO_ETAPA]
+
+Entidades e atributos:
+
+DEPARTAMENTO (
+  id_departamento (PK),
+  nome,
+  sigla
+)
+
+CARGO (
+  id_cargo (PK),
+  nome,
+  descricao,
+  salario_base
+)
+
+CARGO_DEPARTAMENTO (
+  id_cargo (PK/FK),
+  id_departamento (PK/FK)
+)
+
+CONCURSO (
+  id_concurso (PK),
+  edital,
+  data_abertura,
+  data_encerramento,
+  status
+)
+
+CARGO_CONCURSO (
+  id_cargo (PK/FK),
+  id_concurso (PK/FK),
+  vagas
+)
+
+CANDIDATO (
+  id_candidato (PK),
+  nome,
+  cpf,
+  email,
+  telefone
+)
+
+INSCRICAO (
+  id_inscricao (PK),
+  id_candidato (FK),
+  id_cargo (FK),
+  id_concurso (FK),
+  data_inscricao,
+  status
+)
+
+ETAPA (
+  id_etapa (PK),
+  id_concurso (FK),
+  nome,
+  descricao,
+  data,
+  tipo (classificatoria/eliminatoria),
+  peso
+)
+
+PARTICIPACAO_ETAPA (
+  id_participacao (PK),
+  id_inscricao (FK),
+  id_etapa (FK),
+  nota,
+  status (aprovado/reprovado)
+)
+```
+
+**Integridades referenciais:**
+- Um Cargo pode estar em vários Departamentos (obrigatório)
+- Um Concurso oferece vários Cargos (obrigatório)
+- Um Candidato faz várias Inscrições (obrigatório)
+- Uma Inscrição é para um único Cargo em um Concurso (obrigatório)
+- Uma Etapa pertence a um único Concurso (obrigatório)
+- Uma Participação em Etapa está vinculada a uma Inscrição e uma Etapa (obrigatório)
+
+# CONTRATOS
+
+**DER para o sistema de gestão de contratos:**
+
+```
+[FORNECEDOR] (1:N) [CONTRATO_FORNECEDOR]
+[TIPO_CONTRATO] (1:N) [CONTRATO]
+[FORMA_PAGAMENTO] (1:N) [CONTRATO]
+[MATERIAL_SERVICO] (1:N) [ITEM_CONTRATO]
+[CONTRATO] (1:N) [ITEM_CONTRATO]
+[CONTRATO] (1:N) [BOLETA]
+[FORNECEDOR] (1:N) [MATERIAL_SERVICO]
+
+Entidades e atributos:
+
+FORNECEDOR (
+  id_fornecedor (PK),
+  nome,
+  cnpj,
+  ramo_atividade,
+  endereco,
+  telefone
+)
+
+TIPO_CONTRATO (
+  id_tipo (PK),
+  descricao
+)
+
+FORMA_PAGAMENTO (
+  id_forma (PK),
+  descricao
+)
+
+CONTRATO (
+  id_contrato (PK),
+  id_tipo (FK),
+  id_forma_pagamento (FK),
+  numero,
+  data_inicio,
+  data_termino,
+  valor_total,
+  status
+)
+
+CONTRATO_FORNECEDOR (
+  id_contrato (PK/FK),
+  id_fornecedor (PK/FK)
+)
+
+MATERIAL_SERVICO (
+  id_material (PK),
+  id_fornecedor (FK),
+  descricao,
+  unidade_medida,
+  valor_unitario
+)
+
+ITEM_CONTRATO (
+  id_item (PK),
+  id_contrato (FK),
+  id_material (FK),
+  quantidade,
+  valor_unitario,
+  prazo_entrega
+)
+
+BOLETA (
+  id_boleta (PK),
+  id_contrato (FK),
+  id_fornecedor (FK),
+  numero,
+  valor,
+  data_emissao,
+  data_vencimento,
+  data_pagamento,
+  status (pendente/paga)
+)
+```
+
+**Integridades referenciais:**
+- Um Contrato pode ter vários Fornecedores (obrigatório)
+- Um Contrato tem um Tipo e uma Forma de Pagamento (obrigatório)
+- Um Material/Serviço pode ser fornecido por vários Fornecedores (obrigatório)
+- Um Item de Contrato pertence a um Contrato e um Material/Serviço (obrigatório)
+- Uma Boleta pertence a um Contrato e um Fornecedor (obrigatório)
+
+## CONTROLE DE EQUIPAMENTOS
+
+**DER para o sistema de controle de equipamentos:**
+
+```
+[TIPO_EQUIPAMENTO] (1:N) [EQUIPAMENTO]
+[DEPARTAMENTO] (1:N) [EQUIPAMENTO]
+[EMPREGADO] (1:N) [SOLICITACAO_COMPRA]
+[EQUIPAMENTO] (1:N) [MANUTENCAO]
+
+Entidades e atributos:
+
+TIPO_EQUIPAMENTO (
+  id_tipo (PK),
+  descricao
+)
+
+DEPARTAMENTO (
+  id_departamento (PK),
+  nome,
+  sigla
+)
+
+EMPREGADO (
+  id_empregado (PK),
+  id_departamento (FK),
+  nome,
+  cargo,
+  is_chefe (booleano)
+)
+
+EQUIPAMENTO (
+  id_equipamento (PK),
+  id_tipo (FK),
+  id_departamento (FK),
+  modelo,
+  numero_serie,
+  data_aquisicao,
+  status
+)
+
+SOLICITACAO_COMPRA (
+  id_solicitacao (PK),
+  id_empregado (FK),
+  id_tipo_equipamento (FK),
+  justificativa,
+  data_solicitacao,
+  status
+)
+
+MANUTENCAO (
+  id_manutencao (PK),
+  id_equipamento (FK),
+  data,
+  descricao,
+  valor,
+  tipo (preventiva/corretiva),
+  status
+)
+```
+
+**Integridades referenciais:**
+- Um Equipamento tem um Tipo e está em um Departamento (obrigatório)
+- Um Empregado pertence a um Departamento (obrigatório)
+- Uma Solicitação de Compra é feita por um Empregado (chefe) (obrigatório)
+- Uma Manutenção é realizada em um Equipamento (obrigatório)
+
+##  CONTROLE DE HOSPEDAGEM
+
+**DER para o sistema de rede de hotéis:**
+
+```
+[CLIENTE] (1:N) [RESERVA]
+[TIPO_CONVENIO] (1:N) [CLIENTE]
+[QUARTO] (1:N) [HOSPEDAGEM]
+[HOSPEDE] (1:N) [HOSPEDAGEM]
+[HOSPEDAGEM] (1:N) [PEDIDO_SERVICO]
+[TIPO_SERVICO] (1:N) [PEDIDO_SERVICO]
+[TIPO_QUARTO] (1:N) [QUARTO]
+
+Entidades e atributos:
+
+CLIENTE (
+  id_cliente (PK),
+  id_tipo_convenio (FK),
+  nome,
+  cpf,
+  email,
+  telefone
+)
+
+TIPO_CONVENIO (
+  id_tipo (PK),
+  descricao,
+  desconto
+)
+
+HOSPEDE (
+  id_hospede (PK),
+  id_cliente (FK),
+  data_entrada,
+  data_saida,
+  status
+)
+
+TIPO_QUARTO (
+  id_tipo (PK),
+  descricao (luxo/standard),
+  valor_diaria
+)
+
+QUARTO (
+  id_quarto (PK),
+  id_tipo (FK),
+  numero,
+  andar,
+  status (disponivel/ocupado/manutencao)
+)
+
+RESERVA (
+  id_reserva (PK),
+  id_cliente (FK),
+  data_reserva,
+  data_prevista_entrada,
+  data_prevista_saida,
+  status (confirmada/cancelada)
+)
+
+HOSPEDAGEM (
+  id_hospedagem (PK),
+  id_hospede (FK),
+  id_quarto (FK),
+  id_reserva (FK) NULL, -- pode ser nulo para hospedes sem reserva
+  data_entrada,
+  data_saida,
+  valor_total
+)
+
+TIPO_SERVICO (
+  id_tipo (PK),
+  descricao (copa/lavanderia/sauna/etc.),
+  valor
+)
+
+PEDIDO_SERVICO (
+  id_pedido (PK),
+  id_hospedagem (FK),
+  id_tipo_servico (FK),
+  data,
+  valor,
+  status
+)
+
+OCUPANTE (
+  id_ocupante (PK),
+  id_hospedagem (FK),
+  nome,
+  documento
+)
+```
+
+**Integridades referenciais:**
+- Um Cliente pode ter um Tipo de Convênio (opcional)
+- Um Hóspede deriva de um Cliente (obrigatório)
+- Um Quarto tem um Tipo (obrigatório)
+- Uma Reserva é feita por um Cliente (obrigatório)
+- Uma Hospedagem está vinculada a um Hóspede e um Quarto (obrigatório)
+- Uma Hospedagem pode ter uma Reserva (opcional)
+- Um Pedido de Serviço está vinculado a uma Hospedagem e um Tipo de Serviço (obrigatório)
+- Um Ocupante está vinculado a uma Hospedagem (obrigatório)
+
+Estes diagramas atendem aos requisitos de cada cenário, com as entidades, relacionamentos, atributos, chaves primárias e estrangeiras, além das integridades referenciais e opcionalidade/obrigatoriedade dos relacionamentos conforme solicitado.

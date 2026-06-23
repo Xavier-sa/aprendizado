@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Adivinhação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #resultado, #mensagemErro, #tentativas {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        #mensagemErro {
+            color: red;
+        }
+        #reiniciar {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+        #reiniciar:hover {
+            background-color: #218838;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .header img {
+            height: 50px; /* Ajuste conforme necessário */
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="caminho-para-sua-imagem.png" alt="Ícone do Jogo"> <!-- Substitua pelo caminho da sua imagem -->
+            <h1>Jogo da Adivinhação</h1>
+        </div>
+        <p>Adivinhe o NÚMERO entre 1 e 5:</p>
+        <input type="number" id="entradaTentativa" min="1" max="5">
+        <button onclick="tentarAdivinhar()">Tentar</button>
+        <button id="reiniciar" onclick="reiniciarJogo()">Reiniciar Jogo</button>
+        <p id="resultado"></p>
+        <p id="mensagemErro"></p>
+        <p id="tentativas"></p>
+    </div>
+
+    <script>
+        let numeroSecreto;
+        let tentativasRestantes;
+
+        function iniciarJogo() {
+            numeroSecreto = Math.floor(Math.random() * 5) + 1; // Ajustado para 1 a 5
+            tentativasRestantes = 3; // Número de tentativas
+            document.getElementById('tentativas').textContent = `Tentativas restantes: ${tentativasRestantes}`;
+            document.getElementById('resultado').textContent = "";
+            document.getElementById('mensagemErro').textContent = "";
+        }
+
+        function tentarAdivinhar() {
+            let tentativa = parseInt(document.getElementById('entradaTentativa').value);
+            let resultado = document.getElementById('resultado');
+            let mensagemErro = document.getElementById('mensagemErro');
+            let tentativas = document.getElementById('tentativas');
+
+            resultado.textContent = "";
+            mensagemErro.textContent = "";
+
+            if (isNaN(tentativa) || tentativa < 1 || tentativa > 5) { // Ajustado para 1 a 5
+                mensagemErro.textContent = "Por favor, insira um número entre 1 e 5.";
+                return;
+            }
+
+            if (tentativasRestantes > 0) {
+                if (tentativa === numeroSecreto) {
+                    resultado.textContent = "Parabéns! Você acertou na MOSCA!!!";
+                } else {
+                    tentativasRestantes--;
+                    if (tentativasRestantes > 0) {
+                        resultado.textContent = "Tente Novamente!";
+                        tentativas.textContent = `Tentativas restantes: ${tentativasRestantes}`;
+                    } else {
+                        resultado.textContent = `Você perdeu! O número era ${numeroSecreto}.`;
+                    }
+                }
+            }
+        }
+
+        function reiniciarJogo() {
+            iniciarJogo();
+        }
+
+        // Inicializa o jogo ao carregar a página
+        iniciarJogo();
+    </script>
+</body>
+</html>

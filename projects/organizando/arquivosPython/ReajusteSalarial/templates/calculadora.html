@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Aumento Salarial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(240, 147, 251, 0.4);
+        }
+
+        .resultado {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            animation: slideDown 0.5s ease;
+        }
+
+        .resultado.show {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .resultado h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 22px;
+            text-align: center;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .info-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .info-card.destaque .value {
+            font-size: 28px;
+            color: #f5576c;
+        }
+
+        .comparacao {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .comparacao.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+
+        .comparacao h3 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .comparacao-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparacao-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparacao-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comparacao-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #f57c00;
+        }
+
+        .badge-info {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 25px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Calculadora de Aumento Salarial</h1>
+            <p>Simule seu novo salário com diferentes percentuais de aumento</p>
+        </div>
+
+        <div class="content">
+            <form id="formCalculadora">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="salario">💵 Salário Atual (R$)</label>
+                        <input type="number" id="salario" step="0.01" min="0" placeholder="Ex: 3000.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="percentual">📊 Percentual de Aumento (%)</label>
+                        <input type="number" id="percentual" step="0.1" min="0" value="7.5" placeholder="Ex: 7.5" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">🚀 Calcular Aumento</button>
+                <button type="button" class="btn btn-secondary" onclick="compararAumentos()">📈 Comparar Diferentes Aumentos</button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 10px; color: #666;">Calculando...</p>
+            </div>
+
+            <div class="resultado" id="resultado">
+                <h3>📋 Resultado do Cálculo</h3>
+                <div class="info-cards">
+                    <div class="info-card">
+                        <label>Salário Atual</label>
+                        <div class="value" id="salarioAtual">R$ 0,00</div>
+                    </div>
+                    <div class="info-card">
+                        <label>Aumento (%)</label>
+                        <div class="value" id="percentualAumento">0%</div>
+                    </div>
+                    <div class="info-card">
+                        <label>Valor do Aumento</label>
+                        <div class="value" id="valorAumento">R$ 0,00</div>
+                    </div>
+                    <div class="info-card destaque">
+                        <label>Novo Salário</label>
+                        <div class="value" id="novoSalario">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <div class="info-cards">
+                    <div class="info-card">
+                        <label>🔄 Diferença Mensal</label>
+                        <div class="value" style="color: #4caf50;" id="diferencaMensal">R$ 0,00</div>
+                    </div>
+                    <div class="info-card">
+                        <label>📅 Ganho Anual (12 meses)</label>
+                        <div class="value" style="color: #ff9800;" id="diferencaAnual">R$ 0,00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparacao" id="comparacao">
+                <h3>📊 Comparação de Aumentos</h3>
+                <table class="comparacao-table">
+                    <thead>
+                        <tr>
+                            <th>Aumento</th>
+                            <th>Valor Aumento</th>
+                            <th>Novo Salário</th>
+                            <th>Ganho Anual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaComparacao">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+
+        // Formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        // Calcular aumento
+        document.getElementById('formCalculadora').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const salario = parseFloat(document.getElementById('salario').value);
+            const percentual = parseFloat(document.getElementById('percentual').value);
+
+            // Mostrar loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('resultado').classList.remove('show');
+            document.getElementById('comparacao').classList.remove('show');
+
+            try {
+                const response = await fetch(`${API_URL}/calcular`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ salario, percentual })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    // Preencher resultados
+                    document.getElementById('salarioAtual').textContent = formatarMoeda(data.salario_atual);
+                    document.getElementById('percentualAumento').textContent = data.percentual + '%';
+                    document.getElementById('valorAumento').textContent = formatarMoeda(data.valor_aumento);
+                    document.getElementById('novoSalario').textContent = formatarMoeda(data.novo_salario);
+                    document.getElementById('diferencaMensal').textContent = formatarMoeda(data.diferenca_mensal);
+                    document.getElementById('diferencaAnual').textContent = formatarMoeda(data.diferenca_anual);
+
+                    // Mostrar resultado
+                    document.getElementById('resultado').classList.add('show');
+                }
+            } catch (error) {
+                alert('Erro ao calcular. Verifique se o servidor Python está rodando!');
+                console.error(error);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        });
+
+        // Comparar aumentos
+        async function compararAumentos() {
+            const salario = parseFloat(document.getElementById('salario').value);
+
+            if (!salario || salario <= 0) {
+                alert('Por favor, informe um salário válido!');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('comparacao').classList.remove('show');
+
+            try {
+                const response = await fetch(`${API_URL}/comparar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ salario })
+                });
+
+                const data = await response.json();
+
+                if (data.sucesso) {
+                    const tbody = document.getElementById('tabelaComparacao');
+                    tbody.innerHTML = '';
+
+                    data.comparacoes.forEach((comp, index) => {
+                        let badgeClass = 'badge-info';
+                        if (comp.percentual >= 10) badgeClass = 'badge-success';
+                        else if (comp.percentual >= 7) badgeClass = 'badge-warning';
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td><span class="badge ${badgeClass}">${comp.percentual}%</span></td>
+                            <td><strong>${formatarMoeda(comp.valor_aumento)}</strong></td>
+                            <td><strong style="color: #667eea;">${formatarMoeda(comp.novo_salario)}</strong></td>
+                            <td style="color: #f5576c;">${formatarMoeda(comp.ganho_anual)}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    document.getElementById('comparacao').classList.add('show');
+                }
+            } catch (error) {
+                alert('Erro ao comparar. Verifique se o servidor Python está rodando!');
+                console.error(error);
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

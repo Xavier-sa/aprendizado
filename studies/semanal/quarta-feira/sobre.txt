@@ -1,0 +1,130 @@
+Claro! Vamos aprender o básico de **banco de dados** e praticar comandos SQL (`SELECT`, `INSERT`, `UPDATE`, `DELETE`) com **tabelas relacionadas**.
+
+---
+
+## 🔹 O que é um banco de dados?
+
+Um **banco de dados** é um sistema que armazena e organiza informações (como uma planilha gigante, mas mais poderoso).
+
+Usamos a linguagem **SQL** (*Structured Query Language*) para interagir com o banco.
+
+---
+
+## 🔹 Estrutura básica de tabelas relacionadas
+
+Vamos usar um exemplo com **duas tabelas**:
+
+### Tabela `clientes`
+
+| id | nome       | email                                   |
+| -- | ---------- | --------------------------------------- |
+| 1  | João Silva | [joao@email.com](mailto:joao@email.com) |
+| 2  | Ana Lima   | [ana@email.com](mailto:ana@email.com)   |
+
+### Tabela `pedidos`
+
+| id | cliente\_id | produto        | valor |
+| -- | ----------- | -------------- | ----- |
+| 1  | 1           | Celular        | 1500  |
+| 2  | 1           | Fone de Ouvido | 300   |
+| 3  | 2           | Notebook       | 4000  |
+
+A coluna `cliente_id` em `pedidos` se **relaciona** ao `id` em `clientes`.
+
+---
+
+## 🔹 Comandos SQL Básicos
+
+### 1. `SELECT` – Buscar dados
+
+```sql
+-- Buscar todos os clientes
+SELECT * FROM clientes;
+
+-- Buscar todos os pedidos do cliente João (id = 1)
+SELECT * FROM pedidos WHERE cliente_id = 1;
+
+-- Buscar nome do cliente e produto comprado (usando JOIN)
+SELECT c.nome, p.produto
+FROM clientes c
+JOIN pedidos p ON c.id = p.cliente_id;
+```
+
+---
+
+### 2. `INSERT` – Inserir dados
+
+```sql
+-- Adicionar novo cliente
+INSERT INTO clientes (nome, email)
+VALUES ('Carlos Mendes', 'carlos@email.com');
+
+-- Adicionar pedido para o cliente 3 (Carlos)
+INSERT INTO pedidos (cliente_id, produto, valor)
+VALUES (3, 'Teclado', 250);
+```
+
+---
+
+### 3. `UPDATE` – Atualizar dados
+
+```sql
+-- Alterar email do cliente com id = 2
+UPDATE clientes
+SET email = 'ana.lima@email.com'
+WHERE id = 2;
+
+-- Alterar valor do pedido 1
+UPDATE pedidos
+SET valor = 1400
+WHERE id = 1;
+```
+
+---
+
+### 4. `DELETE` – Apagar dados
+
+```sql
+-- Apagar pedido com id = 2
+DELETE FROM pedidos
+WHERE id = 2;
+
+-- Apagar cliente com id = 3
+-- (Antes, apague os pedidos dele para evitar erro de integridade)
+DELETE FROM pedidos WHERE cliente_id = 3;
+DELETE FROM clientes WHERE id = 3;
+```
+
+---
+
+## 🔹 Exercício prático (responda ou copie para praticar)
+
+### 1. Crie essas tabelas (se estiver usando MySQL, PostgreSQL ou SQLite):
+
+```sql
+CREATE TABLE clientes (
+    id INTEGER PRIMARY KEY,
+    nome TEXT,
+    email TEXT
+);
+
+CREATE TABLE pedidos (
+    id INTEGER PRIMARY KEY,
+    cliente_id INTEGER,
+    produto TEXT,
+    valor REAL,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+```
+
+### 2. Insira 2 clientes e 3 pedidos
+
+### 3. Faça:
+
+* um `SELECT` com `JOIN` para ver quem comprou o quê.
+* um `UPDATE` no nome de um cliente.
+* um `DELETE` em um pedido.
+
+---
+
+Se quiser, posso te mandar **mais exercícios práticos**, ou simular um ambiente com perguntas e correções. Deseja seguir assim?

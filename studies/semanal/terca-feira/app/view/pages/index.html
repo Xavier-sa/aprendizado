@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerenciador de Tarefas</title>
+  <style>
+   body {
+    background-image: url('https://wallpaperaccess.com/full/17361.jpg'); 
+    background-size: cover;
+    color: #fff;
+    text-align: center;
+    font-family: 'Arial Black', sans-serif;
+    margin-top: 100px;
+  }
+
+  h2 {
+    font-size: 48px;
+    color: orange;
+    text-shadow: 2px 2px #000;
+  }
+
+  #contador {
+    font-size: 60px;
+    margin: 20px;
+    color: yellow;
+    text-shadow: 3px 3px red;
+  }
+
+  button {
+    font-size: 32px;
+    padding: 10px 30px;
+    margin: 10px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(to bottom, #ff9900, #cc6600);
+    color: white;
+    box-shadow: 0 4px #999;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  button:hover {
+    transform: scale(1.1);
+  }
+
+  button:active {
+    box-shadow: 0 2px #666;
+    transform: translateY(4px);
+  }
+  </style>
+</head>
+<body>
+
+  <h1>📋 Minhas Tarefas</h1>
+
+  <input type="text" id="tarefaInput" placeholder="Digite sua tarefa" />
+  <button onclick="adicionarTarefa()">Adicionar</button>
+  <button onclick="apagarTudo()">Apagar tudo</button>
+
+  <h3>Total de tarefas: <span id="contador">0</span></h3>
+
+  <ul id="listaTarefas"></ul>
+
+  <script>
+    // Array para armazenar objetos de tarefas
+    let tarefas = [];
+
+    // Função para adicionar uma nova tarefa
+    function adicionarTarefa() {
+      const input = document.getElementById("tarefaInput");
+      const nomeTarefa = input.value.trim();
+
+      if (nomeTarefa === "") {
+        alert("Digite algo!");
+        return;
+      }
+
+      // Criando um objeto com a tarefa
+      const novaTarefa = {
+        nome: nomeTarefa,
+        status: "pendente"
+      };
+
+      tarefas.push(novaTarefa); // Adiciona ao array
+      input.value = ""; // Limpa o input
+      atualizarLista(); // Atualiza a tela
+    }
+
+    // Atualiza a exibição da lista
+    function atualizarLista() {
+      const ul = document.getElementById("listaTarefas");
+      ul.innerHTML = "";
+
+      tarefas.forEach((tarefa, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}. ${tarefa.nome} - ${tarefa.status}`;
+        ul.appendChild(li);
+      });
+
+      document.getElementById("contador").innerText = tarefas.length;
+    }
+
+    // Função para apagar todas as tarefas
+    function apagarTudo() {
+      if (confirm("Tem certeza que deseja apagar todas as tarefas?")) {
+        tarefas = [];
+        atualizarLista();
+      }
+    }
+  </script>
+
+</body>
+</html>

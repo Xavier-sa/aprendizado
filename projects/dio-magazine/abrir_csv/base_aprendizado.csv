@@ -1,0 +1,10 @@
+CONCEITO,TIPO,DIFICULDADE,EXEMPLO,EXPLICACAO
+Variáveis,Fundamental,1,x = 10,Armazenam dados na memória
+Operadores Aritméticos,Fundamental,1,"+, -, *, /, %",Realizam cálculos matemáticos
+Operadores Comparação,Fundamental,1,"==, !=, >, <, >=, <=",Comparam valores
+Estrutura IF,Controle,2,if condicao:,Executa código SE condição for True
+Estrutura ELSE,Controle,2,else:,Executa quando IF é False
+Loop WHILE,Repetição,3,while condicao:,Repete ENQUANTO condição for True
+Loop FOR,Repetição,3,for i in range(10):,Repete PARA cada item em sequência
+Listas,Estrutura Dados,2,"lista = [1, 2, 3]",Armazenam múltiplos valores
+Funções,Modularização,4,def minha_funcao():,Agrupam código reutilizável

@@ -1,0 +1,24 @@
+{
+    "jogadores": [
+      {
+        "id": 1,
+        "nome": "GokuBR",
+        "raca": "Sayajin",
+        "nivel": 12,
+        "forca": 150,
+        "ki": 100,
+        "vida": 500,
+        "exp": 2200,
+        "inventario": ["Semente dos Deuses", "Gi de Treinamento"]
+      }
+    ],
+    "arenas": [
+      {
+        "id": 1,
+        "nome": "Todos vs Todos",
+        "jogadores_na_arena": [1, 2, 3],
+        "status": "ativo"
+      }
+    ]
+  }
+  

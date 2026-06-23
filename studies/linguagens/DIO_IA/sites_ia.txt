@@ -1,0 +1,15 @@
+https://aline-antunes.gitbook.io/otimize-seus-prompts-e-aprenda-mais-usando-ias-1
+
+
+https://elidianaandrade.gitbook.io/fundamentos-de-engenharia-de-prompts-com-claude-3
+
+
+https://aws.amazon.com/pt/bedrock/claude/
+
+
+https://aws.amazon.com/pt/blogs/aws-brasil/como-criar-um-assistente-virtual-de-baixa-latencia-com-multiplos-modelos-usando-serverless-e-amazon-bedrock/
+
+https://aws.amazon.com/pt/step-functions/
+
+
+

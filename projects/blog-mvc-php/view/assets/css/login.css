@@ -1,0 +1,45 @@
+.login {
+    display: flex;
+    flex-direction: column;        /* Faz os itens ficarem em uma coluna (um abaixo do outro) */
+    justify-content: center;       /* Centraliza os itens na vertical */
+    align-items: center;           /* Centraliza os itens na horizontal */
+    height: 100vh;                 /* O contêiner ocupa 100% da altura da janela */
+    text-align: center;            /* Garante que o texto seja centralizado */
+    background-color: #f0f0f0;     /* Cor de fundo clara */
+    padding: 20px;                 /* Espaço interno */
+}
+
+.login form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;              /* Limita a largura do formulário */
+    border: 1px solid #ccc;       /* Borda clara, para contraste */
+}
+
+.login form input {
+    margin-bottom: 15px;           /* Espaçamento entre os campos */
+    padding: 10px;
+    border: 1px solid #aaa;        /* Borda mais escura para os campos */
+    border-radius: 4px;            /* Bordas arredondadas */
+    width: 100%;                   /* O campo ocupa toda a largura do formulário */
+    font-size: 16px;               /* Tamanho da fonte */
+}
+
+.login form button {
+    padding: 10px;
+    background-color: #4CAF50;     /* Cor de fundo verde */
+    color: white;
+    border: none;                  /* Remove borda padrão */
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;                   /* O botão ocupa toda a largura do formulário */
+}
+
+.login form button:hover {
+    background-color: #45a049;     /* Cor de fundo quando o botão é pressionado */
+}
+

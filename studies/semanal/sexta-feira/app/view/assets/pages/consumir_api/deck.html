@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck of Cards</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Deck of Cards 🎴</h1>
+  <button onclick="drawCard()">Puxar Carta</button>
+  <div id="cards"></div>
+
+  <script>
+    let deckId = '';
+
+    // Criar um novo baralho ao carregar a página
+    async function createDeck() {
+      const res = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1');
+      const data = await res.json();
+      deckId = data.deck_id;
+      console.log('Baralho criado com ID:', deckId);
+    }
+
+    // Puxar uma carta
+    async function drawCard() {
+      const res = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
+      const data = await res.json();
+      const card = data.cards[0];
+      const img = document.createElement('img');
+      img.src = card.image;
+      img.alt = `${card.value} of ${card.suit}`;
+      document.getElementById('cards').appendChild(img);
+    }
+
+    createDeck();
+  </script>
+</body>
+</html>

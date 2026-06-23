@@ -1,0 +1,6 @@
+body {
+    background: linear-gradient(to bottom, #ffcc00, #ff6600); /* Fundo em gradiente amarelo e laranja */
+    color: #fff; /* Texto branco */
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}

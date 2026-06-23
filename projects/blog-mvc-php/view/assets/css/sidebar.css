@@ -1,0 +1,82 @@
+.sidebar {
+    width: 200px;
+    height: 100vh;
+    background-color: #BDC3C7; /*--- troquei cor  (purple) */
+
+
+    font-size: 35px;/* -------- */
+    line-height: 86px;/* -------- */
+    box-shadow: 4px 0px 12px rgb(0, 0, 0);
+
+    nav {
+        img {
+            width: 100%;
+            object-fit: contain;/* ---------*/
+        }
+
+        ul {
+
+        }
+    }
+}
+
+/* Esconde a sidebar em telas pequenas */
+@media (max-width: 768px) {
+    .sidebar {
+        /* posicionamento para mobile */
+        position: relative;
+        top: 0;
+        height: 100%;
+
+        /* espaçamento p/ botão menu */
+        padding-top: 48px;
+
+        /* inicia escondido na versão mobile */
+        visibility: hidden;
+        margin-left: -200px;
+        width: 200px;
+
+        /* suaviza a transição */
+        transition: .4s;
+
+        /* estilos para sidebar aberta */
+        &.opened {
+            visibility: visible;
+            margin-left: 0;
+
+            .mobile-menu {
+                /* exibe/esconde os ícones conforme situação da sidebar */
+                .open {
+                    display: none;
+                }
+
+                .close {
+                    display: block;
+                    color: var(--text-white);
+                }
+            }
+        }
+
+        .mobile-menu {
+            /* posicionamento na versão mobile */
+            position: fixed;
+            top: calc((48px - 2rem) / 2);
+            left: .25rem;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            visibility: visible;
+
+            /* exibe/esconde os ícones conforme situação da sidebar */
+            .open {
+                display: block;
+                color: var(--text-secondary);
+            }
+
+            .close {
+                display: none;
+            }
+        }
+    }
+}

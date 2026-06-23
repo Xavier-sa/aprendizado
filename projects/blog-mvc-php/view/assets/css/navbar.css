@@ -1,0 +1,25 @@
+
+.navbar {
+    height: 68px;
+    width: calc(100vw - 200px);
+    position: fixed;
+    right: 0;
+
+    background-color: #2C3E50;  /* ----aquamarine---- */
+    
+
+    box-shadow: 4px 0px 12px rgb(0, 0, 0);
+    nav {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        height: 100%;
+
+        img {
+            height: 48px;
+            border-radius: 80%; /* -------- */
+            border: black;  /* -------- */
+           
+        }
+    }
+}

@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Forca</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .forca-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #canvas {
+            border: 3px solid #333;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+
+        .info-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .tema {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .tema h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .tema p {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .palavra {
+            font-size: 36px;
+            letter-spacing: 10px;
+            text-align: center;
+            margin: 30px 0;
+            font-weight: bold;
+            color: #333;
+            min-height: 50px;
+        }
+
+        .teclado {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .letra {
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .letra:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .letra:disabled {
+            background: #e0e0e0;
+            border-color: #ccc;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .letra.correta {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .letra.errada {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-item .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .palavras-list {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .palavra-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .palavra-info {
+            flex: 1;
+        }
+
+        .palavra-info .word {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .palavra-info .theme {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .modal-content.vitoria h2 {
+            color: #4caf50;
+        }
+
+        .modal-content.derrota h2 {
+            color: #f44336;
+        }
+
+        .dica {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .dica strong {
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+
+            .teclado {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Jogo da Forca</h1>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('jogar')">🎯 Jogar</button>
+            <button class="tab" onclick="showTab('adicionar')">➕ Adicionar Palavras</button>
+            <button class="tab" onclick="showTab('gerenciar')">📋 Gerenciar</button>
+        </div>
+
+        <!-- TAB JOGAR -->
+        <div id="jogar" class="tab-content active">
+            <div class="game-area">
+                <div class="forca-container">
+                    <canvas id="canvas" width="300" height="400"></canvas>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="iniciarJogo()">🔄 Novo Jogo</button>
+                        <button class="btn btn-success" onclick="mostrarDica()">💡 Dica</button>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <div class="tema">
+                        <h3>TEMA</h3>
+                        <p id="temaAtual">---</p>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="label">Erros</div>
+                            <div class="value" id="erros">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Acertos</div>
+                            <div class="value" id="acertos">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="label">Vitórias</div>
+                            <div class="value" id="vitorias">0</div>
+                        </div>
+                    </div>
+
+                    <div class="dica" id="dicaContainer" style="display: none;">
+                        <strong>💡 Dica:</strong> <span id="dicaTexto"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="palavra" id="palavraDisplay">_ _ _ _ _</div>
+
+            <div class="teclado" id="teclado"></div>
+        </div>
+
+        <!-- TAB ADICIONAR -->
+        <div id="adicionar" class="tab-content">
+            <h2 style="margin-bottom: 20px;">➕ Adicionar Nova Palavra</h2>
+            
+            <form onsubmit="adicionarPalavra(event)">
+                <div class="form-group">
+                    <label>Palavra: *</label>
+                    <input type="text" id="novaPalavra" placeholder="Ex: ELEFANTE" required pattern="[A-Za-zÀ-ÿ\s]+" title="Apenas letras e espaços">
+                </div>
+
+                <div class="form-group">
+                    <label>Tema: *</label>
+                    <input type="text" id="novoTema" placeholder="Ex: Animais" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Dica (opcional):</label>
+                    <textarea id="novaDica" rows="3" placeholder="Ex: É um animal grande com tromba"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">💾 Salvar Palavra</button>
+            </form>
+        </div>
+
+        <!-- TAB GERENCIAR -->
+        <div id="gerenciar" class="tab-content">
+            <h2 style="margin-bottom: 20px;">📋 Palavras Cadastradas</h2>
+            
+            <div class="palavras-list" id="listaPalavras"></div>
+        </div>
+    </div>
+
+    <!-- MODAL RESULTADO -->
+    <div class="modal" id="modal">
+        <div class="modal-content" id="modalContent">
+            <h2 id="modalTitulo">🎉 Parabéns!</h2>
+            <p id="modalMensagem" style="font-size: 20px; margin: 20px 0;"></p>
+            <button class="btn btn-primary" onclick="fecharModal()">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script>
+        // Dados do jogo
+        let palavras = [
+            { palavra: 'JAVASCRIPT', tema: 'Programação', dica: 'Linguagem de programação web' },
+            { palavra: 'ELEFANTE', tema: 'Animais', dica: 'Animal grande com tromba' },
+            { palavra: 'VIOLÃO', tema: 'Instrumentos', dica: 'Instrumento de cordas' },
+            { palavra: 'COMPUTADOR', tema: 'Tecnologia', dica: 'Máquina para processar dados' },
+            { palavra: 'ABACAXI', tema: 'Frutas', dica: 'Fruta tropical amarela' }
+        ];
+
+        let palavraAtual = '';
+        let temaAtual = '';
+        let dicaAtual = '';
+        let letrasCorretas = [];
+        let letrasErradas = [];
+        let erros = 0;
+        let acertos = 0;
+        let vitorias = 0;
+        const maxErros = 6;
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Carregar dados salvos
+        function carregarDados() {
+            const palavrasSalvas = localStorage.getItem('palavrasForca');
+            if (palavrasSalvas) {
+                palavras = JSON.parse(palavrasSalvas);
+            }
+
+            const estatisticas = localStorage.getItem('estatisticasForca');
+            if (estatisticas) {
+                const stats = JSON.parse(estatisticas);
+                vitorias = stats.vitorias || 0;
+                document.getElementById('vitorias').textContent = vitorias;
+            }
+        }
+
+        // Salvar dados
+        function salvarDados() {
+            localStorage.setItem('palavrasForca', JSON.stringify(palavras));
+            localStorage.setItem('estatisticasForca', JSON.stringify({ vitorias }));
+        }
+
+        // Criar teclado
+        function criarTeclado() {
+            const alfabeto = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            const teclado = document.getElementById('teclado');
+            teclado.innerHTML = '';
+
+            alfabeto.forEach(letra => {
+                const btn = document.createElement('button');
+                btn.className = 'letra';
+                btn.textContent = letra;
+                btn.onclick = () => tentarLetra(letra, btn);
+                teclado.appendChild(btn);
+            });
+        }
+
+        // Desenhar forca
+        function desenharForca() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 3;
+
+            // Base
+            ctx.beginPath();
+            ctx.moveTo(20, 380);
+            ctx.lineTo(180, 380);
+            ctx.stroke();
+
+            // Poste vertical
+            ctx.beginPath();
+            ctx.moveTo(60, 380);
+            ctx.lineTo(60, 50);
+            ctx.stroke();
+
+            // Trave horizontal
+            ctx.beginPath();
+            ctx.moveTo(60, 50);
+            ctx.lineTo(200, 50);
+            ctx.stroke();
+
+            // Corda
+            ctx.beginPath();
+            ctx.moveTo(200, 50);
+            ctx.lineTo(200, 100);
+            ctx.stroke();
+
+            // Desenhar partes do boneco baseado nos erros
+            if (erros > 0) {
+                // Cabeça
+                ctx.beginPath();
+                ctx.arc(200, 130, 30, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            if (erros > 1) {
+                // Corpo
+                ctx.beginPath();
+                ctx.moveTo(200, 160);
+                ctx.lineTo(200, 260);
+                ctx.stroke();
+            }
+
+            if (erros > 2) {
+                // Braço esquerdo
+                ctx.beginPath();
+                ctx.moveTo(200, 180);
+                ctx.lineTo(160, 220);
+                ctx.stroke();
+            }
+
+            if (erros > 3) {
+                // Braço direito
+                ctx.beginPath();
+                ctx.moveTo(200, 180);
+                ctx.lineTo(240, 220);
+                ctx.stroke();
+            }
+
+            if (erros > 4) {
+                // Perna esquerda
+                ctx.beginPath();
+                ctx.moveTo(200, 260);
+                ctx.lineTo(160, 320);
+                ctx.stroke();
+            }
+
+            if (erros > 5) {
+                // Perna direita
+                ctx.beginPath();
+                ctx.moveTo(200, 260);
+                ctx.lineTo(240, 320);
+                ctx.stroke();
+            }
+        }
+
+        // Iniciar jogo
+        function iniciarJogo() {
+            if (palavras.length === 0) {
+                alert('Adicione pelo menos uma palavra primeiro!');
+                showTab('adicionar');
+                return;
+            }
+
+            const palavraObj = palavras[Math.floor(Math.random() * palavras.length)];
+            palavraAtual = palavraObj.palavra.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            temaAtual = palavraObj.tema;
+            dicaAtual = palavraObj.dica || 'Sem dica disponível';
+
+            letrasCorretas = [];
+            letrasErradas = [];
+            erros = 0;
+            acertos = 0;
+
+            document.getElementById('temaAtual').textContent = temaAtual;
+            document.getElementById('erros').textContent = erros;
+            document.getElementById('acertos').textContent = acertos;
+            document.getElementById('dicaContainer').style.display = 'none';
+
+            criarTeclado();
+            atualizarPalavra();
+            desenharForca();
+        }
+
+        // Atualizar palavra
+        function atualizarPalavra() {
+            let display = '';
+            for (let letra of palavraAtual) {
+                if (letra === ' ') {
+                    display += '  ';
+                } else if (letrasCorretas.includes(letra)) {
+                    display += letra + ' ';
+                } else {
+                    display += '_ ';
+                }
+            }
+            document.getElementById('palavraDisplay').textContent = display;
+        }
+
+        // Tentar letra
+        function tentarLetra(letra, btn) {
+            btn.disabled = true;
+
+            if (palavraAtual.includes(letra)) {
+                letrasCorretas.push(letra);
+                btn.classList.add('correta');
+                acertos++;
+                document.getElementById('acertos').textContent = acertos;
+                atualizarPalavra();
+
+                // Verificar vitória
+                const todasLetras = palavraAtual.replace(/ /g, '').split('').every(l => letrasCorretas.includes(l));
+                if (todasLetras) {
+                    setTimeout(() => {
+                        vitorias++;
+                        document.getElementById('vitorias').textContent = vitorias;
+                        salvarDados();
+                        mostrarModal('vitoria', '🎉 VOCÊ VENCEU!', `A palavra era: ${palavraAtual}`);
+                    }, 500);
+                }
+            } else {
+                letrasErradas.push(letra);
+                btn.classList.add('errada');
+                erros++;
+                document.getElementById('erros').textContent = erros;
+                desenharForca();
+
+                // Verificar derrota
+                if (erros >= maxErros) {
+                    setTimeout(() => {
+                        mostrarModal('derrota', '😢 VOCÊ PERDEU!', `A palavra era: ${palavraAtual}`);
+                    }, 500);
+                }
+            }
+        }
+
+        // Mostrar dica
+        function mostrarDica() {
+            document.getElementById('dicaTexto').textContent = dicaAtual;
+            document.getElementById('dicaContainer').style.display = 'block';
+        }
+
+        // Modal
+        function mostrarModal(tipo, titulo, mensagem) {
+            const modal = document.getElementById('modal');
+            const content = document.getElementById('modalContent');
+            
+            content.className = 'modal-content ' + tipo;
+            document.getElementById('modalTitulo').textContent = titulo;
+            document.getElementById('modalMensagem').textContent = mensagem;
+            
+            modal.classList.add('show');
+        }
+
+        function fecharModal() {
+            document.getElementById('modal').classList.remove('show');
+            iniciarJogo();
+        }
+
+        // Adicionar palavra
+        function adicionarPalavra(event) {
+            event.preventDefault();
+
+            const palavra = document.getElementById('novaPalavra').value.toUpperCase().trim();
+            const tema = document.getElementById('novoTema').value.trim();
+            const dica = document.getElementById('novaDica').value.trim();
+
+            palavras.push({ palavra, tema, dica });
+            salvarDados();
+
+            alert('✅ Palavra adicionada com sucesso!');
+            
+            document.getElementById('novaPalavra').value = '';
+            document.getElementById('novoTema').value = '';
+            document.getElementById('novaDica').value = '';
+
+            atualizarListaPalavras();
+        }
+
+        // Atualizar lista de palavras
+        function atualizarListaPalavras() {
+            const lista = document.getElementById('listaPalavras');
+            lista.innerHTML = '';
+
+            if (palavras.length === 0) {
+                lista.innerHTML = '<p style="text-align: center; color: #666;">Nenhuma palavra cadastrada</p>';
+                return;
+            }
+
+            palavras.forEach((p, index) => {
+                const item = document.createElement('div');
+                item.className = 'palavra-item';
+                item.innerHTML = `
+                    <div class="palavra-info">
+                        <div class="word">${p.palavra}</div>
+                        <div class="theme">📚 ${p.tema} ${p.dica ? '| 💡 ' + p.dica : ''}</div>
+                    </div>
+                    <button class="btn btn-danger" onclick="removerPalavra(${index})">🗑️ Excluir</button>
+                `;
+                lista.appendChild(item);
+            });
+        }
+
+        // Remover palavra
+        function removerPalavra(index) {
+            if (confirm('Deseja realmente excluir esta palavra?')) {
+                palavras.splice(index, 1);
+                salvarDados();
+                atualizarListaPalavras();
+            }
+        }
+
+        // Mostrar tab
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'gerenciar') {
+                atualizarListaPalavras();
+            }
+        }
+
+        // Inicializar
+        carregarDados();
+        iniciarJogo();
+        atualizarListaPalavras();
+    </script>
+</body>
+</html>

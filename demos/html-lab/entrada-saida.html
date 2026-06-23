@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Entrada e Saída</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Controle de Entrada e Saída de Pessoas</h2>
+
+    <div class="form-container">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Digite o nome">
+        
+        <label for="data-hora">Data e Hora:</label>
+        <input type="datetime-local" id="data-hora">
+        
+        <label for="acao">Ação:</label>
+        <select id="acao">
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+        </select>
+        
+        <button onclick="registrarMovimento()">Registrar</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Data e Hora</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tabela-movimentos">
+            <!-- Linhas serão adicionadas dinamicamente aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        function registrarMovimento() {
+            // Obtendo os dados do formulário
+            const nome = document.getElementById('nome').value;
+            const dataHora = document.getElementById('data-hora').value;
+            const acao = document.getElementById('acao').value;
+
+            // Validando se todos os campos foram preenchidos
+            if (!nome || !dataHora || !acao) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
+
+            // Criando a nova linha da tabela
+            const tabela = document.getElementById('tabela-movimentos');
+            const novaLinha = tabela.insertRow();
+
+            // Adicionando as células à nova linha
+            const celulaNome = novaLinha.insertCell(0);
+            const celulaDataHora = novaLinha.insertCell(1);
+            const celulaAcao = novaLinha.insertCell(2);
+
+            // Preenchendo as células com os dados
+            celulaNome.textContent = nome;
+            celulaDataHora.textContent = dataHora;
+            celulaAcao.textContent = acao === 'entrada' ? 'Entrada' : 'Saída';
+
+            // Limpando os campos do formulário
+            document.getElementById('nome').value = '';
+            document.getElementById('data-hora').value = '';
+        }
+    </script>
+
+</body>
+</html>

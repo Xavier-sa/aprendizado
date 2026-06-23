@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Adivinhação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding-top: 50px;
+        }
+        .message {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            border: 2px solid green;
+        }
+        .error {
+            color: red;
+            border: 2px solid red;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Adivinhe o NÚMERO entre 1 e 10</h1>
+
+    <input type="number" id="tentativa" placeholder="Digite seu palpite">
+    <br>
+    <button onclick="adivinhar()">Tentar</button>
+
+    <div id="mensagem" class="message"></div>
+
+    <script>
+        let numeroSecreto = Math.floor(Math.random() * 10) + 1;
+
+        function adivinhar() {
+            const tentativa = parseInt(document.getElementById('tentativa').value);
+            const mensagem = document.getElementById('mensagem');
+
+            if (tentativa === numeroSecreto) {
+                mensagem.innerHTML = '°'.repeat(37) + '<br>Parabéns! Você acertou na MOSCA!!!<br>' + '°'.repeat(37);
+                mensagem.className = 'message success';
+            } else {
+                mensagem.innerHTML = '+'.repeat(37) + '<br>Tente Novamente!<br>' + '+'.repeat(37);
+                mensagem.className = 'message error';
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Exercícios JavaScript</title>
+ 
+</head>
+
+<body>
+
+    <h1>Exercícios com JavaScript</h1>
+
+    
+    <div class="exercicio">
+
+        <h2>Exercício 1: Operações Matemáticas</h2>
+
+        <input type="number" id="num1" placeholder="Digite o primeiro número">
+
+        <input type="number" id="num2" placeholder="Digite o segundo número">
+
+        <button onclick="calcularOperacoes()">Calcular</button>
+
+        <p id="resultado1"></p>
+
+    </div>
+
+   
+    <div class="exercicio">
+
+        <h2>Exercício 2: Raiz Quadrada ou Quadrado</h2>
+
+        <input type="number" id="numeroEx2" placeholder="Digite um número">
+
+        <button onclick="calcularRaizOuQuadrado()">Calcular</button>
+
+        <p id="resultado2"></p>
+
+    </div>
+
+   
+    <div class="exercicio">
+
+        <h2>Exercício 3: Divisível por 5</h2>
+
+        <input type="number" id="numeroEx3" placeholder="Digite um número">
+
+        <button onclick="verificarDivisivelPor5()">Verificar</button>
+
+        <p id="resultado3"></p>
+
+    </div>
+
+    <
+    <div class="exercicio">
+
+        <h2>Exercício 4: Sequência de Fibonacci</h2>
+
+        <input type="number" id="numeroEx4" placeholder="Digite o N-ésimo termo">
+
+        <button onclick="gerarFibonacci()">Gerar Sequência</button>
+
+        <p id="resultado4"></p>
+
+    </div>
+
+    
+    <div class="exercicio">
+
+        <h2>Exercício 5: Primeiro e Último Nome</h2>
+
+        <input type="text" id="nomeCompleto" placeholder="Digite o nome completo">
+
+        <button onclick="extrairNomes()">Extrair Nomes</button>
+
+        <p id="resultado5"></p>
+    </div>
+
+    <script>
+       
+
+        function calcularOperacoes() {
+
+            const num1 = parseFloat(document.getElementById('num1').value);
+
+            const num2 = parseFloat(document.getElementById('num2').value);
+
+
+            const soma = num1 + num2;
+
+            const subtracao = num1 - num2;
+
+            const multiplicacao = num1 * num2;
+
+            const divisao = num1 / num2;
+
+            document.getElementById('resultado1').innerText = 
+
+                `Soma: ${soma}, Subtração: ${subtracao}, Multiplicação: ${multiplicacao}, Divisão: ${divisao}`;
+        }
+
+        
+        function calcularRaizOuQuadrado() {
+
+            const num = parseFloat(document.getElementById('numeroEx2').value);
+
+            let resultado;
+
+            if (num >= 0) {
+
+                resultado = Math.sqrt(num);
+
+            } else {
+
+                resultado = num * num;
+            }
+
+            document.getElementById('resultado2').innerText = `Resultado: ${resultado}`;
+        }
+
+       
+        function verificarDivisivelPor5() {
+
+            const num = parseFloat(document.getElementById('numeroEx3').value);
+
+            const divisivel = num % 5 === 0;
+            
+            if (divisivel) {
+
+                document.getElementById('resultado3').innerText = `${num} é divisível por 5.`;
+
+            } else {
+
+                document.getElementById('resultado3').innerText = `${num} não é divisível por 5.`;
+            }
+        }
+
+        // Exercício 4
+        function gerarFibonacci() {
+
+            const n = parseInt(document.getElementById('numeroEx4').value);
+
+            const fibonacci = [1, 1];
+
+            for (let i = 2; i < n; i++) {
+
+                fibonacci.push(fibonacci[i - 1] + fibonacci[i - 2]);
+            }
+
+            document.getElementById('resultado4').innerText = `Sequência de Fibonacci: ${fibonacci.slice(0, n).join(', ')}`;
+        }
+
+        
+        function extrairNomes() {
+            const nomeCompleto = document.getElementById('nomeCompleto').value.trim();
+
+            const nomes = nomeCompleto.split(' ');
+
+            const primeiroNome = nomes[0];
+
+            const ultimoNome = nomes[nomes.length - 1];
+
+            document.getElementById('resultado5').innerText = `Primeiro Nome: ${primeiroNome}, Último Nome: ${ultimoNome}`;
+        }
+    </script>
+
+</body>
+</html>

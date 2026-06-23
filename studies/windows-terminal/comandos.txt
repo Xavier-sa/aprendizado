@@ -1,0 +1,259 @@
+Guia de Comandos CMD (Terminal do Windows)
+
+
+Todos são vulneráveis.
+O importante é ser atualizado.
+A Microsoft não é vulnerável, mas mais apetitoso.
+Um ataque a um sistema utilizado por muitas pessoas é mais relevante.
+
+— Kevin Mitnick
+
+Manipulando a Janela do Prompt no Ambiente Windows
+Para exibir o CMD em tela cheia, pressione “Alt+Enter”. Clicando no ícone que se encontra no alto à esquerda, você poderá acessar as propriedades da janela e escolher layout, cores, fontes, etc. Já para localizar texto, rolar tela, selecionar texto, copiar e colar, você deverá clicar com o botão direito do mouse dentro da própria janela e escolher a opção no menu que se abre.
+
+A opção /t:fg permite alterar as cores do interpretador de comandos. Por exemplo, digite cmd /t:17 e a tela ficar com as letras em branco num fundo azul. O “f” representa a cor do texto e o “g” a cor do fundo.
+
+Relação das cores que podem ser usadas:
+0 – preto
+1 – Azul
+2 – Verde
+3 – Cian
+4 – Vermelho
+5 – Roxo
+6 – Amarelo
+7 – Branco
+8 – Cinza
+9 – Azul claro
+A – Verde claro
+B – Cian claro
+C – Vermelho claro
+D – Roxo claro
+E – Amarelo claro
+F – Branco Claro
+Para obter mais informações sobre um comando específico, digite o “COMANDO” seguido de “/?”.
+
+ATENÇÃO: O Sistema Operacional Windows não é CASE SENSITVE, ou seja, os comandos podem ser digitados tanto em MAIÚSCULO quanto em MÍNUSCULO.
+
+Lista Geral de Comandos
+DIR: – Listando arquivos e pastas
+COPY: – Copiar arquivos
+MOVE: Mover arquivos ou renomear pastas
+MD:– Criar uma Nova pasta
+CD: Entrar em uma pasta
+.:Retornar para a pasta anterior
+RD:  Remover pastas
+ERASE: Deletar arquivos
+DEL:  Deletar arquivos
+REN: Renomear arquivos (EX: ren imagem.jpg foto.jpg)
+TIME:  O comando time permite acertar a hora e o comando date permite corrigir a data.
+BOOTCFG: Permite ver as configurações do seu menu de boot
+DEFRAG: Desfragmentador de disco.
+DISKPART: Gerencia as partições de um disco.
+DRIVERQUERY: Mostra a lista de drivers instalados no Windows e as respectivas propriedades.
+FSUTIL: O comando fsutil tem vários complementos que serão listados digitando-o sem nenhum parâmetro. Digite fsutil fsingo drives e terá a lista dos drives no seu micro.
+GEPRESULT: Este comando mostrará configurações de usuários e de diretivas de grupos.
+RECOVER: Permite a recuperação de arquvios em disco danificado.
+REG: Comando para exportar chaves do registro, copiar, restaurar, comparar, etc.
+SCHTASKS: Para agendar, executar, alterar ou deletar tarefas numa máquina local ou remota com Windows.
+SFC: Comando que permite verificar arquivos de sistemas alterados de forma indevida e recuperar os arquivos originais e oficiais da Microsoft, o que nem sempre será recomendável. Por exemplo, o arquivo uxtheme.dll modificado para permitir o uso de temas voltaria a ser substituído pelo original.
+SHUTDOWN: O comando shutdown permite desligar ou reiniciar o computador de forma imediata ou agendada.
+SYSTEMINFO: Fornece informações básicas sobre o sistema.
+TASKLIST: Mostra a lista de processos sendo executados no Windows.
+TASKKILL: Permite finalizar algum processo. O comando é quase sempre usado com base nas informações fornecidas pelo tasklist. Por exemplo, para finalizar o Messenger digite “taskkill /PID 1680”. A identificação do PID de cada processo sendo executado você ficará sabendo com o comando tasklist.
+ASSOC: Exibe ou modifica associações de extensões de arquivo.
+AT: Agenda comandos e programas para serem executados em um computador.
+ATTRIB: Exibe ou altera atributos de arquivos.
+BOOTCFG: Mostra o boot.ini no prompt de comando
+BREAK: Define ou limpa a verificação estendida CTRL+C.
+CACLS: Exibe ou modifica listas de controle de acesso (ACLs) de arquivos.
+CALL: Chama um programa em lotes a partir de outro.
+CHCP: Exibe ou define o número da página de código ativa.
+CHKDSK: Verifica um disco e exibe um relatório de status.
+CHKNTFS: Exibe ou modifica a verificação do disco na inicialização.
+CLS: Limpa a tela
+CMD: Abre uma outra janela de prompt.
+COLOR: Define as cores padrão de primeiro plano e do plano de fundo do console
+COMP: Compara o conteúdo de dois arquivos ou grupos de arquivos.
+COMPACT: Exibe ou altera a compactação de arquivos.
+CONVERT: Converte volumes FAT em NTFS.
+COPY: Copia um ou mais arquivos para outro local.
+DATE: Mostra a data atual e permite alterá-la.
+DISKCOMP: Compara o conteúdo de dois disquetes.
+DISKCOPY: Copia o conteúdo de um disquete para outro.
+DISKPART: Faz particionamento de disco
+DOSKEY: Edita linhas de comando, volta a chamar comandos do Windows e cria macros.
+ECHO: Exibe mensagens ou ativa ou desativa o eco de comandos.
+ENDLOCAL: Encerra a localização de alterações de ambiente em um arquivo em lotes.
+EXIT: Sai do programa CMD.EXE (interpretador de comandos).
+FC:Compara dois arquivos ou grupos de arquivos e exibe as diferenças entre eles.
+FIND: Procura uma seqüência de texto em um arquivo ou arquivos.
+FINDSTR: Procura seqüências de texto em arquivos.
+FOR: Executa um determinado comando para cada arquivo em um grupo de arquivos.
+FORMAT: Formata um disco rígido ou disquete.
+FTYPE: Exibe ou modifica os tipos de arquivo utilizados em associações de extensões de arquivos.
+GOTO: Direciona o interpretador de comandos do Windows para uma linha identificada em um programa em lotes.
+GRAFTABL: Permite que o Windows exiba um conjunto de caracteres estendidos em modo gráfico.
+HELP: Fornece informações de ajuda sobre comandos do Windows.
+HOSTNAME: Dá o nome do host
+IF: Realiza processamento condicional em arquivos em lotes.
+IPCONFIG: Mostra detalhes das configurações de IP
+LABEL: Cria, altera ou exclui o rótulo de volume de um disco.
+MODE: Configura um dispositivo do sistema.
+MORE: Exibe a saída fazendo pausa a cada tela.
+MOVE: Move um ou mais arquivos de uma pasta para outra pasta.
+PAGEFILECONFIG: Configura memória virtual
+PATH: Exibe ou define um caminho de pesquisa para arquivos executáveis.
+PAUSE: Suspende o processamento de um arquivo em lotes e exibe uma mensagem.
+PING: Checa sua conexão de rede disponível
+POPD: Restaura o valor anterior da pasta atual salva por PUSHD.
+PRINT: Imprime um arquivo de texto.
+PROMPT: Altera o prompt de comando do Windows.
+PUSHD: Salva a pasta atual e, em seguida, altera a mesma.
+REM: Grava comentários (observações) em arquivos em lotes.
+REPLACE: Substitui arquivos.
+ROUT: Mostra detalhes do parâmetro da interface de rede
+SCHTASKS: Agenda e executa algum processo
+SET: Exibe, define ou remove variáveis de ambiente do Windows.
+SETLOCAL: Inicia a localização de alterações de ambiente em um arquivo em lotes.
+SHIFT: Altera a posição dos parâmetros substituíveis em um arquivo em lotes.
+SORT: Classifica a entrada.
+START: Inicia uma janela separada para executar um programa ou comando especificado.
+SUBST: Associa um caminho a uma letra de unidade.
+TITLE: Define o título da janela para uma sessão do CMD.EXE.
+TREE: Exibe graficamente a estrutura de pastas de uma unidade ou caminho.
+TYPE: Exibe o conteúdo de um arquivo de texto.
+VER: Mostra a versão do Windows.
+VERIFY: Faz com que o Windows verifique se os arquivos estão gravados corretamente em um disco.
+VOL: Exibe um rótulo e número de série de volume de disco.
+XCOPY: Copia diretórios com seus subdiretórios.
+Comandos do Painel de Controle
+CPL: abre as opções de acesso
+CPL: abre a ferramenta Adicionar/Excluir um programa
+MSC: abre o gerenciador de autorizações
+MSC: abre os certificados para o usuário atual
+CLICONFG: abre a configuração dos clientes SQL
+CPL: abre a vizinhança imediata
+MSCou DCOMCNFG: abre a ferramenta serviços e componentes
+MSC: abre a ferramenta de gestão do computador
+COMPUTERDEFAULTS: abre a ferramenta dos programas padrão
+CONTROL /NAME MICROSOFT.BACKUPANDRESTORECENTER: abre o centro de backup e de restauração .
+CONTROL ADMINTOOLS: abre as ferramentas de administração
+CONTROL COLOR: abre as configurações de aparência
+CONTROL FOLDERS: abre as opções de pastas
+CONTROL FONTS: abre o gerenciador de caracteres
+CONTROL INTERNATIONAL ou INTL.CPL: abre as opções regionais e linguísticas
+CONTROL KEYBOARD: abre as propriedades do teclado
+CONTROL MOUSE ou MAIN.CPL: abre as propriedades do mouse
+CONTROL PRINTERS: abre as impressoras e os faxes disponíveis
+CONTROL USERPASSWORDS: abre o editor de contas dos usuários
+CONTROL USERPASSWORDS2ou NETPLWIZ: controla os usuários e seus acessos
+CONTROL: abre o Painel de controle
+CREDWIZ: abre a ferramenta de backup e de restauração de senhas dos usuários
+CPL: abre as configurações de exibição
+MSC: abre o gerenciador de periféricos.
+DXDIAG: abre a ferramenta de diagnóstico DirectX
+EVENTVWR ou EVENTVWR.MSC: abre o observador de eventos
+MSC: abre as pastas compartilhadas
+MSC: abre o editor de estratégias de grupo (Para as edições profissionais e mais do Windows)
+CPL: abre o assistente “adicionar hardware”
+CPL: abre o assistente “compatibilidade de programas”
+CPL: abre o gerenciador de infravermelho
+ISCSICPL: abre a ferramenta de configuração do iniciador ISCI Microsoft
+CPL: abre a ferramenta do controlador de jogos
+LPKSETUP: abre o assistente de instalação e desinstalação dos idiomas de exibição
+MSC: abre o editor dos usuários e grupos locais
+MDSCHED: abre a ferramenta de diagnósticos da memória Windows
+MMC: abre um novo console vazio
+CPL: abre as configurações de som
+MOBSYNC: abre o centro de sincronização
+MSCONFIG: abre a ferramenta de configuração do sistema
+MSC: abre a ferramenta de configuração do cliente NAP
+MSC: abre o gerenciador de suporte de armazenamento removível
+MSC: abre as solicitações do operador de armazenamento removível
+ODBCAD32: abre o administrador de fonte de dados ODBC
+OPÇÃOALFEATURES: abre a ferramenta Adicionar/Excluír componentes do Windows
+PERFMON ou PERFMON.MSC: abre o monitor de confiabilidade e de desempenho Windows.
+CPL: abre o gerenciador de modos de alimentação
+REGEDIT ou REGEDT32: abre o editor de registro
+REKEYWIZ: abre o gerenciador de certificados de criptografia de arquivos
+MSC: abre o jogo de estratégia resultante
+MSC: abre as configurações de segurança local
+MSC: abre o gerenciador de serviços
+SLUI: abre o assistente de ativação do Windows
+CPL: abre as propriedades do sistema
+SYSEDIT: abre o editor de configuração do sistema (Atenção, manipular com cautela)
+SYSKEY: abre o utilitário de proteção do banco de dados das contas Windows (Atenção, manipular com extrema cautela !)
+SYSPREP: abre a pasta com a ferramenta de preparação do sistema
+CPL: abre as configurações para o Tablet pc
+MSC ou CONTROL SCHEDTASKS: abre o planejador de tarefas
+CPL: abre a ferramenta de conexão telefônica
+CPL: abre as configurações da hora e da data
+MSC: abre a ferramenta de gestão do módulo de plataforma segura no computador local
+UTILMAN: abre as opções de ergonomia (Central de Facilidades de Acesso)
+MSC: abre o “Windows Management Infrastructure”
+CPL: abre o centro de segurança Windows
+Comandos de Programas e ferramentas Windows
+CALC: abre a calculadora
+CHARMAP: abre a tabela de caracteres
+DIALER: abre o numerador telefônico do Windows
+DVDPLAY: abre seu leitor DVD
+EUDCEDIT: abre o editor de caracteres privados
+EXPLORER: abre o Windows Explorer
+FSQUIRT: Assistente de transferência Bluetooth
+IEXPLORE: abre Internet Explorer
+IEXPRESS: abre o assistente de criação dos arquivos auto-extraíveis.
+MAGNIFY: abre a lupa
+MOVIEMK: abre o Windows Movie Maker
+MRT: executa o utilitário de remoção de malwares.
+MSDT: abre a ferramenta de diagnósticos e suporte da Microsoft
+MSINFO32: abre as informações do sistema
+MSPAINT: abre o “Paint”
+MSRA: abre a assistência remota do Windows
+MSTSC: abre a ferramenta de conexão da assistência remota
+NOTEPAD: abre o bloco de notas
+OSK: abre o teclado visual.
+SIGVERIF: abre a ferramenta de verificação das assinaturas de arquivos
+SNDVOL: abre o misturador de volume
+SOUNDRECORDER: abre o gravador
+TASKMGR: abre o gerenciador de tarefas do Windows
+WINVER: abre a janela para que você conheça a versão do seu Windows
+WINWORD: abre o Word (se estiver instalado)
+WMPLAYER: abre o leitor Windows Media
+WRITE ou WORDPAD: abre o Wordpad
+Comandos de Gestão de discos
+CHKDSK: realiza uma análise da partição especificada nas configurações do comando (Para mais informações, digite CHKDSK /? no interpretador de comandos CMD)
+CLEANMGR: abre a ferramenta de limpeza do disco
+DEFRAG: Desfragmenta o disco rígido
+MSC: abre a ferramenta de desfragmentação do disco
+MSC: abre o gerenciador de discos
+DISKPART: abre a ferramenta de particionamento (manipulação pesada)
+Comandos de Gestão das Redes e Internet
+CONTROL NETCONNECTIONS ou NCPA.CPL: abre as conexões da rede
+CPL: abre o firewall do Windows
+CPL: abre as propriedades da internet
+IPCONFIG: exibe as configuraçãos dos endereços IP no computador
+MSC: abre as funções avançadas do firewall do Windows
+Atalhos, paths e comandos adicionais:
+%HOMEDRIVE%: abre o explorador na partição onde o sistema operacional está instalado.
+%HOMEPATH%: abre a pasta do usuário conectado. Por exemplo C:\Usuários\[nome do usuário]
+%PROGRAMFILES%: abre a pasta de instalação de outros programas (Program Files)
+%TEMP% ou %TMP%: abre a pasta temporária
+%USERPROFILE%: abre a pasta do perfil do usuário conectado
+%WINDIR% ou %SYSTEMROOT%: abre a pasta de instalação do Windows
+%WINDIR%\system32\rundll32.exe shell32.dll,Control_RunDLL hotplug.dll: exibe a janela “Retirar o dispositivo com segurança”
+CPL: abre as propriedades do filtro AC3 (se estiver instalado)
+FIREFOX: executa Mozilla FireFox (se estiver instalado)
+JAVAWS: Visualiza o cache do software JAVA (se estiver instalado)
+LOGOFF: fecha a sessão
+NETPROJ: autoriza ou não a conexão a um projetor de rede
+SFC /SCANNOW: varre, imediatamente, todos os arquivos do sistema e localiza os que estão danificados
+SFC /VERIFYONLY: varre apenas os arquivos do sistema
+SFC /SCANFILE=”nome e caminho do arquivo”: varre o arquivo especificado e repara, caso esteja danificado.
+SFC /VERIFYFILE=”nome e caminho do arquivo”: varre apenas o arquivo especificado
+SFC /SCANONCE: varre os arquivos do sistema no arranque seguinte
+SFC /REVERT: repõe a configuração inicial (Para mais informações, digite SFC /? no interpretador de comandos)
+SHUTDOWN: desliga o Windows
+SHUTDOWN -A: interrompe a desconexão do Windows
+DRIVERQUERY:  O driverquery é uma ferramenta que fornece informações sobre os drivers de hardware instalados em seu computador. Você pode usar o comando driverquery -v ou driverquery -si
+POWERCFG:  é um comando que lhe ajuda a habilitar recursos e obter várias informações sobre a energia do computador, como habilitar a hibernação e obter informações sobre o consumo de energia do Windows.
+PATHPING: O “pathping” é uma versão avançada do ping que exibe várias informações sobre a rota dos pacotes e lhe ajuda a descobrir onde está o problema. Como o ping, digite “pathping” + o nome ou o endereço IP do host.

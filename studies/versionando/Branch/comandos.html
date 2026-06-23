@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar a main com a Branch</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        Solo Leveling - Tema Dark
+    </header>
+
+    <main>
+        <h1>Bem-vindo</h1>
+        <p>Este é um exemplo de página com tema inspirado em <strong>Solo Leveling</strong>, com cores preto e azul.</p>
+        
+        <h2>Comandos Git</h2>
+        <p>Se você deseja atualizar sua branch com as últimas alterações da branch <code>main</code>, siga os passos abaixo:</p>
+        
+        <pre>
+git checkout main
+git pull origin main
+
+git checkout feature-branch
+git merge main
+
+# Resolver conflitos, se necessário:
+git add .
+git commit
+
+# Enviar mudanças para o repositório remoto:
+git push origin feature-branch
+        </pre>
+
+        <p>Para mais informações, visite o <a href="https://git-scm.com/" target="_blank">site oficial do Git</a>.</p>
+    </main>
+
+    <footer>
+        &copy; 2025 - 
+    </footer>
+</body>
+</html>

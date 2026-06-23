@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar a main com a Branch</title>
+
+    <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+    <header>
+        Comandos Basicos Git
+    </header>
+
+    <main>
+        <div>
+            <ul>
+                <tr>
+                    <td>
+                        Se você deseja <strong>atualizar sua branch com as últimas alterações da branch <code>main</code></strong>, você pode seguir os seguintes passos. Isso é útil quando você está trabalhando em uma branch (por exemplo, <code>feature-branch</code>) e quer garantir que ela tenha as últimas atualizações da <code>main</code> antes de continuar o trabalho.
+
+                        Aqui estão os passos para fazer isso:
+
+                        <h2>1. Certifique-se de que sua branch local <code>main</code> está atualizada:</h2>
+                        Primeiro, você deve garantir que sua cópia local da <code>main</code> está atualizada com as últimas mudanças do repositório remoto.
+
+                        <pre>
+# Atualizar a branch main local
+    git checkout main
+    git pull origin main
+                        </pre>
+
+                        <h2>2. Volte para a sua branch de trabalho:</h2>
+                        Agora, volte para a branch em que você estava trabalhando (por exemplo, <code>feature-branch</code>).
+
+                        <pre>
+# Trocar para a branch de trabalho
+    git checkout feature-branch
+                        </pre>
+
+                        <h2>3. Mesclar as alterações da <code>main</code> na sua branch:</h2>
+                        Agora, você vai atualizar a sua branch com as últimas alterações da <code>main</code> (ou seja, fazer o merge da <code>main</code> na sua branch).
+
+                        <pre>
+# Mesclar a branch main na branch atual
+    git merge main
+                        </pre>
+
+                        <h2>4. Resolver conflitos (se houver):</h2>
+                        Se houver conflitos durante o merge, o Git vai te informar. Você precisará resolver esses conflitos manualmente nos arquivos indicados.
+
+                        Após resolver os conflitos, adicione os arquivos corrigidos:
+
+                        <pre>
+# Adicionar os arquivos corrigidos
+    git add .
+                        </pre>
+
+                        E, em seguida, conclua o merge:
+
+                        <pre>
+# Finalizar o commit do merge
+    git commit
+                        </pre>
+
+                        <h2>5. Enviar as mudanças para o repositório remoto (se necessário):</h2>
+                        Caso você tenha feito mudanças na sua branch após o merge, envie as alterações para o repositório remoto.
+
+                        <pre>
+# Enviar as alterações para o repositório remoto
+    git push origin feature-branch
+                        </pre>
+
+                        <h2>Alternativa (Usando <code>git rebase</code>):</h2>
+
+                        Se você preferir rebase para manter o histórico de commits mais limpo, ao invés de um merge, siga os passos abaixo:
+
+                        <h3>1. Fazer rebase da <code>main</code> na sua branch:</h3>
+
+                        <pre>
+# Fazer rebase da branch main na branch atual
+    git checkout feature-branch
+    git fetch origin
+    git rebase origin/main
+                        </pre>
+
+                        Isso vai aplicar os commits da <code>main</code> na sua branch <code>feature-branch</code>.
+
+                        <h3>2. Resolver conflitos (se houver):</h3>
+                        Como no merge, se houver conflitos, o Git irá pedir para resolver. Depois de corrigir os conflitos, use:
+
+                        <pre>
+# Resolver conflitos e continuar o rebase
+    git add .
+    git rebase --continue
+                        </pre>
+
+                        <h3>3. Enviar as alterações para o repositório remoto:</h3>
+                        Se você fez o rebase, pode precisar usar o <code>--force</code> ao enviar para o remoto (cuidado, pois isso pode sobrescrever o histórico remoto):
+
+                        <pre>
+# Enviar as alterações forçando o push
+    git push origin feature-branch --force
+                        </pre>
+
+                        <h3>Resumo:</h3>
+                        <ul>
+                            <li><strong>Usando <code>git merge</code></strong>: Vai unir a <code>main</code> à sua branch, preservando o histórico.</li>
+                            <li><strong>Usando <code>git rebase</code></strong>: Vai colocar suas alterações "em cima" da <code>main</code>, criando um histórico mais linear.</li>
+                        </ul>
+
+                        Escolha o método que se adapta melhor ao seu fluxo de trabalho!
+                    </td>
+                </tr>
+            </ul>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Consulta Xavier
+    </footer>
+</body>
+</html>

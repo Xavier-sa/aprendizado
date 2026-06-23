@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">Developer Xavier</title>
+  <desc id="desc">Banner com fundo azul profundo, detalhes em verde e amarelo, e o texto Developer Xavier em destaque.</desc>
+  <rect width="1200" height="360" fill="#0b1220"/>
+  <path d="M0 268 C170 214 297 328 468 262 C633 198 714 86 878 116 C1017 142 1082 246 1200 206 L1200 360 L0 360 Z" fill="#0f766e" opacity="0.9"/>
+  <path d="M0 292 C168 250 302 345 473 292 C637 242 749 150 902 178 C1038 203 1100 286 1200 248 L1200 360 L0 360 Z" fill="#facc15" opacity="0.92"/>
+  <circle cx="1015" cy="82" r="54" fill="#38bdf8" opacity="0.18"/>
+  <circle cx="1080" cy="132" r="20" fill="#facc15" opacity="0.9"/>
+  <rect x="72" y="74" width="1056" height="212" rx="28" fill="#111827" stroke="#5eead4" stroke-width="3"/>
+  <text x="600" y="176" fill="#f8fafc" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="78" font-weight="800" text-anchor="middle" letter-spacing="1">
+    Developer Xavier
+  </text>
+  <text x="600" y="224" fill="#cbd5e1" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="25" font-weight="500" text-anchor="middle">
+    aprendizado documentado, codigo em evolucao e pratica constante
+  </text>
+</svg>
