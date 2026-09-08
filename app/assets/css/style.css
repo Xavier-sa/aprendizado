@@ -217,8 +217,51 @@
         /*}*/
         
         @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 24px;
+            }
+
             .cronograma {
                 grid-template-columns: 1fr;
+                gap: 18px;
+                margin-top: 16px;
+            }
+
+            .dia {
+                padding: 20px;
+            }
+
+            .dia h2 {
+                font-size: 1.35rem;
+            }
+
+            .quiz-container {
+                padding: 12px;
+            }
+
+            .quiz-navigation {
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .quiz-navigation span {
+                flex: 1 1 100%;
+                order: -1;
+                text-align: center;
+            }
+
+            .footer {
+                padding: 15px 8px;
+            }
+
+            .footer p {
+                overflow-wrap: anywhere;
             }
         }
         
