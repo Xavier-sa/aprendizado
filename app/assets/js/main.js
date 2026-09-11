@@ -211,7 +211,8 @@ const cronograma = [
         "tema": "Git e GitHub",
         "tarefas": [
             "Revisar comandos Git",
-            "Fazer commits e atualizar portfólio"
+            "Fazer commits e atualizar portfólio",
+            " <a href=\"arquivos/github-foundations.html\">Estudar para o GitHub Foundations GH-900</a>"
         ],
         "quizzes": [
             {

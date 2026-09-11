@@ -107,6 +107,17 @@
             margin-bottom: 8px;
             position: relative;
         }
+
+        .dia li a {
+            color: inherit;
+            font-weight: 700;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+
+        .dia li a:hover {
+            opacity: 0.75;
+        }
         
         .dia li::before {
             content: "•";
