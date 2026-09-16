@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/*
+ * Identidade visual inspirada em "riqueza construída gradualmente":
+ * pergaminho, argila, bronze, dourado envelhecido, carvão. Sem neon,
+ * sem excesso de gradiente/animação. Todas as cores ficam centralizadas
+ * aqui — os componentes usam apenas as classes utilitárias abaixo.
+ */
+:root {
+  --color-background: #f5edda;
+  --color-surface: #fbf6ec;
+  --color-surface-secondary: #ece0c4;
+  --color-text-primary: #2a2118;
+  --color-text-muted: #6b5d4f;
+  --color-border: #d9c9a3;
+  --color-accent: #a9782e;
+  --color-accent-strong: #8c6423;
+  --color-income: #3f6b3a;
+  --color-expense: #9c4b2e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #211b15;
+    --color-surface: #2b241c;
+    --color-surface-secondary: #362d22;
+    --color-text-primary: #ede3ce;
+    --color-text-muted: #b5a78c;
+    --color-border: #4a3f30;
+    --color-accent: #c99a46;
+    --color-accent-strong: #e0b563;
+    --color-income: #7fa968;
+    --color-expense: #c97a54;
+  }
+}
+
+@theme inline {
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-accent: var(--color-accent);
+  --color-accent-strong: var(--color-accent-strong);
+  --color-income: var(--color-income);
+  --color-expense: var(--color-expense);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
