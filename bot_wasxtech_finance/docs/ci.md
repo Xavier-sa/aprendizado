@@ -1,5 +1,71 @@
 # Integração Contínua
 
+## CI/CD do FinanceBot em produção
+
+- **CI:** `.github/workflows/financebot-ci.yml` valida pushes e PRs com
+  alterações em `bot_wasxtech_finance/**` ou no próprio workflow. Mantém
+  Node 22, `npm ci`, Prisma generate, testes, lint, typecheck e build.
+  As variáveis de banco e autenticação são fictícias, sem acesso ao Neon.
+- **CD:** a integração GitHub nativa do projeto Vercel `financebot` está
+  conectada a `Xavier-sa/aprendizado`, com Production Branch `main`,
+  Root Directory `bot_wasxtech_finance` e Node 22.x. Um merge relevante
+  na `main` inicia build e publicação em https://finance.wasxtech.com.br.
+  Não há Action de deployment, token Vercel nem secrets reais no CI.
+- **Filtro de deploy:** o Ignored Build Step foi configurado nas settings
+  da Vercel como `git diff HEAD^ HEAD --quiet -- . ../.github/workflows/financebot-ci.yml`.
+  Ele roda dentro do Root Directory: exit 0 cancela o build quando os
+  caminhos não mudaram; exit 1 permite o build. Exit de erro também
+  permite build, evitando ignorar uma alteração sem comparação válida.
+  Esse mecanismo compara o commit com seu primeiro pai; não compara
+  todo o histórico desde o último deployment. Cancelamentos ainda
+  podem aparecer no painel e contam nos limites de deployment/build;
+  não publicam uma nova versão do FinanceBot. O skip automático de
+  projetos não se aplica: este repositório de estudos não usa workspaces.
+
+### Quality gate de publicação e regra de merge
+
+O ruleset `main` existente exige Pull Request e protege contra exclusão
+e force push, mas não exige `Quality Checks`. Sem um gate adicional,
+a integração Vercel inicia e promove builds independentemente do CI.
+Para PRs do FinanceBot, aguarde `Quality Checks` verde antes de fazer merge.
+
+A solução preferida é impedir merges sem CI verde. Entretanto, exigir
+esse workflow globalmente no ruleset da `main` deixa PRs de outros projetos
+bloqueados: o filtro `paths` não roda nesses PRs, e o check obrigatório fica
+pendente. Não foi alterado o ruleset global nem removido o filtro por paths.
+
+Foi criado e confirmado via API oficial um **Deployment Check nativo**,
+restrito a Production do projeto FinanceBot: `FinanceBot CI`, provider
+GitHub, external check `Quality Checks`, `requires: none`,
+`blocks: deployment-alias`, timeout 3600 segundos. A Vercel pode construir
+em paralelo, mas só libera os domínios de produção após o CI verde do
+mesmo commit. Check vermelho, ausente ou vencido não libera a publicação.
+Isso protege a publicação; não impede o merge no GitHub. Não exige polling
+próprio, Action extra ou secrets. O primeiro ciclo completo desse gate
+ainda deve ser observado no próximo merge real; nenhum deployment manual
+foi iniciado para testá-lo.
+
+Configuração visível em Vercel → financebot → Settings → Deployment Checks.
+Não há etapa manual pendente para esse gate de publicação. Se a intenção
+for bloquear também o merge automaticamente, será necessário decidir uma
+política para o monorepo: exigir o check filtrado em toda `main` bloquearia
+PRs sem mudanças no FinanceBot. Essa alteração global não foi aplicada.
+
+Referências: [Vercel monorepos](https://vercel.com/docs/monorepos),
+[Ignored Build Step](https://vercel.com/kb/guide/how-do-i-use-the-ignored-build-step-field-on-vercel),
+[Deployment Checks](https://vercel.com/docs/deployment-checks) e
+[GitHub: workflows filtrados podem bloquear checks obrigatórios](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow).
+
+### Ícones
+
+O ícone padrão foi substituído por barras crescentes, seta e folha, nas
+cores da aplicação. O App Router registra automaticamente `src/app/icon.svg`
+(vetorial), `favicon.ico` (16/32/48), `apple-icon.png` (180), `icon1.png`
+(192) e `icon2.png` (512). Todas as variantes vêm do mesmo SVG local;
+nenhuma imagem externa ou declaração manual duplicada no layout.
+Para regenerar: `node scripts/generate-icons.mjs`, usando `sharp` já
+instalado pelo Next.js, sem adicionar dependência.
+
 ## O que é CI?
 
 CI (Continuous Integration / Integração Contínua) é a prática de rodar
