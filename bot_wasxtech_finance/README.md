@@ -139,6 +139,19 @@ npm run build        # build de produção
 npm run db:studio   # Prisma Studio, para inspecionar o banco
 ```
 
+## Integração Contínua
+
+O projeto utiliza GitHub Actions para validar automaticamente, a cada
+`push` ou `pull request` que altere o FinanceBot:
+
+- testes;
+- lint;
+- TypeScript;
+- Prisma (geração do client);
+- build.
+
+Detalhes e motivação de cada etapa em [docs/ci.md](docs/ci.md).
+
 ## Configurando Neon
 
 1. Crie um projeto gratuito em [neon.tech](https://neon.tech).
