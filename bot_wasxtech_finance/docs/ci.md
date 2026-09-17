@@ -153,6 +153,60 @@ funcionou de ponta a ponta, seguido de `prisma generate`, testes, lint,
 typecheck e build — provando que uma máquina limpa consegue reproduzir o
 mesmo pipeline do GitHub Actions.
 
+## Segundo erro encontrado pelo CI
+
+Com o `npm ci` corrigido, o pipeline avançou e a próxima etapa,
+`npm run typecheck`, falhou com um erro real:
+
+```
+src/app/layout.tsx(10,50): error TS2304: Cannot find name 'LayoutProps'.
+```
+
+**Causa:** `LayoutProps<'/'>` não é um tipo do projeto nem da biblioteca
+`next` — é um tipo **global gerado automaticamente pelo Next.js** dentro de
+`.next/types/routes.d.ts`, criado somente quando `next dev` ou
+`next build` roda (é o mesmo mecanismo do "typed routes" que também gera
+`PageProps` e `RouteContext`). O `tsconfig.json` inclui `.next/types/**/*.ts`
+no `include`, então, quando esse arquivo existe, o TypeScript enxerga
+`LayoutProps` normalmente.
+
+O problema: `.next/` é gerado e fica fora do Git (`.gitignore`), e a ordem
+do pipeline é `test → lint → typecheck → build` — ou seja, `typecheck`
+roda **antes** de qualquer `build`. Em uma máquina de desenvolvimento que
+já rodou `next dev`/`next build` alguma vez, `.next/types/routes.d.ts`
+continua no disco entre execuções, então `npm run typecheck` "funcionava"
+localmente por pura coincidência de estado local, não porque o código
+estivesse correto. Num checkout limpo (como o runner do GitHub Actions, ou
+localmente depois de apagar `.next/`), esse arquivo não existe ainda,
+`LayoutProps` não é encontrado, e o TypeScript falha corretamente.
+
+Reproduzi isso localmente apagando `bot_wasxtech_finance/.next/` (artefato
+gerado, seguro de remover, sem relação com o Git) e rodando
+`npm run typecheck` de novo: o erro se repetiu de forma idêntica ao do CI,
+confirmando a causa antes de corrigir qualquer coisa.
+
+**Correção:** o root layout só usa `children` — não precisa de `params`
+nem de nenhum outro recurso do tipo gerado. Trocamos a dependência do tipo
+gerado por uma tipagem explícita e estável, no mesmo padrão já usado em
+`src/components/layout/Shell.tsx` do próprio projeto:
+
+```diff
++import type { ReactNode } from "react";
+...
+-export default function RootLayout({ children }: LayoutProps<"/">) {
++export default function RootLayout({ children }: { children: ReactNode }) {
+```
+
+Nenhum `any`, `@ts-ignore` ou `@ts-expect-error` foi usado — o tipo
+correto simplesmente não dependia de arquivo gerado. Validado rodando
+`npm run typecheck` com `.next/` completamente ausente (sucesso) e depois
+o pipeline inteiro (`prisma generate` → `test` → `lint` → `typecheck` →
+`build`, todos passando).
+
+Isso ilustra bem o valor incremental do CI: corrigir um problema não
+"resolve tudo" de uma vez — ele deixa o pipeline avançar até o próximo
+problema real, que só aparece quando o anterior para de mascará-lo.
+
 ## Próximos passos (futuro, não implementado agora)
 
 Este repositório pode vir a ter workflows independentes para outros
