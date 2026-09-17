@@ -22,4 +22,8 @@ export const categoryRepository = {
       where: { name: { equals: name, mode: "insensitive" }, type },
     });
   },
+
+  create({ name, type }: { name: string; type: TransactionType }) {
+    return prisma.category.create({ data: { name, type } });
+  },
 };

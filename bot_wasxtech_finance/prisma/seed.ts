@@ -19,6 +19,7 @@ const EXPENSE_CATEGORIES = [
   "Lazer",
   "Assinaturas",
   "Investimentos",
+  "Serviços",
   "Outros",
 ];
 

@@ -16,6 +16,12 @@ function detectType(lower: string): TransactionType | null {
   return null;
 }
 
+/** Tem palavra-chave de tipo (gastei/recebi/...) — usado para decidir se
+ * uma mensagem "parece" uma tentativa de registrar movimentação. */
+export function hasTransactionKeyword(text: string): boolean {
+  return detectType(text.toLowerCase()) !== null;
+}
+
 function stripDateTokens(text: string): string {
   return text
     .replace(/\b\d{1,2}[/-]\d{1,2}(?:[/-]\d{2,4})?\b/g, " ")
@@ -39,6 +45,55 @@ export function detectAmount(text: string): number | null {
   return null;
 }
 
+const LEADING_CONNECTORS = [
+  "de",
+  "do",
+  "da",
+  "em",
+  "no",
+  "na",
+  "com",
+  "para",
+  "pra",
+  "um",
+  "uma",
+  "meu",
+  "minha",
+];
+
+/**
+ * Deriva uma descrição curta a partir do texto livre, removendo o verbo,
+ * o valor e a data já reconhecidos, e conectores soltos no início. Pode
+ * voltar string vazia quando não sobra nada útil — quem chama decide o
+ * fallback (ex.: nome da categoria).
+ */
+export function extractDescription(message: string): string {
+  let remainder = stripDateTokens(message);
+
+  remainder = remainder.replace(/r\$\s*[\d.,]+/gi, " ");
+  remainder = remainder.replace(/[\d.,]+\s*reais/gi, " ");
+  remainder = remainder.replace(
+    /\b\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?\b|\b\d+[.,]\d{1,2}\b|\b\d+\b/g,
+    " ",
+  );
+
+  for (const keyword of [...EXPENSE_KEYWORDS, ...INCOME_KEYWORDS]) {
+    remainder = remainder.replace(new RegExp(`\\b${keyword}\\b`, "gi"), " ");
+  }
+
+  let words = remainder.trim().split(/\s+/).filter(Boolean);
+  while (
+    words.length > 0 &&
+    LEADING_CONNECTORS.includes(words[0].toLowerCase())
+  ) {
+    words = words.slice(1);
+  }
+
+  const result = words.join(" ").trim();
+  if (!result) return "";
+  return result.charAt(0).toUpperCase() + result.slice(1);
+}
+
 export interface ParserCategory {
   id: string;
   name: string;
@@ -48,6 +103,8 @@ export interface ParserCategory {
 /**
  * Parser determinístico: nunca inventa tipo, valor ou categoria. Tudo que
  * não for reconhecido no texto entra em `missing` para o chat perguntar.
+ * Casamentos fracos de categoria viram `suggestedCategory` (precisam de
+ * confirmação), nunca `categoryId` direto.
  */
 export function parseMessage(
   message: string,
@@ -60,26 +117,41 @@ export function parseMessage(
   const amount = detectAmount(message);
   const transactionDate =
     parseNaturalDate(message, reference) ?? startOfDay(reference);
+  const description = extractDescription(message);
 
-  const categoryName = matchCategory(message, type);
-  const category = categoryName
-    ? categories.find(
-        (c) =>
-          c.name.toLowerCase() === categoryName.toLowerCase() &&
-          (!type || c.type === type),
-      )
-    : undefined;
+  const match = matchCategory(message, type);
+  let categoryId: string | null = null;
+  let categoryName: string | null = null;
+  let suggestedCategory: { id: string; name: string } | null = null;
+
+  if (match) {
+    const found = categories.find(
+      (c) =>
+        c.name.toLowerCase() === match.name.toLowerCase() &&
+        (!type || c.type === type),
+    );
+    if (found) {
+      if (match.confidence === "high") {
+        categoryId = found.id;
+        categoryName = found.name;
+      } else {
+        suggestedCategory = { id: found.id, name: found.name };
+      }
+    }
+  }
 
   const missing: MissingField[] = [];
   if (!type) missing.push("type");
   if (amount === null) missing.push("amount");
-  if (!category) missing.push("category");
+  if (!categoryId) missing.push("category");
 
   return {
     type,
     amount,
-    categoryId: category?.id ?? null,
-    categoryName: category?.name ?? categoryName,
+    categoryId,
+    categoryName,
+    suggestedCategory,
+    description,
     transactionDate,
     paymentMethod: null,
     originalMessage: message,

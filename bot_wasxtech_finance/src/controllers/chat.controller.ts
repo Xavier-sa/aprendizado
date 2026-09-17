@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { chatMessageSchema } from "@/schemas/transaction.schema";
-import { parseMessage, detectAmount } from "@/services/parser.service";
+import {
+  detectAmount,
+  hasTransactionKeyword,
+  parseMessage,
+} from "@/services/parser.service";
 import { queryService } from "@/services/query.service";
 import { transactionService } from "@/services/transaction.service";
 import { transactionRepository } from "@/repositories/transaction.repository";
@@ -16,23 +20,52 @@ import type {
 } from "@/types";
 
 const AFFIRMATIVE = /^(sim|s|confirmar|confirmo|ok|pode registrar|yes)\b/i;
-const NEGATIVE = /^(n[aã]o|n|cancelar|cancela)\b/i;
+const CANCEL_PATTERN =
+  /^(n[aã]o|n|cancelar|cancela|esquece|esquec[eê]|deixa pra l[áa]|volta|voltar)\b/i;
 
-function draftPreviewText(draft: ChatDraft) {
-  const typeLabel = draft.type === "INCOME" ? "Receita" : "Despesa";
-  const dateLabel = formatDateBR(new Date(draft.transactionDate));
-  return (
-    `Entendi:\n\n${draft.categoryName}\n${formatCurrencyBRL(draft.amount ?? 0)}\n${dateLabel}\n(${typeLabel})\n\n` +
-    `Deseja registrar?`
-  );
+function resolveDescription(draft: ChatDraft): string {
+  return draft.description || draft.categoryName || "Movimentação";
 }
 
-function missingQuestion(missing: MissingField[]): string {
-  if (missing.includes("type")) return "Isso foi uma receita ou uma despesa?";
+function draftPreviewText(draft: ChatDraft): string {
+  const typeLabel = draft.type === "INCOME" ? "Receita" : "Despesa";
+  return `${typeLabel} de ${formatCurrencyBRL(draft.amount ?? 0)} — confira os detalhes e confirme.`;
+}
+
+function missingQuestion(missing: MissingField[], draft: ChatDraft): string {
+  if (missing.includes("type")) {
+    if (draft.amount !== null) {
+      return `Esses ${formatCurrencyBRL(draft.amount)} foram uma receita ou uma despesa?`;
+    }
+    return "Isso foi uma receita ou uma despesa?";
+  }
   if (missing.includes("amount")) return "Qual o valor dessa movimentação?";
-  if (missing.includes("category"))
-    return "Em qual categoria deseja registrar essa movimentação?";
+  if (missing.includes("category")) {
+    const kind = draft.type === "INCOME" ? "esta receita" : "esta despesa";
+    return `Não consegui identificar a categoria.\nOnde deseja registrar ${kind}?`;
+  }
   return "Pode confirmar os dados?";
+}
+
+async function buildClarifyResponse(
+  draft: ChatDraft,
+  missing: MissingField[],
+): Promise<ChatResponseBody> {
+  const text = missingQuestion(missing, draft);
+
+  if (missing[0] === "category" && draft.type) {
+    const categoryOptions = await categoryRepository.findByType(draft.type);
+    return {
+      type: "clarify",
+      text,
+      missing,
+      draft,
+      categoryOptions,
+      suggestedCategory: draft.suggestedCategory ?? null,
+    };
+  }
+
+  return { type: "clarify", text, missing, draft };
 }
 
 async function buildDraft(
@@ -53,6 +86,8 @@ async function buildDraft(
 
   let categoryId = parsed.categoryId ?? previous?.categoryId ?? null;
   let categoryName = parsed.categoryName ?? previous?.categoryName ?? null;
+  let suggestedCategory =
+    parsed.suggestedCategory ?? previous?.suggestedCategory ?? null;
 
   if (!categoryId) {
     const direct = categories.find(
@@ -62,8 +97,11 @@ async function buildDraft(
     if (direct) {
       categoryId = direct.id;
       categoryName = direct.name;
+      suggestedCategory = null;
     }
   }
+
+  const description = previous?.description || parsed.description || "";
 
   const transactionDate = previous
     ? new Date(previous.transactionDate)
@@ -79,6 +117,8 @@ async function buildDraft(
     amount,
     categoryId,
     categoryName,
+    suggestedCategory,
+    description,
     transactionDate: transactionDate.toISOString(),
     originalMessage: previous
       ? `${previous.originalMessage} ${message}`.trim()
@@ -196,6 +236,11 @@ async function tryHandleEditCommands(
   return null;
 }
 
+const UNKNOWN_RESPONSE: ChatResponseBody = {
+  type: "unknown",
+  text: "Não entendi se você quer registrar uma movimentação ou consultar suas finanças.",
+};
+
 export async function handleChat(
   body: ChatRequestBody,
 ): Promise<ChatResponseBody> {
@@ -217,7 +262,7 @@ export async function handleChat(
         };
       }
       const transaction = await transactionService.create({
-        description: draft.categoryName ?? "Movimentação",
+        description: resolveDescription(draft),
         amount: draft.amount,
         type: draft.type,
         categoryId: draft.categoryId,
@@ -230,13 +275,17 @@ export async function handleChat(
         transaction,
       };
     }
-    if (NEGATIVE.test(trimmed)) {
+    if (CANCEL_PATTERN.test(trimmed)) {
       return { type: "cancelled", text: "Ok, não registrei essa movimentação." };
     }
-    // mensagem não foi sim/não: continua o fluxo normal abaixo
+    // não foi nem "sim" nem "não": segue o fluxo normal abaixo (pode ser
+    // consulta, comando de edição ou uma tentativa de nova movimentação).
   }
 
   if (context.kind === "disambiguate_delete") {
+    if (CANCEL_PATTERN.test(trimmed)) {
+      return { type: "cancelled", text: "Ok, cancelei a exclusão." };
+    }
     const index = Number(trimmed);
     if (Number.isInteger(index) && index >= 1 && index <= context.candidates.length) {
       const candidate = context.candidates[index - 1];
@@ -249,6 +298,35 @@ export async function handleChat(
     };
   }
 
+  if (context.kind === "awaiting_new_category_name") {
+    if (CANCEL_PATTERN.test(trimmed)) {
+      return buildClarifyResponse(context.draft, ["category"]);
+    }
+    if (!trimmed || !context.draft.type) {
+      return { type: "info", text: "Digite um nome para a nova categoria." };
+    }
+    let category = await categoryRepository.findByName(trimmed, context.draft.type);
+    if (!category) {
+      category = await categoryRepository.create({
+        name: trimmed,
+        type: context.draft.type,
+      });
+    }
+    const draft: ChatDraft = {
+      ...context.draft,
+      categoryId: category.id,
+      categoryName: category.name,
+      suggestedCategory: null,
+    };
+    return { type: "confirm", text: draftPreviewText(draft), draft };
+  }
+
+  // Cancelar em qualquer pergunta pendente — evita repetir a mesma
+  // pergunta quando a resposta não é reconhecida (ver docs/decisions.md).
+  if (context.kind === "clarify" && CANCEL_PATTERN.test(trimmed)) {
+    return { type: "cancelled", text: "Ok, cancelei esse registro." };
+  }
+
   const editResult = await tryHandleEditCommands(message);
   if (editResult) return editResult;
 
@@ -257,13 +335,31 @@ export async function handleChat(
     return { type: "answer", text: queryResult.answer };
   }
 
-  const previousDraft = context.kind === "clarify" ? context.draft : undefined;
-  const { draft, missing } = await buildDraft(message, previousDraft);
-
-  if (missing.length > 0) {
-    return { type: "clarify", text: missingQuestion(missing), missing, draft };
+  if (context.kind === "clarify") {
+    const { draft, missing } = await buildDraft(message, context.draft);
+    if (missing.length > 0) {
+      return buildClarifyResponse(draft, missing);
+    }
+    return { type: "confirm", text: draftPreviewText(draft), draft };
   }
 
+  // Estado ocioso (ou uma mensagem solta durante uma confirmação pendente):
+  // só entra no fluxo de nova movimentação se a mensagem tiver sinal real
+  // de transação (verbo conhecido ou valor). Caso contrário, não inventa
+  // um rascunho vazio — pede para o usuário escolher o que quer fazer.
+  const isBareTypeWord = /^(despesa|receita)$/i.test(trimmed);
+  if (
+    !hasTransactionKeyword(message) &&
+    detectAmount(message) === null &&
+    !isBareTypeWord
+  ) {
+    return UNKNOWN_RESPONSE;
+  }
+
+  const { draft, missing } = await buildDraft(message);
+  if (missing.length > 0) {
+    return buildClarifyResponse(draft, missing);
+  }
   return { type: "confirm", text: draftPreviewText(draft), draft };
 }
 

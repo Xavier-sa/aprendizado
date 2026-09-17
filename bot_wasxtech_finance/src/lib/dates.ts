@@ -1,4 +1,4 @@
-import { format, isValid, startOfDay, subDays } from "date-fns";
+import { format, isSameDay, isValid, startOfDay, subDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 /**
@@ -46,4 +46,15 @@ export function formatDateBR(date: Date): string {
 export function formatMonthLabel(monthKey: string): string {
   const [year, month] = monthKey.split("-").map(Number);
   return format(new Date(year, month - 1, 1), "MMM/yy", { locale: ptBR });
+}
+
+/** "Hoje" / "Ontem" quando fizer sentido, senão dd/MM/yyyy. */
+export function formatRelativeDateLabel(
+  date: Date,
+  reference: Date = new Date(),
+): string {
+  const today = startOfDay(reference);
+  if (isSameDay(date, today)) return "Hoje";
+  if (isSameDay(date, subDays(today, 1))) return "Ontem";
+  return formatDateBR(date);
 }

@@ -1,15 +1,29 @@
 import type { TransactionType } from "@prisma/client";
 
+export type CategoryMatchConfidence = "high" | "suggested";
+
 interface CategoryRule {
   category: string;
   type: TransactionType;
   keywords: string[];
+  /** "suggested" = precisa de confirmação do usuário antes de aplicar. */
+  confidence?: CategoryMatchConfidence;
+}
+
+export interface CategoryMatch {
+  name: string;
+  confidence: CategoryMatchConfidence;
 }
 
 /**
  * Palavras-chave -> categoria padrão. Usado apenas para SUGERIR a
  * categoria a partir do texto da mensagem; se nada casar, o parser não
  * inventa nada e pede a categoria ao usuário (seção 13 do escopo).
+ *
+ * Regras sem `confidence` são casamentos fortes (o termo é praticamente o
+ * nome da própria categoria) e continuam aplicadas direto, sem precisar
+ * de confirmação extra. Regras "suggested" são inferências mais fracas —
+ * o chat mostra como sugestão e só aplica se o usuário confirmar.
  */
 const RULES: CategoryRule[] = [
   { category: "Mercado", type: "EXPENSE", keywords: ["mercado", "supermercado", "atacadão", "atacadao"] },
@@ -25,6 +39,23 @@ const RULES: CategoryRule[] = [
   { category: "Lazer", type: "EXPENSE", keywords: ["cinema", "viagem", "bar", "show"] },
   { category: "Assinaturas", type: "EXPENSE", keywords: ["netflix", "spotify", "assinatura", "prime"] },
   { category: "Investimentos", type: "EXPENSE", keywords: ["aporte", "corretora"] },
+  {
+    category: "Serviços",
+    type: "EXPENSE",
+    confidence: "suggested",
+    keywords: [
+      "solda",
+      "soldador",
+      "reparo",
+      "conserto",
+      "manutenção",
+      "manutencao",
+      "encanador",
+      "eletricista",
+      "pedreiro",
+      "pintor",
+    ],
+  },
   { category: "Salário", type: "INCOME", keywords: ["salário", "salario", "pagamento"] },
   { category: "Dividendos", type: "INCOME", keywords: ["dividendo", "dividendos"] },
   { category: "Rendimentos", type: "INCOME", keywords: ["rendimento", "rendimentos", "cdb", "tesouro"] },
@@ -35,12 +66,12 @@ const RULES: CategoryRule[] = [
 export function matchCategory(
   text: string,
   type: TransactionType | null,
-): string | null {
+): CategoryMatch | null {
   const lower = text.toLowerCase();
   for (const rule of RULES) {
     if (type && rule.type !== type) continue;
     if (rule.keywords.some((keyword) => lower.includes(keyword))) {
-      return rule.category;
+      return { name: rule.category, confidence: rule.confidence ?? "high" };
     }
   }
   return null;

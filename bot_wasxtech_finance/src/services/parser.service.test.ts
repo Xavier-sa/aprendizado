@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { parseMessage, detectAmount, type ParserCategory } from "./parser.service";
+import {
+  parseMessage,
+  detectAmount,
+  extractDescription,
+  hasTransactionKeyword,
+  type ParserCategory,
+} from "./parser.service";
 
 const CATEGORIES: ParserCategory[] = [
   { id: "cat-mercado", name: "Mercado", type: "EXPENSE" },
   { id: "cat-energia", name: "Energia", type: "EXPENSE" },
   { id: "cat-combustivel", name: "Combustível", type: "EXPENSE" },
+  { id: "cat-servicos", name: "Serviços", type: "EXPENSE" },
   { id: "cat-dividendos", name: "Dividendos", type: "INCOME" },
   { id: "cat-salario", name: "Salário", type: "INCOME" },
 ];
@@ -96,5 +103,54 @@ describe("parseMessage — mensagens incompletas", () => {
     expect(result.amount).toBe(100);
     expect(result.missing).toContain("type");
     expect(result.missing).toContain("category");
+  });
+});
+
+describe("parseMessage — categoria sugerida (não aplica sozinha)", () => {
+  it("'Gastei 250 em serviço de solda' sugere Serviços mas não aplica direto", () => {
+    const result = parseMessage("Gastei 250 em serviço de solda", CATEGORIES, REFERENCE);
+    expect(result.type).toBe("EXPENSE");
+    expect(result.amount).toBe(250);
+    expect(result.categoryId).toBeNull();
+    expect(result.categoryName).toBeNull();
+    expect(result.suggestedCategory).toEqual({ id: "cat-servicos", name: "Serviços" });
+    expect(result.missing).toContain("category");
+  });
+
+  it("'250 solda' (sem verbo) também sugere Serviços e fica sem tipo", () => {
+    const result = parseMessage("250 solda", CATEGORIES, REFERENCE);
+    expect(result.type).toBeNull();
+    expect(result.amount).toBe(250);
+    expect(result.suggestedCategory).toEqual({ id: "cat-servicos", name: "Serviços" });
+    expect(result.missing).toEqual(["type", "category"]);
+  });
+
+  it("casamento forte (mercado) continua aplicando direto, sem suggestedCategory", () => {
+    const result = parseMessage("Gastei 50 no mercado", CATEGORIES, REFERENCE);
+    expect(result.categoryId).toBe("cat-mercado");
+    expect(result.suggestedCategory).toBeNull();
+  });
+});
+
+describe("extractDescription", () => {
+  it.each([
+    ["Gastei 250 em serviço de solda", "Serviço de solda"],
+    ["Paguei R$ 120,50 de energia", "Energia"],
+    ["Recebi 198,30 de dividendos", "Dividendos"],
+    ["Abasteci 150 reais", ""],
+  ])("%s -> %s", (text, expected) => {
+    expect(extractDescription(text)).toBe(expected);
+  });
+});
+
+describe("hasTransactionKeyword", () => {
+  it("reconhece verbos de despesa/receita", () => {
+    expect(hasTransactionKeyword("Gastei 50 no mercado")).toBe(true);
+    expect(hasTransactionKeyword("Recebi 200")).toBe(true);
+  });
+
+  it("não reconhece texto solto", () => {
+    expect(hasTransactionKeyword("obrigado")).toBe(false);
+    expect(hasTransactionKeyword("qual meu saldo?")).toBe(false);
   });
 });
