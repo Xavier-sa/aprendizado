@@ -93,3 +93,84 @@ da demonstração do produto, não um obstáculo a contornar com dados falsos.
 adequados (implementado em `components/charts/EmptyChartState.tsx` e nas
 mensagens equivalentes em `components/dashboard/CategoryBreakdown.tsx`) —
 sem isso, um usuário novo veria gráficos em branco sem explicação.
+
+## ADR-008 — Autenticação com Better Auth e propriedade dos dados
+
+**Contexto:** o FinanceBot foi construído para uso pessoal — nenhuma
+tabela tinha noção de "dono". Para publicar como projeto de portfólio
+acessível publicamente, isso deixa de ser aceitável: sem isolamento,
+qualquer visitante veria/editaria/apagaria as movimentações de qualquer
+outra pessoa.
+
+**Decisão (autenticação):** usar [Better Auth](https://www.better-auth.com)
+com o adapter Prisma nativo (`better-auth/adapters/prisma`), e-mail/senha
+habilitado.
+
+**Motivo:** mantém 100% dos dados de usuário no mesmo Postgres/Neon do
+projeto (alinhado à postura de privacidade do ADR-002 — nada sai da
+aplicação), tem tipagem TypeScript de ponta a ponta, e permite adicionar
+login social (Google, etc.) depois só configurando um `socialProviders`,
+sem mudar schema. Alternativas consideradas: Auth.js/NextAuth v5 (muito
+usado, mas a v5 nunca teve uma versão estável definitiva) e Clerk (ótima
+DX, mas é um serviço externo — parte dos dados de usuário sairia do nosso
+banco).
+
+**Decisão (modelagem):** `Transaction.userId` é obrigatório — toda
+movimentação pertence a exatamente um usuário. `Category` é híbrida:
+`userId` nulo = categoria padrão do sistema (visível a todos, criada pelo
+seed), `userId` preenchido = categoria criada por um usuário específico
+pelo chat (visível só para quem criou). Isso só formaliza um
+comportamento que já existia informalmente: o seed sempre criou uma lista
+padrão, e o chat sempre permitiu criar categorias novas em tempo real —
+só faltava isolar a segunda parte.
+
+**Limitação técnica conhecida:** o Postgres trata cada `NULL` como
+distinto dentro de uma constraint única, então `@@unique([name, type,
+userId])` não impede, por si só, duas categorias globais duplicadas com o
+mesmo nome (só impede duplicidade dentro do conjunto de categorias de um
+mesmo usuário). Como a única rotina que cria categorias globais é o seed
+(controlado), esse é um risco teórico, não uma falha de isolamento entre
+usuários — o isolamento em si (usuário A nunca ver/criar em cima dos
+dados de B) não depende dessa constraint. Registrado aqui para não ser
+esquecido caso um índice único parcial (`WHERE "userId" IS NULL`) seja
+adicionado depois.
+
+**Decisão (isolamento no backend):** toda consulta/gravação de
+`Transaction` e `Category` passa `userId` explicitamente — não existe
+mais nenhum `findMany`/`update`/`delete` "global" nessas tabelas.
+`update`/`delete` de `Transaction` usam `updateMany`/`deleteMany` com
+`where: { id, userId }` (nunca só `{ id }`), então tentar alterar/apagar
+uma movimentação de outra pessoa simplesmente não afeta nenhuma linha —
+o controller então responde com o mesmo erro genérico de "não encontrada"
+usado para IDs inexistentes, para não revelar que o registro existe e
+pertence a outra pessoa.
+
+**Decisão (dados de teste existentes):** ao desenhar essa mudança, o
+banco do Neon tinha 2 `Transaction` criadas manualmente durante o
+desenvolvimento, sem nenhum usuário ainda existente. Confirmado com o
+responsável pelo projeto que eram dados de teste — foram removidas por
+`id` explícito (não por um `deleteMany({})` genérico) antes da migration
+que torna `Transaction.userId` obrigatório. As 21 categorias padrão não
+foram tocadas. Migration aplicada e confirmada (`prisma migrate status`).
+
+**Validação:** além dos testes automatizados de isolamento
+(`transaction.repository.test.ts`, `category.repository.test.ts`), foi
+feito um smoke test manual com dois usuários reais (e-mails de teste,
+removidos depois) provando isolamento de ponta a ponta — incluindo B
+tentando editar/excluir uma `Transaction` de A pela API diretamente, que
+retornou `404` sem revelar que o registro existia.
+
+## ADR-009 — Desativar a geração automática de AGENTS.md/CLAUDE.md
+
+**Contexto:** o Next.js 16 passou a gerar automaticamente `AGENTS.md` e
+`CLAUDE.md` na raiz do projeto sempre que `next dev` detecta um agente de
+código de IA, para que o agente leia documentação da versão instalada em
+vez de depender do próprio conhecimento (possivelmente desatualizado)
+sobre a API do framework.
+
+**Decisão:** desativado com `agentRules: false` em `next.config.ts` (opção
+estável e documentada nesta versão do Next.js — não experimental), e os
+dois arquivos gerados foram removidos.
+
+**Motivo:** são arquivos gerados, não fazem parte da aplicação, e
+poluiriam o repositório sendo recriados a cada `next dev`.

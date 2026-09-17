@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoutButton } from "./LogoutButton";
 
 function DashboardIcon() {
   return (
@@ -67,6 +68,7 @@ export function Sidebar() {
           );
         })}
       </nav>
+      <LogoutButton className="mt-auto flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-secondary hover:text-text-primary" />
     </aside>
   );
 }

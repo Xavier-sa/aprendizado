@@ -5,6 +5,7 @@ import {
   updateTransactionSchema,
   transactionFiltersSchema,
 } from "@/schemas/transaction.schema";
+import { getUserId } from "@/lib/session";
 import type { TransactionType } from "@prisma/client";
 
 function errorResponse(error: unknown, fallbackStatus = 400) {
@@ -12,8 +13,15 @@ function errorResponse(error: unknown, fallbackStatus = 400) {
   return NextResponse.json({ error: message }, { status: fallbackStatus });
 }
 
+function unauthorized() {
+  return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+}
+
 export const transactionController = {
   async list(request: Request) {
+    const userId = await getUserId(request);
+    if (!userId) return unauthorized();
+
     const { searchParams } = new URL(request.url);
     const parsed = transactionFiltersSchema.safeParse({
       from: searchParams.get("from") ?? undefined,
@@ -25,18 +33,21 @@ export const transactionController = {
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     }
-    const transactions = await transactionService.list(parsed.data);
+    const transactions = await transactionService.list(userId, parsed.data);
     return NextResponse.json({ transactions });
   },
 
   async create(request: Request) {
+    const userId = await getUserId(request);
+    if (!userId) return unauthorized();
+
     const body = await request.json();
     const parsed = createTransactionSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     }
     try {
-      const transaction = await transactionService.create(parsed.data);
+      const transaction = await transactionService.create(userId, parsed.data);
       return NextResponse.json({ transaction }, { status: 201 });
     } catch (error) {
       return errorResponse(error);
@@ -44,25 +55,31 @@ export const transactionController = {
   },
 
   async update(request: Request, id: string) {
+    const userId = await getUserId(request);
+    if (!userId) return unauthorized();
+
     const body = await request.json();
     const parsed = updateTransactionSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     }
     try {
-      const transaction = await transactionService.update(id, parsed.data);
+      const transaction = await transactionService.update(id, userId, parsed.data);
       return NextResponse.json({ transaction });
     } catch (error) {
-      return errorResponse(error);
+      return errorResponse(error, 404);
     }
   },
 
-  async remove(id: string) {
+  async remove(request: Request, id: string) {
+    const userId = await getUserId(request);
+    if (!userId) return unauthorized();
+
     try {
-      await transactionService.remove(id);
+      await transactionService.remove(id, userId);
       return NextResponse.json({ ok: true });
     } catch (error) {
-      return errorResponse(error);
+      return errorResponse(error, 404);
     }
   },
 };

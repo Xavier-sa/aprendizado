@@ -63,6 +63,10 @@ etapa seguinte não roda.
   é um valor fictício (`postgresql://user:password@localhost:5432/ci_db`),
   necessário apenas porque `prisma.config.ts` e `prisma generate` esperam a
   variável definida. Nenhuma conexão de rede real é feita com esse valor.
+- Não cria nenhuma sessão/usuário real: `BETTER_AUTH_SECRET` no workflow
+  também é um valor fictício, necessário só porque `src/lib/auth.ts` é
+  importado por rotas e pelo build — mesmo raciocínio do `DATABASE_URL`
+  acima.
 
 ## Por que `npm ci` e não `npm install`?
 
@@ -203,9 +207,79 @@ correto simplesmente não dependia de arquivo gerado. Validado rodando
 o pipeline inteiro (`prisma generate` → `test` → `lint` → `typecheck` →
 `build`, todos passando).
 
+## Terceiro erro: o mesmo problema de lockfile voltou
+
+Depois de corrigir o lockfile pela primeira vez (ver acima), rodei
+`npm install better-auth` para adicionar a biblioteca de autenticação.
+Um `npm ci` limpo logo em seguida voltou a falhar:
+
+```
+npm error Invalid: lock file's @emnapi/wasi-threads@1.2.1 does not satisfy @emnapi/wasi-threads@1.2.3
+npm error Missing: @emnapi/core@1.10.0 from lock file
+npm error Missing: @emnapi/wasi-threads@1.2.1 from lock file
+```
+
+**Causa:** exatamente a mesma classe de problema do primeiro erro —
+`npm install <pacote>` faz uma atualização **incremental** do lockfile
+(calcula só o delta em relação ao que já está registrado), e essa
+atualização incremental não resolve por completo a subárvore opcional
+`wasm32`/`@emnapi/*` usada por `sharp` (via `next`) e por
+`@tailwindcss/oxide`. Isso confirma que o problema não é pontual — é uma
+característica de como o npm atualiza lockfiles incrementalmente nesta
+árvore de dependências específica, e vai se repetir toda vez que uma
+dependência nova for adicionada com `npm install <pacote>`.
+
+**Correção:** a mesma de antes — apagar `package-lock.json` por completo
+e rodar `npm install` (sem argumentos) para forçar uma resolução completa
+do zero a partir do `package.json`. Confirmado por comparação campo a
+campo que nenhuma dependência direta mudou de versão; só a árvore
+transitiva/opcional foi completada.
+
+**Consequência prática:** ao adicionar qualquer dependência nova a este
+projeto, depois de `npm install <pacote>`, rode `npm ci` uma vez para
+confirmar que o lockfile ficou consistente. Se falhar com um erro
+`Missing: ... from lock file`, apague `package-lock.json` e rode
+`npm install` do zero antes de continuar — não tente contornar com
+`npm install` incremental de novo, ele não resolve esse problema
+específico.
+
 Isso ilustra bem o valor incremental do CI: corrigir um problema não
 "resolve tudo" de uma vez — ele deixa o pipeline avançar até o próximo
 problema real, que só aparece quando o anterior para de mascará-lo.
+
+## Vulnerabilidades conhecidas (`npm audit`)
+
+`npm audit` reporta 4 vulnerabilidades de severidade alta, todas nas
+mesmas duas origens:
+
+- `deepmerge-ts` (stack exhaustion em merge recursivo)
+- `mysql2` (downgrade de auth plugin / decompression bomb)
+
+Ambas são dependências **transitivas do pacote `prisma`** (a CLI, em
+`devDependencies` — não do `@prisma/client`, que é o que roda em
+produção). `prisma` inclui suporte a múltiplos bancos na sua ferramenta
+de linha de comando, então carrega `mysql2` mesmo este projeto usando só
+PostgreSQL. Nenhum dos dois pacotes é importado pelo código da aplicação
+nem roda no servidor em produção — o uso real é só durante
+desenvolvimento/CI (`prisma generate`/`migrate`).
+
+A única correção automática disponível (`npm audit fix --force`)
+rebaixaria `prisma` para `6.19.3` — uma mudança **breaking** que
+desfaria toda a configuração do Prisma 7 deste projeto
+(`prisma.config.ts`, driver adapters). Por isso não foi aplicada.
+Tratamento: acompanhar novas versões 7.x do `prisma` que atualizem essas
+dependências transitivas, sem downgrade.
+
+## `postinstall: prisma generate`
+
+Adicionado ao `package.json` porque a Vercel (e qualquer ambiente que não
+seja este CI) roda só `npm install` + `next build` — sem o passo
+explícito de `Generate Prisma Client` que este workflow declara à parte.
+Sem `postinstall`, o build falharia lá pelo mesmo motivo que já vimos
+aqui: `@prisma/client` não existe até alguém rodar `prisma generate`. O
+passo explícito no workflow continua existindo por clareza/documentação
+do pipeline; rodar `prisma generate` duas vezes (postinstall + passo
+explícito) é redundante, mas inofensivo (idempotente).
 
 ## Próximos passos (futuro, não implementado agora)
 

@@ -56,18 +56,24 @@ gráficos.
   despesas por categoria, evolução do saldo, evolução mensal dos gastos).
 - CRUD completo de movimentações pela tela `/transactions`, com filtros
   por período, categoria, tipo e busca por descrição.
+- Autenticação (e-mail/senha) e dados completamente isolados por
+  usuário — cada pessoa só vê e altera as próprias movimentações. Ver
+  [docs/authentication.md](docs/authentication.md).
 
 ## O que ele ainda NÃO faz
 
 Ver [docs/roadmap.md](docs/roadmap.md) para a lista completa. Resumindo:
-não tem autenticação/múltiplos usuários, não lida com contas recorrentes,
-parcelamento, orçamento mensal, metas, investimentos, importação/exportação
-de extratos, e não usa nenhum LLM — o parser é 100% baseado em regras.
+não tem verificação de e-mail/recuperação de senha, não lida com contas
+recorrentes, parcelamento, orçamento mensal, metas, investimentos,
+importação/exportação de extratos, não usa nenhum LLM — o parser é 100%
+baseado em regras — e **ainda não está publicado** (deploy é uma etapa
+separada, ver [docs/deployment.md](docs/deployment.md)).
 
 ## Tecnologias
 
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [Tailwind CSS](https://tailwindcss.com) v4
+- [Better Auth](https://www.better-auth.com) para autenticação
 - [PostgreSQL](https://www.postgresql.org) via [Neon](https://neon.tech)
 - [Prisma ORM](https://www.prisma.io) (com driver adapter `@prisma/adapter-pg`)
 - [Zod](https://zod.dev) para validação
@@ -101,8 +107,10 @@ valores monetários. Detalhes em [docs/database.md](docs/database.md).
 ## Primeiro uso
 
 O FinanceBot não inclui movimentações financeiras fictícias por padrão.
+Depois de configurar o banco, crie sua conta em `/sign-up` — cada conta
+começa com seu próprio histórico, isolado de qualquer outra.
 
-Após configurar o banco, o dashboard começa zerado — saldo, receitas e
+Após criar a conta, o dashboard começa zerado — saldo, receitas e
 despesas em R$ 0,00, nenhuma movimentação. Isso permite que o histórico
 financeiro seja construído naturalmente a partir das movimentações
 registradas pelo próprio usuário, em vez de nascer misturado a dados de
@@ -123,7 +131,7 @@ abaixo).
 
 ```bash
 npm install
-cp .env.example .env   # preencha DATABASE_URL com a sua connection string
+cp .env.example .env   # preencha DATABASE_URL e gere um BETTER_AUTH_SECRET
 npm run db:migrate     # aplica as migrations no seu banco
 npm run db:seed        # cria/atualiza as categorias padrão (não cria nenhuma transação)
 npm run dev             # http://localhost:3000
@@ -138,6 +146,12 @@ npm run typecheck   # tsc --noEmit
 npm run build        # build de produção
 npm run db:studio   # Prisma Studio, para inspecionar o banco
 ```
+
+## Autenticação
+
+Cada usuário só vê e altera as próprias movimentações. Autenticação via
+[Better Auth](https://www.better-auth.com) (e-mail/senha). Detalhes em
+[docs/authentication.md](docs/authentication.md).
 
 ## Integração Contínua
 
@@ -173,8 +187,11 @@ Detalhes e motivação de cada etapa em [docs/ci.md](docs/ci.md).
 ## Segurança
 
 - `.env` nunca é commitado (`.gitignore` cobre `.env*`, `*.sql`, `*.dump`).
-- `.env.example` contém apenas um placeholder de `DATABASE_URL`.
+- `.env.example` contém apenas placeholders (`DATABASE_URL`,
+  `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`), nunca valores reais.
 - Nenhuma credencial real aparece neste README ou em logs da aplicação.
+- Cada usuário só acessa as próprias movimentações e categorias
+  personalizadas — ver [docs/authentication.md](docs/authentication.md).
 - Se uma credencial real for exposta acidentalmente em algum momento
   (commit, print, etc.), o certo é **rotacionar a senha no Neon**, nunca
   reutilizá-la.
@@ -183,12 +200,18 @@ Detalhes e motivação de cada etapa em [docs/ci.md](docs/ci.md).
 
 ```
 src/
-  app/            páginas (dashboard, chat, transactions) e rotas de API
+  app/
+    (app)/          dashboard, chat, transactions — autenticadas, com Shell
+    sign-in/        login
+    sign-up/        cadastro
+    api/            rotas de API (inclui api/auth/[...all] do Better Auth)
+    page.tsx        landing pública
+    proxy.ts        proteção de rotas (Next.js 16)
   components/     ui, layout, dashboard, chat, transactions, charts
   controllers/    validação (Zod) + coordenação entre services/repositories
   services/       parser, regras financeiras, consultas em linguagem natural
-  repositories/   acesso ao Prisma
-  lib/            prisma client, formatação de moeda e datas
+  repositories/   acesso ao Prisma (sempre filtrado por userId)
+  lib/            prisma client, better auth, sessão, formatação de moeda e datas
   schemas/        schemas Zod
   types/          tipos compartilhados
   utils/          casamento de categoria por palavra-chave
@@ -196,7 +219,8 @@ prisma/
   schema.prisma
   seed.ts
 docs/
-  architecture.md, database.md, uml.md, decisions.md, roadmap.md
+  architecture.md, database.md, uml.md, decisions.md, roadmap.md,
+  authentication.md, deployment.md, ci.md
 ```
 
 ## Exemplos de uso
@@ -246,10 +270,11 @@ Ver [docs/roadmap.md](docs/roadmap.md).
   diferentes das listadas em [docs/decisions.md](docs/decisions.md) podem
   não ser entendidas.
 - Comandos de edição pelo chat ("mude para...", "na verdade foram...")
-  atuam sempre sobre o **último lançamento**, não sobre um lançamento
-  específico mencionado no meio de uma conversa mais longa.
-- Sem autenticação: qualquer pessoa com acesso à aplicação vê e edita
-  todos os dados.
+  atuam sempre sobre o **último lançamento do usuário autenticado**, não
+  sobre um lançamento específico mencionado no meio de uma conversa mais
+  longa.
+- Sem verificação de e-mail nem recuperação de senha (ver
+  [docs/authentication.md](docs/authentication.md)).
 
 ## Licença
 

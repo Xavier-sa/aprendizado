@@ -10,8 +10,11 @@ export interface TransactionFilters {
   search?: string;
 }
 
-function buildWhere(filters: TransactionFilters): Prisma.TransactionWhereInput {
-  const where: Prisma.TransactionWhereInput = {};
+function buildWhere(
+  userId: string,
+  filters: TransactionFilters,
+): Prisma.TransactionWhereInput {
+  const where: Prisma.TransactionWhereInput = { userId };
   if (filters.from || filters.to) {
     where.transactionDate = {
       ...(filters.from ? { gte: filters.from } : {}),
@@ -37,56 +40,64 @@ export const transactionRepository = {
     return prisma.transaction.create({ data, include: { category: true } });
   },
 
-  findMany(filters: TransactionFilters = {}) {
+  findMany(userId: string, filters: TransactionFilters = {}) {
     return prisma.transaction.findMany({
-      where: buildWhere(filters),
+      where: buildWhere(userId, filters),
       include: { category: true },
       orderBy: { transactionDate: "desc" },
     });
   },
 
-  findById(id: string) {
+  findById(id: string, userId: string) {
+    return prisma.transaction.findFirst({
+      where: { id, userId },
+      include: { category: true },
+    });
+  },
+
+  findLast(userId: string) {
+    return prisma.transaction.findFirst({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: { category: true },
+    });
+  },
+
+  /** Retorna null se a movimentação não existir OU não pertencer a `userId`. */
+  async update(id: string, userId: string, data: Prisma.TransactionUncheckedUpdateInput) {
+    const result = await prisma.transaction.updateMany({
+      where: { id, userId },
+      data,
+    });
+    if (result.count === 0) return null;
     return prisma.transaction.findUnique({
       where: { id },
       include: { category: true },
     });
   },
 
-  findLast() {
-    return prisma.transaction.findFirst({
-      orderBy: { createdAt: "desc" },
-      include: { category: true },
-    });
+  /** Retorna `false` se a movimentação não existir OU não pertencer a `userId`. */
+  async delete(id: string, userId: string): Promise<boolean> {
+    const result = await prisma.transaction.deleteMany({ where: { id, userId } });
+    return result.count > 0;
   },
 
-  update(id: string, data: Prisma.TransactionUncheckedUpdateInput) {
-    return prisma.transaction.update({
-      where: { id },
-      data,
-      include: { category: true },
-    });
+  count(userId: string, filters: TransactionFilters = {}) {
+    return prisma.transaction.count({ where: buildWhere(userId, filters) });
   },
 
-  delete(id: string) {
-    return prisma.transaction.delete({ where: { id } });
-  },
-
-  count(filters: TransactionFilters = {}) {
-    return prisma.transaction.count({ where: buildWhere(filters) });
-  },
-
-  async sumByType(filters: TransactionFilters = {}) {
+  async sumByType(userId: string, filters: TransactionFilters = {}) {
     const result = await prisma.transaction.aggregate({
-      where: buildWhere(filters),
+      where: buildWhere(userId, filters),
       _sum: { amount: true },
     });
     return Number(result._sum.amount ?? 0);
   },
 
-  async sumByCategory(filters: TransactionFilters = {}) {
+  async sumByCategory(userId: string, filters: TransactionFilters = {}) {
     const grouped = await prisma.transaction.groupBy({
       by: ["categoryId"],
-      where: buildWhere(filters),
+      where: buildWhere(userId, filters),
       _sum: { amount: true },
     });
     return grouped.map((row) => ({
@@ -95,14 +106,15 @@ export const transactionRepository = {
     }));
   },
 
-  /** Totais mensais de receita/despesa dos últimos `months` meses (inclui o mês atual). */
-  async monthlySeries(months: number): Promise<MonthlyTotal[]> {
+  /** Totais mensais de receita/despesa dos últimos `months` meses (inclui o mês atual), só de `userId`. */
+  async monthlySeries(userId: string, months: number): Promise<MonthlyTotal[]> {
     const rows = await prisma.$queryRaw<
       { month: Date; type: TransactionType; total: Prisma.Decimal }[]
     >(Prisma.sql`
       SELECT date_trunc('month', "transactionDate") AS month, "type", SUM("amount") AS total
       FROM "Transaction"
-      WHERE "transactionDate" >= date_trunc('month', now()) - (${months - 1} || ' months')::interval
+      WHERE "userId" = ${userId}
+        AND "transactionDate" >= date_trunc('month', now()) - (${months - 1} || ' months')::interval
       GROUP BY 1, 2
       ORDER BY 1 ASC
     `);
@@ -120,30 +132,30 @@ export const transactionRepository = {
     );
   },
 
-  /** Saldo total (receitas - despesas) considerando todo o histórico. */
-  async totalBalance() {
+  /** Saldo total (receitas - despesas) de `userId`, considerando todo o histórico. */
+  async totalBalance(userId: string) {
     const [income, expense] = await Promise.all([
       prisma.transaction.aggregate({
-        where: { type: "INCOME" },
+        where: { userId, type: "INCOME" },
         _sum: { amount: true },
       }),
       prisma.transaction.aggregate({
-        where: { type: "EXPENSE" },
+        where: { userId, type: "EXPENSE" },
         _sum: { amount: true },
       }),
     ]);
     return Number(income._sum.amount ?? 0) - Number(expense._sum.amount ?? 0);
   },
 
-  /** Saldo acumulado (receitas - despesas) de tudo que ocorreu antes de `date`. */
-  async balanceBefore(date: Date) {
+  /** Saldo acumulado de `userId` (receitas - despesas) de tudo que ocorreu antes de `date`. */
+  async balanceBefore(userId: string, date: Date) {
     const [income, expense] = await Promise.all([
       prisma.transaction.aggregate({
-        where: { type: "INCOME", transactionDate: { lt: date } },
+        where: { userId, type: "INCOME", transactionDate: { lt: date } },
         _sum: { amount: true },
       }),
       prisma.transaction.aggregate({
-        where: { type: "EXPENSE", transactionDate: { lt: date } },
+        where: { userId, type: "EXPENSE", transactionDate: { lt: date } },
         _sum: { amount: true },
       }),
     ]);

@@ -9,10 +9,14 @@ para o porquê de cada escolha.
 O projeto segue uma separação inspirada em MVC, adaptada ao Next.js
 (App Router):
 
-- **View** — `src/app/*` (páginas) e `src/components/*` (UI). Páginas de
-  dashboard e movimentações são Server Components que buscam dados
-  diretamente dos services; o chat e o CRUD de movimentações são Client
-  Components que conversam com a API via `fetch`.
+- **View** — `src/app/*` (páginas) e `src/components/*` (UI). Páginas
+  autenticadas (`dashboard`, `chat`, `transactions`) ficam no grupo de
+  rotas `src/app/(app)/` — só elas usam o layout com navegação (`Shell`).
+  A landing pública (`/`) e as telas de autenticação (`/sign-in`,
+  `/sign-up`) ficam fora desse grupo, com layout próprio. Dashboard busca
+  dados diretamente dos services (Server Component); chat e o CRUD de
+  movimentações são Client Components que conversam com a API via
+  `fetch`.
 - **Controller** — `src/controllers/*`. Recebem a `Request` do Next.js,
   validam entrada com Zod (`src/schemas/*`), coordenam services e
   repositories, e devolvem `NextResponse`. As rotas em `src/app/api/*`
@@ -43,7 +47,15 @@ vez, sem histórico persistido de conversas).
 
 Ver [database.md](./database.md).
 
+## Autenticação e multiusuário
+
+Ver [authentication.md](./authentication.md). Resumo: Better Auth
+protege páginas e APIs, e todo acesso a `Transaction`/`Category` passa
+`userId` explicitamente pela cadeia repository → service → controller —
+não existe mais consulta "global" a essas tabelas.
+
 ## O que não existe (ainda)
 
-Autenticação, múltiplos usuários, filas/jobs em background, cache,
-qualquer chamada a LLM. Ver [roadmap.md](./roadmap.md).
+Deploy/CD, verificação de e-mail e recuperação de senha, filas/jobs em
+background, cache, qualquer chamada a LLM. Ver [roadmap.md](./roadmap.md)
+e [deployment.md](./deployment.md).

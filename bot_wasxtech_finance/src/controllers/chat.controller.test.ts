@@ -1,5 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
+const USER_ID = "user-1";
+
 const CATEGORIES = [
   { id: "cat-mercado", name: "Mercado", type: "EXPENSE" as const },
   { id: "cat-servicos", name: "Serviços", type: "EXPENSE" as const },
@@ -13,8 +15,9 @@ const categoryRepositoryMock = {
   ),
   findById: vi.fn(),
   findByName: vi.fn().mockResolvedValue(null),
-  create: vi.fn(({ name, type }: { name: string; type: "EXPENSE" | "INCOME" }) =>
-    Promise.resolve({ id: "cat-new", name, type }),
+  create: vi.fn(
+    ({ name, type }: { name: string; type: "EXPENSE" | "INCOME"; userId: string }) =>
+      Promise.resolve({ id: "cat-new", name, type }),
   ),
 };
 
@@ -34,7 +37,7 @@ const transactionRepositoryMock = {
 };
 
 const transactionServiceMock = {
-  create: vi.fn((input: Record<string, unknown>) =>
+  create: vi.fn((_userId: string, input: Record<string, unknown>) =>
     Promise.resolve({
       id: "tx-1",
       ...input,
@@ -57,7 +60,11 @@ vi.mock("@/services/transaction.service", () => ({
 }));
 
 const { handleChat } = await import("./chat.controller");
-import type { ChatContext } from "@/types";
+import type { ChatContext, ChatRequestBody } from "@/types";
+
+function chat(body: ChatRequestBody) {
+  return handleChat(USER_ID, body);
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -73,12 +80,12 @@ beforeEach(() => {
 
 describe("handleChat — intenção e estado da conversa", () => {
   it("mensagem sem sinal de transação nem consulta -> unknown, sem criar rascunho", async () => {
-    const response = await handleChat({ message: "obrigado" });
+    const response = await chat({ message: "obrigado" });
     expect(response.type).toBe("unknown");
   });
 
   it("'gastei 250 em serviço de solda' sugere categoria, não pergunta em texto puro sem opções", async () => {
-    const response = await handleChat({ message: "gastei 250 em serviço de solda" });
+    const response = await chat({ message: "gastei 250 em serviço de solda" });
     expect(response.type).toBe("clarify");
     if (response.type !== "clarify") throw new Error("esperado clarify");
     expect(response.missing).toEqual(["category"]);
@@ -88,7 +95,7 @@ describe("handleChat — intenção e estado da conversa", () => {
   });
 
   it("'250 solda' sem verbo pergunta o tipo primeiro, mantendo o rascunho", async () => {
-    const response = await handleChat({ message: "250 solda" });
+    const response = await chat({ message: "250 solda" });
     expect(response.type).toBe("clarify");
     if (response.type !== "clarify") throw new Error("esperado clarify");
     expect(response.missing[0]).toBe("type");
@@ -97,10 +104,10 @@ describe("handleChat — intenção e estado da conversa", () => {
   });
 
   it("continuar a mesma movimentação: responder 'despesa' preenche o tipo e mantém o valor", async () => {
-    const first = await handleChat({ message: "250 solda" });
+    const first = await chat({ message: "250 solda" });
     if (first.type !== "clarify") throw new Error("esperado clarify");
 
-    const second = await handleChat({
+    const second = await chat({
       message: "despesa",
       context: { kind: "clarify", draft: first.draft, missing: first.missing },
     });
@@ -126,7 +133,7 @@ describe("handleChat — intenção e estado da conversa", () => {
       },
       missing: ["category"],
     };
-    const response = await handleChat({ message: "não", context });
+    const response = await chat({ message: "não", context });
     expect(response.type).toBe("cancelled");
   });
 
@@ -145,10 +152,18 @@ describe("handleChat — intenção e estado da conversa", () => {
       },
       missing: ["category"],
     };
-    const response = await handleChat({ message: "qual meu saldo?", context });
+    const response = await chat({ message: "qual meu saldo?", context });
     expect(response.type).toBe("answer");
     if (response.type !== "answer") throw new Error("esperado answer");
     expect(response.text).toContain("1.234,56");
+    // "Qual meu saldo?" nunca pode calcular em cima do histórico de outro
+    // usuário — o saldo consultado tem que ser sempre o de quem perguntou.
+    expect(transactionRepositoryMock.totalBalance).toHaveBeenCalledWith(USER_ID);
+  });
+
+  it("'apague meu último lançamento' só considera o último lançamento DO usuário autenticado", async () => {
+    await chat({ message: "apague meu último lançamento" });
+    expect(transactionRepositoryMock.findLast).toHaveBeenCalledWith(USER_ID);
   });
 
   it("confirmar cria a transação", async () => {
@@ -166,9 +181,13 @@ describe("handleChat — intenção e estado da conversa", () => {
       },
       missing: [],
     } as unknown as ChatContext;
-    const response = await handleChat({ message: "sim", context });
+    const response = await chat({ message: "sim", context });
     expect(response.type).toBe("created");
     expect(transactionServiceMock.create).toHaveBeenCalledTimes(1);
+    expect(transactionServiceMock.create).toHaveBeenCalledWith(
+      USER_ID,
+      expect.objectContaining({ categoryId: "cat-servicos" }),
+    );
   });
 
   it("cancelar a confirmação não cria a transação", async () => {
@@ -186,7 +205,7 @@ describe("handleChat — intenção e estado da conversa", () => {
       },
       missing: [],
     } as unknown as ChatContext;
-    const response = await handleChat({ message: "não", context });
+    const response = await chat({ message: "não", context });
     expect(response.type).toBe("cancelled");
     expect(transactionServiceMock.create).not.toHaveBeenCalled();
   });
@@ -202,13 +221,14 @@ describe("handleChat — intenção e estado da conversa", () => {
       transactionDate: new Date().toISOString(),
       originalMessage: "gastei 250 em serviço de solda",
     };
-    const response = await handleChat({
+    const response = await chat({
       message: "Manutenção",
       context: { kind: "awaiting_new_category_name", draft },
     });
     expect(categoryRepositoryMock.create).toHaveBeenCalledWith({
       name: "Manutenção",
       type: "EXPENSE",
+      userId: USER_ID,
     });
     expect(response.type).toBe("confirm");
     if (response.type !== "confirm") throw new Error("esperado confirm");

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "./Sidebar";
+import { LogoutButton } from "./LogoutButton";
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export function MobileNav() {
           </Link>
         );
       })}
+      <LogoutButton className="flex flex-1 flex-col items-center gap-0.5 py-3 text-center text-xs font-medium text-text-muted" />
     </nav>
   );
 }

@@ -26,6 +26,10 @@ jobs:
       # Valor fictício, só para satisfazer prisma.config.ts / prisma generate.
       # Nenhuma conexão real é feita neste workflow (sem migrate/db push/seed).
       DATABASE_URL: "postgresql://user:password@localhost:5432/ci_db?schema=public"
+      # Idem: o Better Auth exige a variável para inicializar (src/lib/auth.ts
+      # é importado por rotas e pelo build), mas nenhuma sessão real é criada.
+      BETTER_AUTH_SECRET: "ci-only-fake-secret-not-used-for-real-auth-32chars"
+      BETTER_AUTH_URL: "http://localhost:3000"
 
     steps:
       - name: Checkout

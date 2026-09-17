@@ -1,3 +1,6 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { financialService } from "@/services/financial.service";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { CategoryBreakdown } from "@/components/dashboard/CategoryBreakdown";
@@ -10,9 +13,12 @@ import { MonthlySpendChart } from "@/components/charts/MonthlySpendChart";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/sign-in");
+
   const [summary, series] = await Promise.all([
-    financialService.getDashboardSummary(),
-    financialService.getMonthlyChartSeries(),
+    financialService.getDashboardSummary(session.user.id),
+    financialService.getMonthlyChartSeries(session.user.id),
   ]);
 
   return (

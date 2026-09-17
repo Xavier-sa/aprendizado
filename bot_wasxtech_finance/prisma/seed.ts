@@ -37,24 +37,30 @@ const INCOME_CATEGORIES = [
  * Transaction — o histórico financeiro só existe a partir do uso real
  * da aplicação (ver ADR-007 em docs/decisions.md).
  */
+/**
+ * Sem `upsert`: o Prisma não aceita `null` dentro de uma chave composta
+ * (`name_type_userId`), mesmo `userId` sendo uma coluna anulável — é
+ * assim que Prisma modela unicidade composta com campo opcional. Por
+ * isso o find-then-create explícito abaixo, em vez de upsert.
+ */
+async function ensureGlobalCategory(name: string, type: "EXPENSE" | "INCOME") {
+  const existing = await prisma.category.findFirst({
+    where: { name, type, userId: null },
+  });
+  if (existing) return false;
+  await prisma.category.create({ data: { name, type } });
+  return true;
+}
+
 async function seedCategories() {
   let created = 0;
 
   for (const name of EXPENSE_CATEGORIES) {
-    const result = await prisma.category.upsert({
-      where: { name_type: { name, type: "EXPENSE" } },
-      update: {},
-      create: { name, type: "EXPENSE" },
-    });
-    if (result) created += 1;
+    if (await ensureGlobalCategory(name, "EXPENSE")) created += 1;
   }
 
   for (const name of INCOME_CATEGORIES) {
-    await prisma.category.upsert({
-      where: { name_type: { name, type: "INCOME" } },
-      update: {},
-      create: { name, type: "INCOME" },
-    });
+    if (await ensureGlobalCategory(name, "INCOME")) created += 1;
   }
 
   return created;

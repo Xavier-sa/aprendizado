@@ -7,6 +7,7 @@ const CHART_MONTHS = 6;
 
 export const financialService = {
   async getDashboardSummary(
+    userId: string,
     reference: Date = new Date(),
   ): Promise<DashboardSummary> {
     const monthStart = startOfMonth(reference);
@@ -20,24 +21,24 @@ export const financialService = {
       expenseByCategoryRaw,
       categories,
     ] = await Promise.all([
-      transactionRepository.sumByType({
+      transactionRepository.sumByType(userId, {
         type: "INCOME",
         from: monthStart,
         to: monthEnd,
       }),
-      transactionRepository.sumByType({
+      transactionRepository.sumByType(userId, {
         type: "EXPENSE",
         from: monthStart,
         to: monthEnd,
       }),
-      transactionRepository.totalBalance(),
-      transactionRepository.count(),
-      transactionRepository.sumByCategory({
+      transactionRepository.totalBalance(userId),
+      transactionRepository.count(userId),
+      transactionRepository.sumByCategory(userId, {
         type: "EXPENSE",
         from: monthStart,
         to: monthEnd,
       }),
-      categoryRepository.findAll(),
+      categoryRepository.findAll(userId),
     ]);
 
     const categoryNameById = new Map(categories.map((c) => [c.id, c.name]));
@@ -58,15 +59,16 @@ export const financialService = {
     };
   },
 
-  /** Séries mensais para os gráficos, com saldo acumulado real (a partir do histórico completo). */
+  /** Séries mensais para os gráficos, com saldo acumulado real (a partir do histórico completo de `userId`). */
   async getMonthlyChartSeries(
+    userId: string,
     months: number = CHART_MONTHS,
   ): Promise<MonthlyChartPoint[]> {
-    const series = await transactionRepository.monthlySeries(months);
+    const series = await transactionRepository.monthlySeries(userId, months);
     if (series.length === 0) return [];
 
     const firstMonth = new Date(series[0].month);
-    let runningBalance = await transactionRepository.balanceBefore(firstMonth);
+    let runningBalance = await transactionRepository.balanceBefore(userId, firstMonth);
 
     return series.map((point) => {
       runningBalance += point.income - point.expense;

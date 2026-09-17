@@ -1,11 +1,14 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { ChatWindow } from "@/components/chat/ChatWindow";
 import { categoryRepository } from "@/repositories/category.repository";
+import { auth } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-async function checkDatabaseConnection(): Promise<boolean> {
+async function checkDatabaseConnection(userId: string): Promise<boolean> {
   try {
-    await categoryRepository.findAll();
+    await categoryRepository.findAll(userId);
     return true;
   } catch {
     return false;
@@ -13,7 +16,10 @@ async function checkDatabaseConnection(): Promise<boolean> {
 }
 
 export default async function ChatPage() {
-  const connected = await checkDatabaseConnection();
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session) redirect("/sign-in");
+
+  const connected = await checkDatabaseConnection(session.user.id);
 
   return (
     <div className="flex flex-col gap-4">

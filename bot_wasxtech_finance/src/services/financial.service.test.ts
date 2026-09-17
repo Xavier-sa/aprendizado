@@ -19,9 +19,11 @@ vi.mock("@/repositories/category.repository", () => ({
 
 const { financialService } = await import("./financial.service");
 
+const USER_ID = "user-1";
+
 describe("financialService — banco sem nenhuma transação", () => {
   it("getDashboardSummary retorna tudo zerado", async () => {
-    const summary = await financialService.getDashboardSummary(new Date(2026, 8, 16));
+    const summary = await financialService.getDashboardSummary(USER_ID, new Date(2026, 8, 16));
 
     expect(summary.balance).toBe(0);
     expect(summary.monthIncome).toBe(0);
@@ -32,7 +34,7 @@ describe("financialService — banco sem nenhuma transação", () => {
   });
 
   it("getMonthlyChartSeries retorna lista vazia (sem quebrar)", async () => {
-    const series = await financialService.getMonthlyChartSeries();
+    const series = await financialService.getMonthlyChartSeries(USER_ID);
     expect(series).toEqual([]);
   });
 });

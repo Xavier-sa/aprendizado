@@ -29,18 +29,18 @@ function toDTO(transaction: TransactionWithCategory): TransactionDTO {
 }
 
 export const transactionService = {
-  async list(filters: TransactionFilters = {}): Promise<TransactionDTO[]> {
-    const rows = await transactionRepository.findMany(filters);
+  async list(userId: string, filters: TransactionFilters = {}): Promise<TransactionDTO[]> {
+    const rows = await transactionRepository.findMany(userId, filters);
     return rows.map(toDTO);
   },
 
-  async getById(id: string): Promise<TransactionDTO | null> {
-    const row = await transactionRepository.findById(id);
+  async getById(id: string, userId: string): Promise<TransactionDTO | null> {
+    const row = await transactionRepository.findById(id, userId);
     return row ? toDTO(row) : null;
   },
 
-  async create(input: CreateTransactionInput): Promise<TransactionDTO> {
-    const category = await categoryRepository.findById(input.categoryId);
+  async create(userId: string, input: CreateTransactionInput): Promise<TransactionDTO> {
+    const category = await categoryRepository.findById(input.categoryId, userId);
     if (!category) {
       throw new Error("Categoria não encontrada");
     }
@@ -49,6 +49,7 @@ export const transactionService = {
     }
 
     const created = await transactionRepository.create({
+      userId,
       description: input.description,
       amount: input.amount,
       type: input.type,
@@ -62,17 +63,20 @@ export const transactionService = {
 
   async update(
     id: string,
+    userId: string,
     input: UpdateTransactionInput,
   ): Promise<TransactionDTO> {
     if (input.categoryId) {
-      const category = await categoryRepository.findById(input.categoryId);
+      const category = await categoryRepository.findById(input.categoryId, userId);
       if (!category) throw new Error("Categoria não encontrada");
     }
-    const updated = await transactionRepository.update(id, input);
+    const updated = await transactionRepository.update(id, userId, input);
+    if (!updated) throw new Error("Movimentação não encontrada");
     return toDTO(updated);
   },
 
-  async remove(id: string): Promise<void> {
-    await transactionRepository.delete(id);
+  async remove(id: string, userId: string): Promise<void> {
+    const removed = await transactionRepository.delete(id, userId);
+    if (!removed) throw new Error("Movimentação não encontrada");
   },
 };

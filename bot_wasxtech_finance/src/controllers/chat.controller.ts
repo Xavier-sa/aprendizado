@@ -11,6 +11,7 @@ import { transactionRepository } from "@/repositories/transaction.repository";
 import { categoryRepository } from "@/repositories/category.repository";
 import { parseNaturalDate, formatDateBR } from "@/lib/dates";
 import { formatCurrencyBRL } from "@/lib/currency";
+import { getUserId } from "@/lib/session";
 import type {
   ChatContext,
   ChatDraft,
@@ -48,13 +49,14 @@ function missingQuestion(missing: MissingField[], draft: ChatDraft): string {
 }
 
 async function buildClarifyResponse(
+  userId: string,
   draft: ChatDraft,
   missing: MissingField[],
 ): Promise<ChatResponseBody> {
   const text = missingQuestion(missing, draft);
 
   if (missing[0] === "category" && draft.type) {
-    const categoryOptions = await categoryRepository.findByType(draft.type);
+    const categoryOptions = await categoryRepository.findByType(draft.type, userId);
     return {
       type: "clarify",
       text,
@@ -69,10 +71,11 @@ async function buildClarifyResponse(
 }
 
 async function buildDraft(
+  userId: string,
   message: string,
   previous?: ChatDraft,
 ): Promise<{ draft: ChatDraft; missing: MissingField[] }> {
-  const categories = await categoryRepository.findAll();
+  const categories = await categoryRepository.findAll(userId);
   const parsed = parseMessage(message, categories);
 
   const trimmedLower = message.trim().toLowerCase();
@@ -129,16 +132,17 @@ async function buildDraft(
 }
 
 async function tryHandleEditCommands(
+  userId: string,
   message: string,
 ): Promise<ChatResponseBody | null> {
   const lower = message.toLowerCase();
 
   if (/apague.*últi?mo lan[çc]amento|apagar.*últi?mo lan[çc]amento/i.test(lower)) {
-    const last = await transactionRepository.findLast();
+    const last = await transactionRepository.findLast(userId);
     if (!last) {
       return { type: "info", text: "Não encontrei nenhum lançamento para apagar." };
     }
-    await transactionService.remove(last.id);
+    await transactionService.remove(last.id, userId);
     return {
       type: "deleted",
       text: `Lançamento "${last.description}" (${formatCurrencyBRL(Number(last.amount))}) excluído.`,
@@ -149,11 +153,11 @@ async function tryHandleEditCommands(
   if (amountFix) {
     const amount = detectAmount(amountFix[1]);
     if (amount === null) return { type: "info", text: "Não entendi o novo valor." };
-    const last = await transactionRepository.findLast();
+    const last = await transactionRepository.findLast(userId);
     if (!last) {
       return { type: "info", text: "Não encontrei nenhum lançamento recente para corrigir." };
     }
-    const transaction = await transactionService.update(last.id, { amount });
+    const transaction = await transactionService.update(last.id, userId, { amount });
     return {
       type: "updated",
       text: `Valor atualizado para ${formatCurrencyBRL(amount)}.`,
@@ -165,17 +169,17 @@ async function tryHandleEditCommands(
     lower.match(/mude (?:a categoria )?para\s+(.+)/i) ??
     lower.match(/troque a categoria para\s+(.+)/i);
   if (categoryFix) {
-    const last = await transactionRepository.findLast();
+    const last = await transactionRepository.findLast(userId);
     if (!last) {
       return { type: "info", text: "Não encontrei nenhum lançamento recente para corrigir." };
     }
-    const categories = await categoryRepository.findByType(last.type);
+    const categories = await categoryRepository.findByType(last.type, userId);
     const wanted = categoryFix[1].trim();
     const target = categories.find((c) => wanted.includes(c.name.toLowerCase()));
     if (!target) {
       return { type: "info", text: `Não encontrei a categoria "${wanted}".` };
     }
-    const transaction = await transactionService.update(last.id, {
+    const transaction = await transactionService.update(last.id, userId, {
       categoryId: target.id,
     });
     return {
@@ -189,13 +193,13 @@ async function tryHandleEditCommands(
     lower.match(/coloque a data como\s+(.+)/i) ??
     lower.match(/mude a data para\s+(.+)/i);
   if (dateFix) {
-    const last = await transactionRepository.findLast();
+    const last = await transactionRepository.findLast(userId);
     if (!last) {
       return { type: "info", text: "Não encontrei nenhum lançamento recente para corrigir." };
     }
     const date = parseNaturalDate(dateFix[1]);
     if (!date) return { type: "info", text: "Não entendi a nova data." };
-    const transaction = await transactionService.update(last.id, {
+    const transaction = await transactionService.update(last.id, userId, {
       transactionDate: date,
     });
     return {
@@ -208,18 +212,18 @@ async function tryHandleEditCommands(
   const deleteByCategory = lower.match(/^apague\s+(?:o|a|os|as)?\s*(.+)/i);
   if (deleteByCategory) {
     const keyword = deleteByCategory[1].trim();
-    const categories = await categoryRepository.findAll();
+    const categories = await categoryRepository.findAll(userId);
     const target = categories.find((c) => keyword.includes(c.name.toLowerCase()));
     if (!target) return null;
 
-    const candidates = await transactionRepository.findMany({
+    const candidates = await transactionRepository.findMany(userId, {
       categoryId: target.id,
     });
     if (candidates.length === 0) {
       return { type: "info", text: `Não encontrei lançamentos de ${target.name}.` };
     }
     if (candidates.length === 1) {
-      await transactionService.remove(candidates[0].id);
+      await transactionService.remove(candidates[0].id, userId);
       return { type: "deleted", text: `Lançamento de ${target.name} excluído.` };
     }
     const options = candidates.slice(0, 10).map((t) => ({
@@ -242,6 +246,7 @@ const UNKNOWN_RESPONSE: ChatResponseBody = {
 };
 
 export async function handleChat(
+  userId: string,
   body: ChatRequestBody,
 ): Promise<ChatResponseBody> {
   const parsedBody = chatMessageSchema.safeParse({ message: body.message });
@@ -261,7 +266,7 @@ export async function handleChat(
           text: "Faltam dados para registrar. Vamos tentar de novo — descreva a movimentação.",
         };
       }
-      const transaction = await transactionService.create({
+      const transaction = await transactionService.create(userId, {
         description: resolveDescription(draft),
         amount: draft.amount,
         type: draft.type,
@@ -289,7 +294,7 @@ export async function handleChat(
     const index = Number(trimmed);
     if (Number.isInteger(index) && index >= 1 && index <= context.candidates.length) {
       const candidate = context.candidates[index - 1];
-      await transactionService.remove(candidate.id);
+      await transactionService.remove(candidate.id, userId);
       return { type: "deleted", text: `Lançamento "${candidate.label}" excluído.` };
     }
     return {
@@ -300,16 +305,17 @@ export async function handleChat(
 
   if (context.kind === "awaiting_new_category_name") {
     if (CANCEL_PATTERN.test(trimmed)) {
-      return buildClarifyResponse(context.draft, ["category"]);
+      return buildClarifyResponse(userId, context.draft, ["category"]);
     }
     if (!trimmed || !context.draft.type) {
       return { type: "info", text: "Digite um nome para a nova categoria." };
     }
-    let category = await categoryRepository.findByName(trimmed, context.draft.type);
+    let category = await categoryRepository.findByName(trimmed, context.draft.type, userId);
     if (!category) {
       category = await categoryRepository.create({
         name: trimmed,
         type: context.draft.type,
+        userId,
       });
     }
     const draft: ChatDraft = {
@@ -327,18 +333,18 @@ export async function handleChat(
     return { type: "cancelled", text: "Ok, cancelei esse registro." };
   }
 
-  const editResult = await tryHandleEditCommands(message);
+  const editResult = await tryHandleEditCommands(userId, message);
   if (editResult) return editResult;
 
-  const queryResult = await queryService.answer(message);
+  const queryResult = await queryService.answer(userId, message);
   if (queryResult) {
     return { type: "answer", text: queryResult.answer };
   }
 
   if (context.kind === "clarify") {
-    const { draft, missing } = await buildDraft(message, context.draft);
+    const { draft, missing } = await buildDraft(userId, message, context.draft);
     if (missing.length > 0) {
-      return buildClarifyResponse(draft, missing);
+      return buildClarifyResponse(userId, draft, missing);
     }
     return { type: "confirm", text: draftPreviewText(draft), draft };
   }
@@ -356,18 +362,22 @@ export async function handleChat(
     return UNKNOWN_RESPONSE;
   }
 
-  const { draft, missing } = await buildDraft(message);
+  const { draft, missing } = await buildDraft(userId, message);
   if (missing.length > 0) {
-    return buildClarifyResponse(draft, missing);
+    return buildClarifyResponse(userId, draft, missing);
   }
   return { type: "confirm", text: draftPreviewText(draft), draft };
 }
 
 export const chatController = {
   async post(request: Request) {
+    const userId = await getUserId(request);
+    if (!userId) {
+      return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
+    }
     const body = (await request.json()) as ChatRequestBody;
     try {
-      const response = await handleChat(body);
+      const response = await handleChat(userId, body);
       return NextResponse.json(response);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Erro inesperado";
