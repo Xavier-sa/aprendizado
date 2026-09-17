@@ -8,10 +8,17 @@ export const dashboardController = {
     if (!userId) {
       return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
     }
-    const [summary, series] = await Promise.all([
-      financialService.getDashboardSummary(userId),
-      financialService.getMonthlyChartSeries(userId),
-    ]);
-    return NextResponse.json({ summary, series });
+    try {
+      const [summary, series] = await Promise.all([
+        financialService.getDashboardSummary(userId),
+        financialService.getMonthlyChartSeries(userId),
+      ]);
+      return NextResponse.json({ summary, series });
+    } catch (error) {
+      // Nunca repassar a mensagem real (pode ser um erro do Prisma/banco)
+      // — ver docs/security.md, seção "Erros".
+      console.error(error);
+      return NextResponse.json({ error: "Erro inesperado" }, { status: 500 });
+    }
   },
 };

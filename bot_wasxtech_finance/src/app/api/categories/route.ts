@@ -7,6 +7,11 @@ export async function GET(request: Request) {
   if (!userId) {
     return NextResponse.json({ error: "Não autenticado" }, { status: 401 });
   }
-  const categories = await categoryRepository.findAll(userId);
-  return NextResponse.json({ categories });
+  try {
+    const categories = await categoryRepository.findAll(userId);
+    return NextResponse.json({ categories });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Erro inesperado" }, { status: 500 });
+  }
 }

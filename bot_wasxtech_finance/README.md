@@ -151,7 +151,9 @@ npm run db:studio   # Prisma Studio, para inspecionar o banco
 
 Cada usuário só vê e altera as próprias movimentações. Autenticação via
 [Better Auth](https://www.better-auth.com) (e-mail/senha). Detalhes em
-[docs/authentication.md](docs/authentication.md).
+[docs/authentication.md](docs/authentication.md) e, para a auditoria de
+segurança (mass assignment, CSRF, headers, isolamento testado
+ativamente), [docs/security.md](docs/security.md).
 
 ## Integração Contínua
 

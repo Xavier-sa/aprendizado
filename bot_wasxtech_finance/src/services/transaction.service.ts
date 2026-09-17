@@ -9,6 +9,7 @@ import type {
   UpdateTransactionInput,
 } from "@/schemas/transaction.schema";
 import type { TransactionDTO } from "@/types";
+import { AppError } from "@/lib/errors";
 
 type TransactionWithCategory = Prisma.TransactionGetPayload<{
   include: { category: true };
@@ -42,10 +43,10 @@ export const transactionService = {
   async create(userId: string, input: CreateTransactionInput): Promise<TransactionDTO> {
     const category = await categoryRepository.findById(input.categoryId, userId);
     if (!category) {
-      throw new Error("Categoria não encontrada");
+      throw new AppError("Categoria não encontrada");
     }
     if (category.type !== input.type) {
-      throw new Error("Categoria não corresponde ao tipo da movimentação");
+      throw new AppError("Categoria não corresponde ao tipo da movimentação");
     }
 
     const created = await transactionRepository.create({
@@ -68,15 +69,15 @@ export const transactionService = {
   ): Promise<TransactionDTO> {
     if (input.categoryId) {
       const category = await categoryRepository.findById(input.categoryId, userId);
-      if (!category) throw new Error("Categoria não encontrada");
+      if (!category) throw new AppError("Categoria não encontrada");
     }
     const updated = await transactionRepository.update(id, userId, input);
-    if (!updated) throw new Error("Movimentação não encontrada");
+    if (!updated) throw new AppError("Movimentação não encontrada");
     return toDTO(updated);
   },
 
   async remove(id: string, userId: string): Promise<void> {
     const removed = await transactionRepository.delete(id, userId);
-    if (!removed) throw new Error("Movimentação não encontrada");
+    if (!removed) throw new AppError("Movimentação não encontrada");
   },
 };

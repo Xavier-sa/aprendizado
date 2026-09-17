@@ -52,7 +52,9 @@ Ver [database.md](./database.md).
 Ver [authentication.md](./authentication.md). Resumo: Better Auth
 protege páginas e APIs, e todo acesso a `Transaction`/`Category` passa
 `userId` explicitamente pela cadeia repository → service → controller —
-não existe mais consulta "global" a essas tabelas.
+não existe mais consulta "global" a essas tabelas. Para a auditoria de
+segurança (o que um usuário com DevTools consegue e não consegue fazer,
+CSRF, headers, mass assignment), ver [security.md](./security.md).
 
 ## O que não existe (ainda)
 

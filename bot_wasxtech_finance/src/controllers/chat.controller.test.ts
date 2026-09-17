@@ -190,6 +190,26 @@ describe("handleChat — intenção e estado da conversa", () => {
     );
   });
 
+  it("draft com valor negativo (manipulado pelo cliente) é recusado, mesmo com 'sim'", async () => {
+    const context: ChatContext = {
+      kind: "confirm_create",
+      draft: {
+        type: "EXPENSE",
+        amount: -999999,
+        categoryId: "cat-servicos",
+        categoryName: "Serviços",
+        suggestedCategory: null,
+        description: "valor manipulado no devtools",
+        transactionDate: new Date().toISOString(),
+        originalMessage: "gastei 250 em serviço de solda",
+      },
+      missing: [],
+    } as unknown as ChatContext;
+    const response = await chat({ message: "sim", context });
+    expect(response.type).toBe("info");
+    expect(transactionServiceMock.create).not.toHaveBeenCalled();
+  });
+
   it("cancelar a confirmação não cria a transação", async () => {
     const context: ChatContext = {
       kind: "confirm_create",

@@ -16,9 +16,15 @@ function matchesUserVisibility(row: FakeCategory, userId: string): boolean {
 
 const fakePrisma = {
   category: {
-    findMany: vi.fn(({ where }: { where: { type?: string; OR?: { userId: string | null }[] } }) =>
-      Promise.resolve(
-        rows.filter((r) => {
+    findMany: vi.fn(
+      ({
+        where,
+        select,
+      }: {
+        where: { type?: string; OR?: { userId: string | null }[] };
+        select?: Record<string, boolean>;
+      }) => {
+        const filtered = rows.filter((r) => {
           if (where.type && r.type !== where.type) return false;
           if (where.OR) {
             const userId = where.OR.find((c) => c.userId !== null)?.userId ?? null;
@@ -26,8 +32,20 @@ const fakePrisma = {
             return matchesUserVisibility(r, userId);
           }
           return true;
-        }),
-      ),
+        });
+        // Reproduz o `select` do Prisma de verdade: se o repository pedir
+        // campos específicos, o "banco" só devolve esses campos — é assim
+        // que se prova que userId/createdAt/updatedAt não vazam na API
+        // (ver docs/security.md, "Respostas das APIs").
+        if (!select) return Promise.resolve(filtered);
+        return Promise.resolve(
+          filtered.map((r) =>
+            Object.fromEntries(
+              Object.entries(r).filter(([key]) => select[key]),
+            ),
+          ),
+        );
+      },
     ),
     findFirst: vi.fn(
       ({ where }: { where: { id?: string; name?: unknown; type?: string; OR?: { userId: string | null }[] } }) => {
@@ -115,5 +133,16 @@ describe("categoryRepository — isolamento entre usuários", () => {
     expect(forA.map((c) => c.name)).toContain("Bônus");
     expect(forB.map((c) => c.name)).not.toContain("Bônus");
     expect(forB.map((c) => c.name)).toContain("Salário");
+  });
+
+  it("findAll/findByType nunca devolvem userId/createdAt/updatedAt (só id/name/type)", async () => {
+    await categoryRepository.create({ name: "Pessoal", type: "EXPENSE", userId: USER_A });
+
+    const all = await categoryRepository.findAll(USER_A);
+    const byType = await categoryRepository.findByType("EXPENSE", USER_A);
+
+    for (const category of [...all, ...byType]) {
+      expect(Object.keys(category).sort()).toEqual(["id", "name", "type"]);
+    }
   });
 });

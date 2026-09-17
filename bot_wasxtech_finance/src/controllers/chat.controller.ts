@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { chatMessageSchema } from "@/schemas/transaction.schema";
+import { chatMessageSchema, createTransactionSchema, transactionTypeSchema } from "@/schemas/transaction.schema";
 import {
   detectAmount,
   hasTransactionKeyword,
@@ -12,6 +12,7 @@ import { categoryRepository } from "@/repositories/category.repository";
 import { parseNaturalDate, formatDateBR } from "@/lib/dates";
 import { formatCurrencyBRL } from "@/lib/currency";
 import { getUserId } from "@/lib/session";
+import { AppError } from "@/lib/errors";
 import type {
   ChatContext,
   ChatDraft,
@@ -266,14 +267,26 @@ export async function handleChat(
           text: "Faltam dados para registrar. Vamos tentar de novo — descreva a movimentação.",
         };
       }
-      const transaction = await transactionService.create(userId, {
+      // `draft` volta do cliente (o chat não guarda estado no servidor — ver
+      // docs/architecture.md), então é reafirmado aqui pelas MESMAS regras
+      // de negócio da API REST (valor positivo, descrição não vazia, data
+      // válida) antes de criar a movimentação — nunca confiar nele como se
+      // já tivesse sido validado.
+      const parsedInput = createTransactionSchema.safeParse({
         description: resolveDescription(draft),
         amount: draft.amount,
         type: draft.type,
         categoryId: draft.categoryId,
-        transactionDate: new Date(draft.transactionDate),
+        transactionDate: draft.transactionDate,
         originalMessage: draft.originalMessage,
       });
+      if (!parsedInput.success) {
+        return {
+          type: "info",
+          text: "Não consegui registrar: dados inválidos. Vamos tentar de novo — descreva a movimentação.",
+        };
+      }
+      const transaction = await transactionService.create(userId, parsedInput.data);
       return {
         type: "created",
         text: `${draft.type === "INCOME" ? "Receita" : "Despesa"} registrada com sucesso.`,
@@ -307,16 +320,14 @@ export async function handleChat(
     if (CANCEL_PATTERN.test(trimmed)) {
       return buildClarifyResponse(userId, context.draft, ["category"]);
     }
-    if (!trimmed || !context.draft.type) {
+    const typeCheck = transactionTypeSchema.safeParse(context.draft.type);
+    if (!trimmed || !typeCheck.success) {
       return { type: "info", text: "Digite um nome para a nova categoria." };
     }
-    let category = await categoryRepository.findByName(trimmed, context.draft.type, userId);
+    const type = typeCheck.data;
+    let category = await categoryRepository.findByName(trimmed, type, userId);
     if (!category) {
-      category = await categoryRepository.create({
-        name: trimmed,
-        type: context.draft.type,
-        userId,
-      });
+      category = await categoryRepository.create({ name: trimmed, type, userId });
     }
     const draft: ChatDraft = {
       ...context.draft,
@@ -380,10 +391,19 @@ export const chatController = {
       const response = await handleChat(userId, body);
       return NextResponse.json(response);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Erro inesperado";
-      return NextResponse.json({ type: "info", text: message } satisfies ChatResponseBody, {
-        status: 400,
-      });
+      // Só a mensagem de um AppError (lançado deliberadamente, texto seguro
+      // para o usuário) chega ao cliente — qualquer outro erro vira
+      // mensagem genérica; o erro real fica só no log do servidor.
+      if (error instanceof AppError) {
+        return NextResponse.json({ type: "info", text: error.message } satisfies ChatResponseBody, {
+          status: 400,
+        });
+      }
+      console.error(error);
+      return NextResponse.json(
+        { type: "info", text: "Erro inesperado. Tente novamente." } satisfies ChatResponseBody,
+        { status: 500 },
+      );
     }
   },
 };

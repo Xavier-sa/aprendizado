@@ -191,12 +191,16 @@ export function ChatWindow() {
   ];
 
   return (
-    <div className="flex h-[calc(100vh-9rem)] flex-col md:h-[calc(100vh-3rem)]">
-      <div className="mb-3">
+    // min-h-0 é o que permite este flex-1 encolher abaixo da altura do seu
+    // conteúdo — sem isso, a área de mensagens (também flex-1 min-h-0, logo
+    // abaixo) não conseguiria rolar internamente: o painel inteiro cresceria
+    // e empurraria o campo de digitação para fora da tela.
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="mb-3 shrink-0">
         <ChoiceChips choices={quickActions} />
       </div>
 
-      <div className="flex-1 space-y-3 overflow-y-auto rounded-lg border border-border bg-background p-3 sm:p-4">
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto rounded-lg border border-border bg-background p-4 sm:p-5">
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center gap-3 px-4 text-center">
             <p className="text-sm text-text-muted">Experimente escrever:</p>
@@ -271,18 +275,19 @@ export function ChatWindow() {
         <div ref={bottomRef} />
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-3 flex gap-2">
+      <form onSubmit={handleSubmit} className="mt-3 flex shrink-0 gap-2">
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Digite uma movimentação ou pergunta..."
           disabled={loading}
+          className="py-2.5 text-base"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
           aria-label="Enviar"
-          className="flex items-center justify-center rounded-md bg-accent px-4 text-surface transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex shrink-0 items-center justify-center rounded-md bg-accent px-4 text-surface transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
         >
           <svg
             width="18"

@@ -8,7 +8,7 @@ export function MessageBubble({ role, text }: MessageBubbleProps) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-[85%] whitespace-pre-line rounded-lg px-3 py-2 text-sm sm:max-w-[70%] ${
+        className={`max-w-[88%] whitespace-pre-line break-words rounded-lg px-4 py-2.5 text-base leading-relaxed sm:max-w-[75%] lg:max-w-lg ${
           isUser
             ? "bg-accent text-surface"
             : "bg-surface-secondary text-text-primary"

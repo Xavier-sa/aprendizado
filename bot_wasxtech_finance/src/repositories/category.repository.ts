@@ -6,11 +6,16 @@ function visibleTo(userId: string): Prisma.CategoryWhereInput {
   return { OR: [{ userId: null }, { userId }] };
 }
 
+// Só os campos que a UI/parser realmente precisam — nunca userId,
+// createdAt/updatedAt (ver docs/security.md, "Respostas das APIs").
+const PUBLIC_SELECT = { id: true, name: true, type: true } as const;
+
 export const categoryRepository = {
   findAll(userId: string) {
     return prisma.category.findMany({
       where: visibleTo(userId),
       orderBy: { name: "asc" },
+      select: PUBLIC_SELECT,
     });
   },
 
@@ -18,6 +23,7 @@ export const categoryRepository = {
     return prisma.category.findMany({
       where: { type, ...visibleTo(userId) },
       orderBy: { name: "asc" },
+      select: PUBLIC_SELECT,
     });
   },
 

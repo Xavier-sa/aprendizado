@@ -6,11 +6,21 @@ import {
   transactionFiltersSchema,
 } from "@/schemas/transaction.schema";
 import { getUserId } from "@/lib/session";
+import { AppError } from "@/lib/errors";
 import type { TransactionType } from "@prisma/client";
 
+/**
+ * Só a mensagem de um `AppError` (lançado deliberadamente pelo service,
+ * com texto seguro para o usuário) chega ao cliente. Qualquer outro erro
+ * (Prisma, rede, etc.) vira uma mensagem genérica — o erro real fica só
+ * no log do servidor. Ver docs/security.md, seção "Erros".
+ */
 function errorResponse(error: unknown, fallbackStatus = 400) {
-  const message = error instanceof Error ? error.message : "Erro inesperado";
-  return NextResponse.json({ error: message }, { status: fallbackStatus });
+  if (error instanceof AppError) {
+    return NextResponse.json({ error: error.message }, { status: fallbackStatus });
+  }
+  console.error(error);
+  return NextResponse.json({ error: "Erro inesperado" }, { status: 500 });
 }
 
 function unauthorized() {
@@ -33,8 +43,12 @@ export const transactionController = {
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     }
-    const transactions = await transactionService.list(userId, parsed.data);
-    return NextResponse.json({ transactions });
+    try {
+      const transactions = await transactionService.list(userId, parsed.data);
+      return NextResponse.json({ transactions });
+    } catch (error) {
+      return errorResponse(error);
+    }
   },
 
   async create(request: Request) {
