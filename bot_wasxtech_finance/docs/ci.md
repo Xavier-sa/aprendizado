@@ -91,6 +91,68 @@ no projeto. O README documenta "Node.js 20+" como pré-requisito. O CI usa
 a versão 22, que é uma LTS ativa, compatível com esse requisito mínimo e
 com as versões atuais de Next.js 16 e React 19 usadas no projeto.
 
+## Primeiro erro encontrado pelo CI
+
+A primeira execução do `financebot-ci.yml` no GitHub Actions falhou logo na
+etapa `npm ci`, com este erro:
+
+```
+npm ci can only install packages when your package.json and
+package-lock.json are in sync.
+
+Missing: @emnapi/runtime@1.11.3
+Missing: @emnapi/core@1.11.3
+```
+
+Localmente, testes, lint, typecheck e build sempre passaram sem problema —
+porque a máquina de desenvolvimento (Windows) já tinha um `node_modules`
+funcional, instalado antes de o `package-lock.json` existir nesse estado.
+O runner do GitHub Actions, por outro lado, parte de uma máquina limpa e
+depende inteiramente do que está escrito no lockfile. Foi exatamente isso
+que o CI existe para pegar: uma inconsistência que uma máquina "quente"
+esconde.
+
+**Causa raiz:** `@emnapi/runtime` e `@emnapi/core` não são dependências
+diretas do projeto — ninguém as declara no `package.json`. Elas são
+dependências transitivas de variantes **WebAssembly (wasm32)** usadas como
+*fallback* multiplataforma por dois pacotes opcionais:
+
+- `sharp` → `@img/sharp-wasm32` (dependência opcional do `next`, usada para
+  otimização de imagens) → precisa de `@emnapi/runtime`;
+- `@tailwindcss/oxide` → `@tailwindcss/oxide-wasm32-wasi` (dependência
+  opcional do `tailwindcss` v4) → precisa de `@emnapi/core` e
+  `@emnapi/runtime`.
+
+O `package-lock.json` já continha entradas para `@img/sharp-wasm32` e
+`@tailwindcss/oxide-wasm32-wasi`, mas **sem** as entradas de nível
+superior para as próprias dependências deles (`@emnapi/*`). Ou seja, o
+lockfile referenciava pacotes que ele mesmo não sabia resolver — uma
+árvore incompleta. Isso não veio de uma edição manual: o
+`package-lock.json` nunca havia sido tocado desde o commit inicial do
+projeto, então o problema já existia desde a primeira geração do lockfile.
+
+Uma tentativa de `npm install` incremental (sem apagar o lockfile) não
+corrigiu nada — o npm confia na estrutura já registrada e só calcula o
+delta em relação ao `package.json`, então não reprocessa uma subárvore
+opcional já "presente", ainda que incompleta. A correção só apareceu ao
+apagar `package-lock.json` por completo e deixar o npm resolver a árvore
+inteira do zero a partir do `package.json`.
+
+**Correção:** apagar `package-lock.json` e `node_modules` e rodar
+`npm install` puro (sem `npm update`, sem tocar em nenhuma versão do
+`package.json`). O `package.json` não mudou uma linha — confirmado por
+`git diff`. Todas as dependências diretas (`next`, `react`, `prisma`,
+`zod`, `vitest`, etc.) ficaram resolvidas exatamente nas mesmas versões
+de antes; só a árvore transitiva/opcional (incluindo as entradas que
+faltavam de `@emnapi/core` e `@emnapi/runtime`) foi completada.
+
+`npm ci` foi mantido como comando de instalação do CI — a causa era o
+lockfile incompleto, não o comando. Depois da correção, `npm ci` foi
+rodado localmente contra uma instalação limpa (`node_modules` apagado) e
+funcionou de ponta a ponta, seguido de `prisma generate`, testes, lint,
+typecheck e build — provando que uma máquina limpa consegue reproduzir o
+mesmo pipeline do GitHub Actions.
+
 ## Próximos passos (futuro, não implementado agora)
 
 Este repositório pode vir a ter workflows independentes para outros
