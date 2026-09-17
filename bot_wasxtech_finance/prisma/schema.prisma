@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+/// Tabelas exigidas pelo Better Auth (ver docs/authentication.md).
+/// Nomes e campos seguem o schema canônico da lib para compatibilidade
+/// com o adapter Prisma (`better-auth/adapters/prisma`).
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions     Session[]
+  accounts     Account[]
+  transactions Transaction[]
+  categories   Category[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+/// Guarda tanto contas de login social (futuro) quanto o hash de senha do
+/// provider "credential" (email/senha) — é assim que o Better Auth modela
+/// autenticação por senha, sem campo de senha no User.
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+/// Categorias padrão do sistema têm userId nulo (visíveis a todos).
+/// Categorias criadas pelo usuário pelo chat têm userId preenchido e são
+/// visíveis somente para quem as criou (ver ADR-008 em docs/decisions.md).
+model Category {
+  id           String            @id @default(cuid())
+  name         String
+  type         TransactionType
+  userId       String?
+  user         User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  transactions Transaction[]
+
+  @@unique([name, type, userId])
+}
+
+model Transaction {
+  id              String           @id @default(cuid())
+  description     String
+  amount          Decimal          @db.Decimal(12, 2)
+  type            TransactionType
+  categoryId      String
+  category        Category         @relation(fields: [categoryId], references: [id])
+  userId          String
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paymentMethod   String?
+  transactionDate DateTime
+  originalMessage String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([transactionDate])
+  @@index([categoryId])
+  @@index([type])
+  @@index([userId])
+}

@@ -1,0 +1,63 @@
+name: FinanceBot CI
+
+# Este repositório ("aprendizado") contém vários projetos e linguagens.
+# Este workflow deve rodar SOMENTE quando o FinanceBot (ou ele mesmo) mudar.
+on:
+  push:
+    paths:
+      - "bot_wasxtech_finance/**"
+      - ".github/workflows/financebot-ci.yml"
+  pull_request:
+    paths:
+      - "bot_wasxtech_finance/**"
+      - ".github/workflows/financebot-ci.yml"
+
+jobs:
+  quality:
+    name: Quality Checks
+    runs-on: ubuntu-latest
+
+    # Evita repetir "cd bot_wasxtech_finance" em todo comando abaixo.
+    defaults:
+      run:
+        working-directory: bot_wasxtech_finance
+
+    env:
+      # Valor fictício, só para satisfazer prisma.config.ts / prisma generate.
+      # Nenhuma conexão real é feita neste workflow (sem migrate/db push/seed).
+      DATABASE_URL: "postgresql://user:password@localhost:5432/ci_db?schema=public"
+      # Idem: o Better Auth exige a variável para inicializar (src/lib/auth.ts
+      # é importado por rotas e pelo build), mas nenhuma sessão real é criada.
+      BETTER_AUTH_SECRET: "ci-only-fake-secret-not-used-for-real-auth-32chars"
+      BETTER_AUTH_URL: "http://localhost:3000"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: bot_wasxtech_finance/package-lock.json
+
+      # npm ci (não npm install): instala exatamente o que está no
+      # package-lock.json, sem recalcular versões. Ver docs/ci.md.
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run tests
+        run: npm test
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
