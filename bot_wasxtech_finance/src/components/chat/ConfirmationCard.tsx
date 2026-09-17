@@ -1,24 +1,4 @@
-import { Button } from "@/components/ui/Button";
 import type { DeleteCandidate } from "@/types";
-
-export function ConfirmActions({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: () => void;
-  onCancel: () => void;
-}) {
-  return (
-    <div className="ml-0 mt-1 flex gap-2 sm:ml-2">
-      <Button variant="primary" onClick={onConfirm}>
-        Confirmar
-      </Button>
-      <Button variant="secondary" onClick={onCancel}>
-        Cancelar
-      </Button>
-    </div>
-  );
-}
 
 export function DisambiguateOptions({
   candidates,
