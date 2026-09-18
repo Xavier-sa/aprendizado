@@ -98,6 +98,7 @@ export default function LandingPage() {
       <footer className="border-t border-border px-4 py-6 text-center text-xs text-text-muted sm:px-8">
         Projeto educacional de organização financeira. Não constitui
         recomendação financeira.
+        <Link href="/privacy" className="mt-2 block underline">Dados e acesso administrativo</Link>
       </footer>
     </div>
   );

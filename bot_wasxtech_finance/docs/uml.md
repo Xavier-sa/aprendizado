@@ -18,7 +18,29 @@ classDiagram
         +String name
         +String email
         +Boolean emailVerified
+        +UserRole role "default USER"
         +DateTime createdAt
+    }
+
+    class UserRole {
+        <<enumeration>>
+        USER
+        ADMIN
+    }
+
+    class ThemePalette {
+        <<enumeration>>
+        PAPIRO
+        ESMERALDA
+        OCEANO
+        GRAFITE
+        AMETISTA
+    }
+
+    class UserPreference {
+        +String userId
+        +ThemePalette theme "default PAPIRO"
+        +DateTime updatedAt
     }
 
     class Category {
@@ -45,13 +67,15 @@ classDiagram
     }
 
     User "1" --> "*" Transaction : userId
+    User "1" --> "0..1" UserPreference : userId
+    UserPreference --> ThemePalette
     User "0..1" --> "*" Category : userId (nulo = global)
     Category "1" --> "*" Transaction : categoryId
     Transaction --> TransactionType
     Category --> TransactionType
 ```
 
-`User`, `Session`, `Account` e `Verification` (tabelas do Better Auth,
+`Session`, `Account` e `Verification` (tabelas do Better Auth,
 ver [authentication.md](./authentication.md)) omitidas acima por
 brevidade — não fazem parte do domínio financeiro.
 

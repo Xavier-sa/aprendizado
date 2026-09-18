@@ -6,6 +6,7 @@ import {
   hasTransactionKeyword,
   type ParserCategory,
 } from "./parser.service";
+import { civilDate } from "@/lib/dates";
 
 const CATEGORIES: ParserCategory[] = [
   { id: "cat-mercado", name: "Mercado", type: "EXPENSE" },
@@ -16,7 +17,11 @@ const CATEGORIES: ParserCategory[] = [
   { id: "cat-salario", name: "Salário", type: "INCOME" },
 ];
 
-const REFERENCE = new Date(2026, 8, 16); // 16/09/2026
+// Instante fixo, sem ambiguidade de fuso: meio-dia UTC de 16/09/2026, que
+// cai às 08h em America/Campo_Grande (UTC-4) — dentro do dia civil
+// 16/09/2026 em qualquer fuso plausível, então serve de "agora" estável
+// para os testes abaixo (ver src/lib/dates.ts para a política temporal).
+const REFERENCE = new Date(Date.UTC(2026, 8, 16, 12, 0, 0));
 
 describe("parseMessage — casos da seção 26", () => {
   it("Gastei 50 reais no mercado hoje", () => {
@@ -24,7 +29,7 @@ describe("parseMessage — casos da seção 26", () => {
     expect(result.type).toBe("EXPENSE");
     expect(result.amount).toBe(50);
     expect(result.categoryName).toBe("Mercado");
-    expect(result.transactionDate).toEqual(REFERENCE);
+    expect(result.transactionDate).toEqual(civilDate(2026, 9, 16));
     expect(result.missing).toEqual([]);
   });
 
@@ -65,8 +70,45 @@ describe("parseMessage — casos da seção 26", () => {
     expect(result.type).toBe("EXPENSE");
     expect(result.amount).toBe(90);
     expect(result.categoryName).toBe("Mercado");
-    const yesterday = new Date(2026, 8, 15);
-    expect(result.transactionDate).toEqual(yesterday);
+    expect(result.transactionDate).toEqual(civilDate(2026, 9, 15));
+  });
+
+  it("Recebi 100 reais hoje", () => {
+    const result = parseMessage("Recebi 100 reais hoje", CATEGORIES, REFERENCE);
+    expect(result.type).toBe("INCOME");
+    expect(result.amount).toBe(100);
+    expect(result.transactionDate).toEqual(civilDate(2026, 9, 16));
+  });
+
+  it("Gastei 50 reais no mercado em 18/09/2026 (data explícita)", () => {
+    const result = parseMessage(
+      "Gastei 50 reais no mercado em 18/09/2026",
+      CATEGORIES,
+      REFERENCE,
+    );
+    expect(result.type).toBe("EXPENSE");
+    expect(result.amount).toBe(50);
+    expect(result.transactionDate).toEqual(civilDate(2026, 9, 18));
+  });
+});
+
+describe("parseMessage — 'hoje' na virada do dia em Campo Grande (bug real corrigido)", () => {
+  // 00:05 em Campo Grande (UTC-4) é 04:05 UTC do MESMO dia civil — não
+  // pode ser interpretado como o dia anterior só porque o processo Node
+  // roda com fuso local UTC (caso do servidor da Vercel).
+  it("00:05 em Campo Grande, ainda dia 18, não vira 17", () => {
+    const justAfterMidnight = new Date(Date.UTC(2026, 8, 18, 4, 5, 0));
+    const result = parseMessage("gastei 50 reais hoje", CATEGORIES, justAfterMidnight);
+    expect(result.transactionDate).toEqual(civilDate(2026, 9, 18));
+  });
+
+  // 23:30 em Campo Grande do dia 18 já é 03:30 UTC do dia 19 — "hoje"
+  // continua sendo 18 para quem está em Campo Grande, mesmo que o
+  // relógio UTC do servidor já tenha virado a página do dia.
+  it("23:30 em Campo Grande (03:30 UTC do dia seguinte) continua sendo o dia 18", () => {
+    const lateEvening = new Date(Date.UTC(2026, 8, 19, 3, 30, 0));
+    const result = parseMessage("gastei 50 reais hoje", CATEGORIES, lateEvening);
+    expect(result.transactionDate).toEqual(civilDate(2026, 9, 18));
   });
 });
 

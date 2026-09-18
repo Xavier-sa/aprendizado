@@ -12,8 +12,21 @@ import type { CategoryDTO, TransactionDTO } from "@/types";
 
 const EMPTY_FILTERS: FiltersValue = { from: "", to: "", categoryId: "", type: "", search: "" };
 
+/**
+ * Data de hoje no fuso do PRÓPRIO navegador (não UTC) — `toISOString()`
+ * converte para UTC antes de fatiar a data, então à noite (fuso negativo,
+ * ex.: Brasil) ela "adianta" para o dia seguinte. O campo de data de um
+ * formulário deve refletir o calendário de quem está preenchendo, então
+ * aqui os componentes locais (`getFullYear`/`getMonth`/`getDate`) são o
+ * valor certo — diferente de `transactionDate`, que é resolvido no
+ * servidor pelo fuso central da aplicação (ver src/lib/dates.ts).
+ */
 function todayISODate() {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 const EMPTY_NEW_TRANSACTION: TransactionFormValues = {

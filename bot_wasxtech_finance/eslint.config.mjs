@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local Vercel tooling and generated deployment artifacts are not app code.
+    ".vercel/**",
   ]),
 ]);
 

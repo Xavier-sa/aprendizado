@@ -1,7 +1,6 @@
-import { startOfDay } from "date-fns";
 import type { TransactionType } from "@prisma/client";
 import { parseCurrencyToken } from "@/lib/currency";
-import { parseNaturalDate } from "@/lib/dates";
+import { parseNaturalDate, todayInAppTimeZone } from "@/lib/dates";
 import { matchCategory } from "@/utils/category-matcher";
 import type { ParsedTransaction, MissingField } from "@/types";
 
@@ -116,7 +115,7 @@ export function parseMessage(
   const type = detectType(lower);
   const amount = detectAmount(message);
   const transactionDate =
-    parseNaturalDate(message, reference) ?? startOfDay(reference);
+    parseNaturalDate(message, reference) ?? todayInAppTimeZone(reference);
   const description = extractDescription(message);
 
   const match = matchCategory(message, type);

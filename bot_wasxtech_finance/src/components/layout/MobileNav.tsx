@@ -2,27 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { NAV_ITEMS } from "./Sidebar";
+import { ADMIN_NAV_ITEMS, NAV_ITEMS } from "./Sidebar";
 import { LogoutButton } from "./LogoutButton";
 
-export function MobileNav() {
+export function MobileNav({ admin = false }: { admin?: boolean }) {
   const pathname = usePathname();
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-10 flex border-t border-border bg-surface md:hidden">
-      {NAV_ITEMS.map((item) => {
-        const active = pathname?.startsWith(item.href);
+      {(admin ? ADMIN_NAV_ITEMS : NAV_ITEMS).map((item) => {
+        const active = item.href === "/admin" ? pathname === item.href : pathname?.startsWith(item.href);
         const Icon = item.icon;
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex flex-1 flex-col items-center gap-0.5 py-3 text-center text-xs font-medium ${
+            aria-label={item.label}
+            className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 px-1 py-3 text-center text-xs font-medium ${
               active ? "text-accent" : "text-text-muted"
             }`}
           >
             <Icon />
-            {item.label}
+            <span className="max-w-full break-words">{"mobileLabel" in item ? item.mobileLabel : item.label}</span>
           </Link>
         );
       })}

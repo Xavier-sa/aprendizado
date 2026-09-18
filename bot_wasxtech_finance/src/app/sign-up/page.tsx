@@ -104,6 +104,10 @@ export default function SignUpPage() {
           </Button>
         </form>
 
+        <p className="mt-4 text-center text-xs text-text-muted">
+          Administradores autorizados podem consultar dados para operação e suporte.{" "}
+          <Link href="/privacy" className="underline">Saiba mais</Link>
+        </p>
         <p className="mt-4 text-center text-sm text-text-muted">
           Já tem uma conta?{" "}
           <Link href="/sign-in" className="text-accent hover:underline">

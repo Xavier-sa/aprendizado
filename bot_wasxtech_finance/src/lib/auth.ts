@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@/lib/prisma";
+import { rolePolicy } from "@/lib/auth-policy";
 
 /**
  * Configuração central do Better Auth. E-mail/senha por enquanto — login
@@ -8,6 +9,7 @@ import { prisma } from "@/lib/prisma";
  * sem mudar o schema (ver docs/authentication.md).
  */
 export const auth = betterAuth({
+  ...rolePolicy,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

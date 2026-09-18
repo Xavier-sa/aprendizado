@@ -5,6 +5,20 @@ com o driver adapter `@prisma/adapter-pg` (ver [decisions.md](./decisions.md#adr
 
 ## Modelos
 
+### UserPreference (migration local pendente)
+
+Relação opcional 1:1 com User, identificada por `userId`, com `theme` enum
+`ThemePalette` e `updatedAt`. Conta sem linha usa Papiro; primeiro salvamento
+cria a preferência. Nenhum backfill ou mudança em dados financeiros.
+Ver [phase-4-appearance.md](./phase-4-appearance.md) para SQL e rollback.
+
+### UserRole (migration local pendente)
+
+`User.role` usa enum `UserRole` (`USER`, `ADMIN`) com default `USER`.
+A migration aditiva preserva contas, categorias e movimentações; ainda não
+aplicada no Neon. Ver [phase-2-authorization.md](./phase-2-authorization.md).
+A Fase 3 usa somente consultas, sem novas tabelas ou migrations.
+
 ### User, Session, Account, Verification
 
 Tabelas exigidas pelo [Better Auth](https://www.better-auth.com) (ver

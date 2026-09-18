@@ -13,6 +13,7 @@ import type { MonthlyChartPoint } from "@/types";
 import { formatCurrencyBRL } from "@/lib/currency";
 import { formatMonthLabel } from "@/lib/dates";
 import { EmptyChartState } from "./EmptyChartState";
+import { CHART_TOOLTIP } from "./chartTheme";
 
 export function MonthlySpendChart({ data }: { data: MonthlyChartPoint[] }) {
   if (data.length === 0) {
@@ -25,7 +26,7 @@ export function MonthlySpendChart({ data }: { data: MonthlyChartPoint[] }) {
     <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
           <XAxis
             dataKey="month"
             tickFormatter={formatMonthLabel}
@@ -41,19 +42,14 @@ export function MonthlySpendChart({ data }: { data: MonthlyChartPoint[] }) {
           <Tooltip
             formatter={(value) => formatCurrencyBRL(Number(value ?? 0))}
             labelFormatter={(label) => formatMonthLabel(String(label ?? ""))}
-            contentStyle={{
-              background: "var(--color-surface)",
-              border: "1px solid var(--color-border)",
-              borderRadius: 8,
-              color: "var(--color-text-primary)",
-            }}
+            {...CHART_TOOLTIP}
           />
           <Area
             type="monotone"
             dataKey="expense"
             name="Gastos"
-            stroke="var(--color-expense)"
-            fill="var(--color-expense)"
+            stroke="var(--color-chart-expense)"
+            fill="var(--color-chart-expense)"
             fillOpacity={0.18}
             strokeWidth={2}
           />
