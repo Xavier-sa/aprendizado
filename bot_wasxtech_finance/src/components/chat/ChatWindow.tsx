@@ -287,7 +287,7 @@ export function ChatWindow() {
           type="submit"
           disabled={loading || !input.trim()}
           aria-label="Enviar"
-          className="flex shrink-0 items-center justify-center rounded-md bg-accent px-4 text-surface transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex shrink-0 items-center justify-center rounded-md bg-accent px-4 text-accent-foreground transition-colors hover:bg-accent-strong disabled:cursor-not-allowed disabled:bg-disabled disabled:text-disabled-foreground"
         >
           <svg
             width="18"

@@ -23,7 +23,7 @@ export function MobileNav({ admin = false }: { admin?: boolean }) {
             }`}
           >
             <Icon />
-            <span className="max-w-full break-words">{item.label}</span>
+            <span className="max-w-full break-words">{"mobileLabel" in item ? item.mobileLabel : item.label}</span>
           </Link>
         );
       })}

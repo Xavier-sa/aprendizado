@@ -4,8 +4,12 @@ import { NextRequest } from "next/server";
 const mocks = vi.hoisted(() => ({ getSession: vi.fn(), findUnique: vi.fn(), redirect: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ auth: { api: { getSession: mocks.getSession } } }));
 vi.mock("@/lib/prisma", () => ({ prisma: { user: { findUnique: mocks.findUnique } } }));
+vi.mock("@/repositories/preference.repository", () => ({ preferenceRepository: { get: async () => "PAPIRO" } }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("next/navigation", () => ({ redirect: mocks.redirect }));
+vi.mock("@/services/admin.service", () => ({ adminService: { dashboard: async () => ({
+  summary: { users: 1, transactions: 0, income: "0.00", expense: "0.00", volume: "0.00", balance: "0.00" }, monthly: [],
+}) } }));
 
 import { getAdminAccess, requireAdminApi } from "./admin-access";
 import { proxy, config } from "@/proxy";
@@ -61,7 +65,7 @@ describe("administrative authorization", () => {
     expect(await requireAdminApi(request("/api/admin"))).toBeNull();
     expect(await AdminPage()).toBeTruthy();
     expect(await AdminLayout({ children: "allowed" })).toMatchObject({ props: {
-      children: "allowed", admin: true,
+      initialTheme: "PAPIRO", children: { props: { children: "allowed", admin: true } },
     } });
     expect((await proxy(request("/admin"))).headers.get("x-middleware-next")).toBe("1");
     // Namespace has no implemented administrative resource yet.

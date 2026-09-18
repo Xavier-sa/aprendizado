@@ -6,6 +6,11 @@ import { auth } from "@/lib/auth";
  * onde a sessão é validada de fato antes de tocar em dados de um usuário.
  */
 export async function getUserId(request: Request): Promise<string | null> {
-  const session = await auth.api.getSession({ headers: request.headers });
+  return getAuthenticatedUserId(request.headers);
+}
+
+export async function getAuthenticatedUserId(headers: Headers): Promise<string | null> {
+  const session = await auth.api.getSession({ headers, query: { disableCookieCache: true } });
+  if (!session || !(new Date(session.session.expiresAt).getTime() > Date.now())) return null;
   return session?.user.id ?? null;
 }

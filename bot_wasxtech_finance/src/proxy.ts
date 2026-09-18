@@ -2,12 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 import { getAdminAccess } from "@/lib/admin-access";
 
-const PROTECTED_PAGES = ["/dashboard", "/chat", "/transactions"];
+const PROTECTED_PAGES = ["/dashboard", "/chat", "/transactions", "/settings"];
 const PROTECTED_API_PREFIXES = [
   "/api/transactions",
   "/api/dashboard",
   "/api/chat",
   "/api/categories",
+  "/api/settings",
 ];
 const AUTH_PAGES = ["/sign-in", "/sign-up"];
 
@@ -66,11 +67,13 @@ export const config = {
     "/dashboard/:path*",
     "/chat/:path*",
     "/transactions/:path*",
+    "/settings/:path*",
     "/sign-in",
     "/sign-up",
     "/api/transactions/:path*",
     "/api/dashboard/:path*",
     "/api/chat/:path*",
     "/api/categories/:path*",
+    "/api/settings/:path*",
   ],
 };

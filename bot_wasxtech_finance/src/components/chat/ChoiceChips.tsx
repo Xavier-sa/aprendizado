@@ -30,7 +30,7 @@ export function ChoiceChips({ choices, note }: ChoiceChipsProps) {
             <button
               key={choice.key}
               onClick={choice.onClick}
-              className="rounded-full border border-accent bg-accent px-3 py-1.5 text-sm font-medium text-surface transition-colors hover:bg-accent-strong"
+              className="rounded-full border border-accent bg-accent px-3 py-1.5 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent-strong"
             >
               ✓ {choice.label}
             </button>

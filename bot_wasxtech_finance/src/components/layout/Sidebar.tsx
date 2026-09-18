@@ -35,16 +35,18 @@ function TransactionsIcon() {
 }
 
 export const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: DashboardIcon },
+  { href: "/dashboard", label: "Dashboard", mobileLabel: "Resumo", icon: DashboardIcon },
   { href: "/chat", label: "Chat", icon: ChatIcon },
-  { href: "/transactions", label: "Movimentações", icon: TransactionsIcon },
+  { href: "/transactions", label: "Movimentações", mobileLabel: "Registros", icon: TransactionsIcon },
+  { href: "/settings/appearance", label: "Aparência", mobileLabel: "Tema", icon: DashboardIcon },
 ] as const;
 
 export const ADMIN_NAV_ITEMS = [
-  { href: "/admin", label: "Visão geral", icon: DashboardIcon },
-  { href: "/admin/users", label: "Usuários", icon: DashboardIcon },
+  { href: "/admin", label: "Visão geral", mobileLabel: "Resumo", icon: DashboardIcon },
+  { href: "/admin/users", label: "Usuários", mobileLabel: "Contas", icon: DashboardIcon },
   { href: "/admin/transactions", label: "Registros", icon: TransactionsIcon },
   { href: "/dashboard", label: "Pessoal", icon: DashboardIcon },
+  { href: "/settings/appearance", label: "Aparência", mobileLabel: "Tema", icon: DashboardIcon },
 ] as const;
 
 export function Sidebar({ admin = false }: { admin?: boolean }) {
@@ -65,7 +67,7 @@ export function Sidebar({ admin = false }: { admin?: boolean }) {
               href={item.href}
               className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                 active
-                  ? "bg-accent text-background"
+                  ? "bg-accent text-accent-foreground"
                   : "text-text-muted hover:bg-surface-secondary hover:text-text-primary"
               }`}
             >

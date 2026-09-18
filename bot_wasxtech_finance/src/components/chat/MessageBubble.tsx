@@ -10,7 +10,7 @@ export function MessageBubble({ role, text }: MessageBubbleProps) {
       <div
         className={`max-w-[88%] whitespace-pre-line break-words rounded-lg px-4 py-2.5 text-base leading-relaxed sm:max-w-[75%] lg:max-w-lg ${
           isUser
-            ? "bg-accent text-surface"
+            ? "bg-accent text-accent-foreground"
             : "bg-surface-secondary text-text-primary"
         }`}
       >

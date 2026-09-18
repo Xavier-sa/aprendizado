@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({ session: vi.fn(), role: vi.fn(), dashboard: vi
   users: vi.fn(), transactions: vi.fn(), user: vi.fn(), pathname: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ auth: { api: { getSession: mocks.session } } }));
 vi.mock("@/lib/prisma", () => ({ prisma: { user: { findUnique: mocks.role } } }));
+vi.mock("@/repositories/preference.repository", () => ({ preferenceRepository: { get: async () => "PAPIRO" } }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("next/navigation", () => ({
   redirect: (url: string) => { throw new Error(`redirect:${url}`); },

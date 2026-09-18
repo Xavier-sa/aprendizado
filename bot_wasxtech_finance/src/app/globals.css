@@ -1,39 +1,159 @@
 @import "tailwindcss";
 
-/*
- * Identidade visual inspirada em "riqueza construída gradualmente":
- * pergaminho, argila, bronze, dourado envelhecido, carvão. Sem neon,
- * sem excesso de gradiente/animação. Todas as cores ficam centralizadas
- * aqui — os componentes usam apenas as classes utilitárias abaixo.
- */
-:root {
+/* Palette values are centralized. Public/auth pages use Papiro;
+   authenticated layouts load the stored selection before hydration. */
+:root, [data-theme="PAPIRO"] {
+  color-scheme: light;
   --color-background: #f5edda;
   --color-surface: #fbf6ec;
   --color-surface-secondary: #ece0c4;
   --color-text-primary: #2a2118;
-  --color-text-muted: #6b5d4f;
-  --color-border: #d9c9a3;
-  --color-accent: #a9782e;
-  --color-accent-strong: #8c6423;
-  --color-income: #3f6b3a;
-  --color-expense: #9c4b2e;
+  --color-text-muted: #625344;
+  --color-border: #d0bd96;
+  --color-control-border: #887650;
+  --color-accent: #805716;
+  --color-accent-strong: #654218;
+  --color-accent-foreground: #ffffff;
+  --color-income: #31562d;
+  --color-income-soft: #e5eddd;
+  --color-expense: #8a391f;
+  --color-expense-strong: #6d2a17;
+  --color-expense-foreground: #ffffff;
+  --color-expense-soft: #f3e3db;
+  --color-chart-grid: #d0bd96;
+  --color-chart-1: #805716;
+  --color-chart-2: #8a391f;
+  --color-chart-3: #31562d;
+  --color-chart-4: #315776;
+  --color-chart-5: #684579;
+  --color-chart-6: #7b6220;
+  --color-chart-7: #2b6264;
+  --color-chart-8: #5c536c;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #211b15;
-    --color-surface: #2b241c;
-    --color-surface-secondary: #362d22;
-    --color-text-primary: #ede3ce;
-    --color-text-muted: #b5a78c;
-    --color-border: #4a3f30;
-    --color-accent: #c99a46;
-    --color-accent-strong: #e0b563;
-    --color-income: #7fa968;
-    --color-expense: #c97a54;
-  }
+[data-theme="ESMERALDA"] {
+  color-scheme: light;
+  --color-background: #edf5ee;
+  --color-surface: #f8fcf9;
+  --color-surface-secondary: #dce9de;
+  --color-text-primary: #172d21;
+  --color-text-muted: #496250;
+  --color-border: #b8cbbd;
+  --color-control-border: #6b8371;
+  --color-accent: #25623e;
+  --color-accent-strong: #194d2e;
+  --color-accent-foreground: #ffffff;
+  --color-income: #245835;
+  --color-income-soft: #e0eee3;
+  --color-expense: #923924;
+  --color-expense-strong: #732c1b;
+  --color-expense-foreground: #ffffff;
+  --color-expense-soft: #f7e5df;
+  --color-chart-grid: #b8cbbd;
+  --color-chart-1: #25623e;
+  --color-chart-2: #923924;
+  --color-chart-3: #2b5873;
+  --color-chart-4: #744b89;
+  --color-chart-5: #5b641c;
+  --color-chart-6: #366668;
+  --color-chart-7: #7a5227;
+  --color-chart-8: #6a5575;
 }
-
+[data-theme="OCEANO"] {
+  color-scheme: light;
+  --color-background: #edf4fa;
+  --color-surface: #f8fbfe;
+  --color-surface-secondary: #dae7f2;
+  --color-text-primary: #192b3d;
+  --color-text-muted: #4b6074;
+  --color-border: #b7cadc;
+  --color-control-border: #6b8197;
+  --color-accent: #245a86;
+  --color-accent-strong: #1b4568;
+  --color-accent-foreground: #ffffff;
+  --color-income: #2c633b;
+  --color-income-soft: #e2efe5;
+  --color-expense: #953d30;
+  --color-expense-strong: #762c21;
+  --color-expense-foreground: #ffffff;
+  --color-expense-soft: #f7e4e1;
+  --color-chart-grid: #b7cadc;
+  --color-chart-1: #245a86;
+  --color-chart-2: #2c633b;
+  --color-chart-3: #953d30;
+  --color-chart-4: #634e85;
+  --color-chart-5: #796825;
+  --color-chart-6: #456770;
+  --color-chart-7: #684c54;
+  --color-chart-8: #295268;
+}
+[data-theme="GRAFITE"] {
+  color-scheme: dark;
+  --color-background: #171b23;
+  --color-surface: #202630;
+  --color-surface-secondary: #2c3440;
+  --color-text-primary: #f1f3f6;
+  --color-text-muted: #bcc5d1;
+  --color-border: #485463;
+  --color-control-border: #8190a3;
+  --color-accent: #becfe5;
+  --color-accent-strong: #dde7f3;
+  --color-accent-foreground: #16263b;
+  --color-income: #a4dcb0;
+  --color-income-soft: #223e2d;
+  --color-expense: #ffb8a4;
+  --color-expense-strong: #ffd0c2;
+  --color-expense-foreground: #32180f;
+  --color-expense-soft: #482e29;
+  --color-chart-grid: #485463;
+  --color-chart-1: #becfe5;
+  --color-chart-2: #a4dcb0;
+  --color-chart-3: #ffb8a4;
+  --color-chart-4: #d2b9ef;
+  --color-chart-5: #eed39a;
+  --color-chart-6: #9ed8db;
+  --color-chart-7: #f3afd7;
+  --color-chart-8: #bdc7bd;
+}
+[data-theme="AMETISTA"] {
+  color-scheme: light;
+  --color-background: #f3eff8;
+  --color-surface: #fbf9fd;
+  --color-surface-secondary: #e7dfee;
+  --color-text-primary: #30233e;
+  --color-text-muted: #655372;
+  --color-border: #cdbfdc;
+  --color-control-border: #897699;
+  --color-accent: #67438a;
+  --color-accent-strong: #4e306b;
+  --color-accent-foreground: #ffffff;
+  --color-income: #365e3f;
+  --color-income-soft: #e5eddf;
+  --color-expense: #93412d;
+  --color-expense-strong: #743020;
+  --color-expense-foreground: #ffffff;
+  --color-expense-soft: #f3e4df;
+  --color-chart-grid: #cdbfdc;
+  --color-chart-1: #67438a;
+  --color-chart-2: #365e3f;
+  --color-chart-3: #93412d;
+  --color-chart-4: #305c81;
+  --color-chart-5: #726423;
+  --color-chart-6: #5f566e;
+  --color-chart-7: #326669;
+  --color-chart-8: #804c64;
+}
+:root, [data-theme] {
+  --color-focus: var(--color-accent);
+  --color-disabled: var(--color-surface-secondary);
+  --color-disabled-foreground: var(--color-text-muted);
+  --color-disabled-border: var(--color-border);
+  --color-chart-income: var(--color-income);
+  --color-chart-expense: var(--color-expense);
+  --color-chart-balance: var(--color-accent);
+  --color-tooltip-background: var(--color-surface);
+  --color-tooltip-foreground: var(--color-text-primary);
+  --color-tooltip-border: var(--color-control-border);
+}
 @theme inline {
   --color-background: var(--color-background);
   --color-surface: var(--color-surface);
@@ -41,14 +161,27 @@
   --color-text-primary: var(--color-text-primary);
   --color-text-muted: var(--color-text-muted);
   --color-border: var(--color-border);
+  --color-control-border: var(--color-control-border);
   --color-accent: var(--color-accent);
   --color-accent-strong: var(--color-accent-strong);
+  --color-accent-foreground: var(--color-accent-foreground);
   --color-income: var(--color-income);
+  --color-income-soft: var(--color-income-soft);
   --color-expense: var(--color-expense);
+  --color-expense-strong: var(--color-expense-strong);
+  --color-expense-foreground: var(--color-expense-foreground);
+  --color-expense-soft: var(--color-expense-soft);
+  --color-focus: var(--color-focus);
+  --color-disabled: var(--color-disabled);
+  --color-disabled-foreground: var(--color-disabled-foreground);
+  --color-disabled-border: var(--color-disabled-border);
 }
-
 body {
   background: var(--color-background);
   color: var(--color-text-primary);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
 }

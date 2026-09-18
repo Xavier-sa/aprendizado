@@ -16,6 +16,14 @@ enum UserRole {
   ADMIN
 }
 
+enum ThemePalette {
+  PAPIRO
+  ESMERALDA
+  OCEANO
+  GRAFITE
+  AMETISTA
+}
+
 /// Tabelas exigidas pelo Better Auth (ver docs/authentication.md).
 /// Nomes e campos seguem o schema canônico da lib para compatibilidade
 /// com o adapter Prisma (`better-auth/adapters/prisma`).
@@ -33,6 +41,14 @@ model User {
   accounts     Account[]
   transactions Transaction[]
   categories   Category[]
+  preference   UserPreference?
+}
+
+model UserPreference {
+  userId    String       @id
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theme     ThemePalette @default(PAPIRO)
+  updatedAt DateTime     @updatedAt
 }
 
 model Session {
