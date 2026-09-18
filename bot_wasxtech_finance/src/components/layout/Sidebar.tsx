@@ -34,6 +34,15 @@ function TransactionsIcon() {
   );
 }
 
+function ShieldIcon() {
+  return (
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 3 3 7v5c0 5 9 9 9 9s9-4 9-9V7l-9-4Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
 export const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", mobileLabel: "Resumo", icon: DashboardIcon },
   { href: "/chat", label: "Chat", icon: ChatIcon },
@@ -49,7 +58,13 @@ export const ADMIN_NAV_ITEMS = [
   { href: "/settings/appearance", label: "Aparência", mobileLabel: "Tema", icon: DashboardIcon },
 ] as const;
 
-export function Sidebar({ admin = false }: { admin?: boolean }) {
+export function getNavItems(admin: boolean, canAccessAdmin: boolean) {
+  if (admin) return ADMIN_NAV_ITEMS;
+  if (canAccessAdmin) return [...NAV_ITEMS, { href: "/admin", label: "Administração", mobileLabel: "Admin", icon: ShieldIcon }];
+  return NAV_ITEMS;
+}
+
+export function Sidebar({ admin = false, canAccessAdmin = false }: { admin?: boolean; canAccessAdmin?: boolean }) {
   const pathname = usePathname();
 
   return (
@@ -58,7 +73,7 @@ export function Sidebar({ admin = false }: { admin?: boolean }) {
         FinanceBot
       </span>
       <nav className="flex flex-col gap-1">
-        {(admin ? ADMIN_NAV_ITEMS : NAV_ITEMS).map((item) => {
+        {getNavItems(admin, canAccessAdmin).map((item) => {
           const active = item.href === "/admin" ? pathname === item.href : pathname?.startsWith(item.href);
           const Icon = item.icon;
           return (

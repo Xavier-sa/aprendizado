@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ADMIN_NAV_ITEMS, NAV_ITEMS } from "./Sidebar";
+import { getNavItems } from "./Sidebar";
 import { LogoutButton } from "./LogoutButton";
 
-export function MobileNav({ admin = false }: { admin?: boolean }) {
+export function MobileNav({ admin = false, canAccessAdmin = false }: { admin?: boolean; canAccessAdmin?: boolean }) {
   const pathname = usePathname();
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-10 flex border-t border-border bg-surface md:hidden">
-      {(admin ? ADMIN_NAV_ITEMS : NAV_ITEMS).map((item) => {
+      {getNavItems(admin, canAccessAdmin).map((item) => {
         const active = item.href === "/admin" ? pathname === item.href : pathname?.startsWith(item.href);
         const Icon = item.icon;
         return (
