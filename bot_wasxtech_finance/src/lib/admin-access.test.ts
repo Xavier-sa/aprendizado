@@ -61,7 +61,7 @@ describe("administrative authorization", () => {
     expect(await requireAdminApi(request("/api/admin"))).toBeNull();
     expect(await AdminPage()).toBeTruthy();
     expect(await AdminLayout({ children: "allowed" })).toMatchObject({ props: {
-      children: "allowed",
+      children: "allowed", admin: true,
     } });
     expect((await proxy(request("/admin"))).headers.get("x-middleware-next")).toBe("1");
     // Namespace has no implemented administrative resource yet.
