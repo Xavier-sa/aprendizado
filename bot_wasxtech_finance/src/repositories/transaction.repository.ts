@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import type { TransactionType } from "@prisma/client";
+import { addCivilMonths, startOfCivilMonth } from "@/lib/dates";
 
 export interface TransactionFilters {
   from?: Date;
@@ -106,15 +107,26 @@ export const transactionRepository = {
     }));
   },
 
-  /** Totais mensais de receita/despesa dos últimos `months` meses (inclui o mês atual), só de `userId`. */
-  async monthlySeries(userId: string, months: number): Promise<MonthlyTotal[]> {
+  /**
+   * Totais mensais de receita/despesa dos últimos `months` meses (inclui
+   * o mês atual), só de `userId`. O limite inferior é calculado em JS a
+   * partir do mês civil (fuso de `APP_TIME_ZONE`, ver `src/lib/dates.ts`)
+   * — não usa `now()` do Postgres, que reflete o fuso da sessão do banco,
+   * não o do usuário.
+   */
+  async monthlySeries(
+    userId: string,
+    months: number,
+    reference: Date = new Date(),
+  ): Promise<MonthlyTotal[]> {
+    const from = addCivilMonths(startOfCivilMonth(reference), -(months - 1));
     const rows = await prisma.$queryRaw<
       { month: Date; type: TransactionType; total: Prisma.Decimal }[]
     >(Prisma.sql`
       SELECT date_trunc('month', "transactionDate") AS month, "type", SUM("amount") AS total
       FROM "Transaction"
       WHERE "userId" = ${userId}
-        AND "transactionDate" >= date_trunc('month', now()) - (${months - 1} || ' months')::interval
+        AND "transactionDate" >= ${from}
       GROUP BY 1, 2
       ORDER BY 1 ASC
     `);

@@ -1,4 +1,10 @@
-import { startOfDay, endOfDay, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import {
+  todayInAppTimeZone,
+  endOfCivilDay,
+  startOfCivilMonth,
+  endOfCivilMonth,
+  addCivilMonths,
+} from "@/lib/dates";
 import { transactionRepository } from "@/repositories/transaction.repository";
 import { categoryRepository } from "@/repositories/category.repository";
 import { formatCurrencyBRL } from "@/lib/currency";
@@ -11,9 +17,14 @@ type Handler = (userId: string, lower: string, reference: Date) => Promise<Query
 
 function resolvePeriod(lower: string, reference: Date) {
   if (/\bhoje\b/.test(lower)) {
-    return { from: startOfDay(reference), to: endOfDay(reference), label: "hoje" };
+    const today = todayInAppTimeZone(reference);
+    return { from: today, to: endOfCivilDay(today), label: "hoje" };
   }
-  return { from: startOfMonth(reference), to: endOfMonth(reference), label: "este mês" };
+  return {
+    from: startOfCivilMonth(reference),
+    to: endOfCivilMonth(reference),
+    label: "este mês",
+  };
 }
 
 async function findCategoryByKeyword(userId: string, lower: string) {
@@ -47,11 +58,10 @@ const HANDLERS: Handler[] = [
 
   async (userId, lower, reference) => {
     if (!/compar/.test(lower)) return null;
-    const thisStart = startOfMonth(reference);
-    const thisEnd = endOfMonth(reference);
-    const prevRef = subMonths(reference, 1);
-    const prevStart = startOfMonth(prevRef);
-    const prevEnd = endOfMonth(prevRef);
+    const thisStart = startOfCivilMonth(reference);
+    const thisEnd = endOfCivilMonth(reference);
+    const prevStart = addCivilMonths(thisStart, -1);
+    const prevEnd = endOfCivilMonth(prevStart);
 
     const [thisExpense, prevExpense, thisIncome, prevIncome] = await Promise.all([
       transactionRepository.sumByType(userId, { type: "EXPENSE", from: thisStart, to: thisEnd }),

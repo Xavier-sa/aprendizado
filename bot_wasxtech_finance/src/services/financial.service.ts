@@ -1,4 +1,4 @@
-import { startOfMonth, endOfMonth } from "date-fns";
+import { startOfCivilMonth, endOfCivilMonth } from "@/lib/dates";
 import { transactionRepository } from "@/repositories/transaction.repository";
 import { categoryRepository } from "@/repositories/category.repository";
 import type { DashboardSummary, MonthlyChartPoint } from "@/types";
@@ -10,8 +10,8 @@ export const financialService = {
     userId: string,
     reference: Date = new Date(),
   ): Promise<DashboardSummary> {
-    const monthStart = startOfMonth(reference);
-    const monthEnd = endOfMonth(reference);
+    const monthStart = startOfCivilMonth(reference);
+    const monthEnd = endOfCivilMonth(reference);
 
     const [
       monthIncome,
@@ -63,8 +63,9 @@ export const financialService = {
   async getMonthlyChartSeries(
     userId: string,
     months: number = CHART_MONTHS,
+    reference: Date = new Date(),
   ): Promise<MonthlyChartPoint[]> {
-    const series = await transactionRepository.monthlySeries(userId, months);
+    const series = await transactionRepository.monthlySeries(userId, months, reference);
     if (series.length === 0) return [];
 
     const firstMonth = new Date(series[0].month);
