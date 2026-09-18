@@ -1,5 +1,29 @@
 # Segurança
 
+## Preferência de aparência (local)
+
+A API valida sessão real e expiração; `userId` vem exclusivamente da sessão.
+PATCH aceita apenas theme predefinido e rejeita campos extras, query de
+targeting e origem cross-site. Respostas são no-store. Preview/root data-theme
+são apresentação, nunca autorização; nenhum estado visual concede ADMIN.
+Preferência acompanha a conta no banco, sem localStorage/cookie compartilhado.
+Logout restaura a aparência pública. Ver [phase-4-appearance.md](./phase-4-appearance.md).
+
+## Acesso administrativo (implementação local)
+
+Autenticação e autorização são distintas: Better Auth confirma identidade;
+o papel atual no banco determina acesso administrativo. Cada página/API
+administrativa possui guard server-side, além do proxy e layout. API retorna
+401 sem sessão válida e 403 para USER; ADMIN atual pode consultar dados
+globais. Revogação não depende de atualização de cookie ou estado cliente.
+O hook público rejeita explicitamente qualquer `role` em cadastro/perfil.
+
+Administradores autorizados podem consultar contas e movimentações para
+operação/suporte, como informado em `/privacy`. As projeções administrativas
+excluem hashes, tokens e sessões; APIs não permitem cache. Ownership das
+rotas comuns permanece intacto. Não há promoção, mutação administrativa ou
+auditoria persistente nesta fase. Ver [phase-3-admin.md](./phase-3-admin.md).
+
 ## Princípio central
 
 **O navegador nunca é uma fronteira de confiança.** Assumimos que quem usa

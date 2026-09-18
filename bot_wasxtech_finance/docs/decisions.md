@@ -174,3 +174,27 @@ dois arquivos gerados foram removidos.
 
 **Motivo:** são arquivos gerados, não fazem parte da aplicação, e
 poluiriam o repositório sendo recriados a cada `next dev`.
+
+## ADR-010 — Consultas administrativas separadas e somente leitura
+
+Autenticação pelo Better Auth confirma a identidade; a autorização administrativa
+consulta `User.role` atual no banco em cada requisição. Guards em páginas e
+controllers somam-se ao proxy/layout, sem depender de role na sessão ou cliente.
+Consultas globais ficam em `admin.repository.ts`; ownership dos repositories
+comuns permanece obrigatório. Projeções selecionam somente dados necessários,
+listagens são paginadas no banco e APIs usam no-store. Não há mutações nem
+promoção nesta fase. AdminAuditLog não foi adotado para o MVP somente leitura;
+auditoria persistente de consultas sensíveis permanece evolução documentada.
+O acesso global autorizado é informado aos usuários em `/privacy`.
+Ver [phase-3-admin.md](./phase-3-admin.md). Migration e publicação pendentes.
+## ADR-011 — Paletas predefinidas e preferência por conta
+
+UserPreference opcional 1:1 evita alterar dados financeiros ou o modelo escalar
+canônico de autenticação. A API aceita somente theme predefinido; userId vem da
+sessão validada, com checagem de origem nas mutações. Layouts autenticados carregam
+o tema no servidor; preview usa contexto React e salvar persiste no banco.
+Tokens CSS centralizam as cinco paletas e gráficos. Foreground de botão é separado
+de surface, corrigindo o contraste diagnosticado de 3,60:1. Grafite é explícito,
+sem substituição parcial automática pelo tema do sistema. Sem novas dependências
+ou mudança do CI/CD. Ver [phase-4-appearance.md](./phase-4-appearance.md).
+Migration gerada localmente; produção não alterada.

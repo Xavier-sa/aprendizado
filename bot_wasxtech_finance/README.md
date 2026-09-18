@@ -1,5 +1,18 @@
 # FinanceBot
 
+## Evolução administrativa (local, ainda não publicada)
+
+Também disponível localmente: [aparência por usuário](docs/phase-4-appearance.md)
+com cinco paletas, preview e persistência por conta. A migration de
+`UserPreference` foi gerada, mas ainda não aplicada no Neon.
+
+Fases 2 e 3: papéis `USER`/`ADMIN`, autorização pelo papel atual no banco,
+dashboard administrativo e consultas paginadas de usuários/movimentações.
+A migration de `User.role` está gerada, mas ainda não aplicada em produção.
+Ver [Fase 2](docs/phase-2-authorization.md) e [Fase 3](docs/phase-3-admin.md).
+Administradores autorizados podem consultar dados armazenados para operação
+e suporte, conforme a página pública `/privacy`.
+
 Um jeito simples de registrar gastos do dia a dia conversando, em vez de
 preencher formulários — com dashboard, gráficos e consultas em linguagem
 natural.
