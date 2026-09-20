@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="bgAir" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#94a3b8"/>
+      <stop offset="1" stop-color="#d6d3d1"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#bgAir)"/>
+  <g fill="#44403c" opacity="0.8">
+    <rect x="60" y="330" width="70" height="180"/>
+    <rect x="150" y="270" width="80" height="240"/>
+    <rect x="250" y="360" width="55" height="150"/>
+    <rect x="740" y="300" width="65" height="210"/>
+    <rect x="825" y="350" width="65" height="160"/>
+  </g>
+  <g fill="#292524">
+    <rect x="455" y="300" width="50" height="210"/>
+    <rect x="440" y="270" width="80" height="35" rx="3"/>
+  </g>
+  <g fill="#e7e5e4" opacity="0.85">
+    <ellipse cx="480" cy="230" rx="46" ry="24"/>
+    <ellipse cx="440" cy="215" rx="34" ry="18"/>
+    <ellipse cx="530" cy="205" rx="40" ry="20"/>
+    <ellipse cx="490" cy="175" rx="30" ry="16"/>
+  </g>
+  <rect width="960" height="540" fill="#78716c" opacity="0.22"/>
+  <g fill="#f5f5f4" opacity="0.55">
+    <circle cx="300" cy="150" r="3"/>
+    <circle cx="350" cy="190" r="2.4"/>
+    <circle cx="620" cy="160" r="3"/>
+    <circle cx="670" cy="200" r="2.4"/>
+    <circle cx="200" cy="230" r="2.8"/>
+    <circle cx="720" cy="240" r="2.6"/>
+    <circle cx="410" cy="120" r="2.2"/>
+    <circle cx="560" cy="130" r="2.2"/>
+  </g>
+</svg>
