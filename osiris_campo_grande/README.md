@@ -1,77 +1,90 @@
 # OSIRIS Campo Grande
 
-POC exploratória de dados públicos da [API OSIRIS](https://osirisai.live/docs)
-(`osirisai.live` — **não** confundir com `useosiris.ai` ou `osiris-code.com`)
-com foco fixo em **Campo Grande, Mato Grosso do Sul, Brasil**.
+Observatório experimental de dados e riscos para **Campo Grande, Mato
+Grosso do Sul, Brasil** — reúne, normaliza e apresenta dados públicos e
+georreferenciados de várias fontes oficiais para responder a uma pergunta
+concreta: **o que está acontecendo em Campo Grande e no entorno agora?**
+
+Combina a [API OSIRIS](https://osirisai.live/docs) (`osirisai.live` — **não**
+confundir com `useosiris.ai` ou `osiris-code.com`) com duas fontes
+brasileiras oficiais: **INMET** (avisos meteorológicos ativos) e **IBGE**
+(identidade territorial do município).
 
 Aplicação independente, na raiz do repositório como irmã de
 `bot_wasxtech_finance`, para poder ser publicada separadamente no futuro
 (ex.: Vercel com `Root Directory = osiris_campo_grande`).
 
-## O que é a OSIRIS
-
-A OSIRIS é um agregador de feeds públicos de "inteligência" — voos ADS-B,
-satélites, terremotos, incêndios, clima espacial, câmeras públicas,
-infraestrutura estratégica, tráfego marítimo, eventos geocodificados
-globais, imagens de satélite Sentinel-1, e também ferramentas de OSINT
-(whois, IP, Shodan etc.) e um scanner de rede. É software livre, licença
-**MIT**, código em
-[github.com/simplifaisoul/osiris](https://github.com/simplifaisoul/osiris).
-Esta POC não é afiliada oficialmente à OSIRIS e usa **apenas os feeds
-públicos e somente-leitura que fazem sentido para uma visão geográfica de
-uma cidade** — a auditoria completa de todos os endpoints descobertos,
-testados e descartados (17 endpoints testados, com valores reais de
-resposta) está em
-[`docs/osiris-api-discovery.md`](docs/osiris-api-discovery.md). Metodologia,
-proveniência e créditos completos também em `/sobre` dentro da aplicação.
-
 ## Descoberta principal (leia antes de esperar um mapa cheio)
 
 A maioria dos feeds da OSIRIS tem cobertura muito esparsa para o interior do
-Brasil. Com o raio padrão de 300km ao redor de Campo Grande, a maior parte
-das categorias (terremotos, incêndios, clima severo, infraestrutura,
-marítimo, câmeras, GPS/rede, eventos geocodificados) honestamente retorna
-**zero registros** no momento em que você abrir a aplicação — isso é
-mostrado explicitamente na interface, nunca escondido. Voos, satélites e
-imagens Sentinel-1 normalmente têm alguns resultados reais. Detalhes e
-números exatos testados: ver `docs/osiris-api-discovery.md`.
+Brasil — na maior parte do tempo, terremotos, infraestrutura, marítimo,
+câmeras, GPS/rede e eventos geocodificados retornam **zero registros**
+dentro de qualquer raio razoável. Isso é mostrado explicitamente na
+interface (aba "Fontes"), nunca escondido. O que de fato costuma ter dado
+real: voos, satélites, imagens Sentinel-1 e — a descoberta mais valiosa
+desta segunda fase — **avisos meteorológicos ativos do INMET**, que têm
+cobertura oficial e confirmada para Campo Grande. Detalhes e números
+testados: [`docs/osiris-api-discovery.md`](docs/osiris-api-discovery.md) e
+[`docs/external-sources.md`](docs/external-sources.md).
+
+## O que é a OSIRIS
+
+Um agregador de feeds públicos de "inteligência" — voos ADS-B, satélites,
+incêndios, clima espacial, câmeras públicas, infraestrutura estratégica,
+eventos geocodificados globais, imagens Sentinel-1, e também ferramentas de
+OSINT (não usadas aqui). Software livre, MIT,
+[github.com/simplifaisoul/osiris](https://github.com/simplifaisoul/osiris).
+Esta aplicação não é afiliada oficialmente à OSIRIS, ao INMET ou ao IBGE —
+consome só as APIs públicas de cada um. Auditoria completa dos 17 endpoints
+da OSIRIS testados em
+[`docs/osiris-api-discovery.md`](docs/osiris-api-discovery.md); pesquisa das
+fontes brasileiras adicionais (incluindo as não integradas, e por quê) em
+[`docs/external-sources.md`](docs/external-sources.md). Metodologia,
+proveniência e créditos completos também em `/sobre` dentro da aplicação.
 
 ## Arquitetura
 
-```
+```text
 browser
    ↓ (fetch para /api/osiris/*, mesma origem)
 Next.js server (API routes)
-   ↓ (OsirisClient)
-OSIRIS (osirisai.live/api)
+   ↓                              ↓                    ↓
+OsirisClient                InmetClient            IbgeClient
+   ↓                              ↓                    ↓
+OSIRIS (osirisai.live)  INMET (apiprevmet3...)  IBGE (servicodados...)
 ```
 
-O browser nunca fala diretamente com a OSIRIS. Isso importa mesmo os
-endpoints usados hoje sendo públicos: se algum dia um deles passar a exigir
-`OSIRIS_API_KEY`, só o servidor precisa saber da chave — nada muda no
-front-end.
+O browser nunca fala diretamente com nenhuma das três fontes. Cada cliente
+tem timeout, erro tipado e cache em memória próprios (documentado em cada
+arquivo — o cache do Next.js recusa respostas grandes, ver
+`src/lib/osiris/client.ts`).
 
-```
+```text
 src/
   app/
-    page.tsx                 — monta <CampoGrandeApp />
-    sobre/page.tsx            — página "Sobre o projeto" (metodologia, créditos, licença)
-    icon.svg, apple-icon.png  — favicon "WX" (convenção de arquivo do Next.js)
-    api/osiris/feeds/        — proxy: os 13 feeds geográficos + filtro local
-    api/osiris/global/       — proxy: feeds sem coordenadas (clima espacial, stats, risco por país) + health + region-dossier
-  lib/osiris/
-    client.ts                — OsirisClient (timeout, erros tipados, User-Agent, cache)
-    endpoints.ts              — path/label/TTL/upstream documentado/normalizador de cada feed
-    geo.ts                    — haversine, bbox, e a constante única CAMPO_GRANDE {latitude, longitude, defaultRadiusKm}
-    normalizers.ts            — um normalizador por feed (formatos bem diferentes entre si)
-  services/feeds.service.ts   — fetch + normalização + filtro geográfico + classificação (scope) + proveniência em 2 níveis; nunca lança
-  types/index.ts               — NormalizedRecord, Provenance (com upstreamSource), FeedResult (com scope/scopeNote), FeedScope
+    page.tsx                  — monta <CampoGrandeApp />
+    sobre/page.tsx             — "Sobre o projeto" (metodologia, proveniência, fontes e créditos)
+    icon.svg, apple-icon.png   — favicon "WX"
+    api/osiris/feeds/         — proxy: feeds geográficos da OSIRIS + INMET, raio escolhido pelo usuário
+    api/osiris/global/        — proxy: contexto global da OSIRIS + region-dossier + health + municipality (IBGE)
+  lib/
+    osiris/    — client.ts, endpoints.ts, geo.ts (CAMPO_GRANDE + RADIUS_OPTIONS_KM), normalizers.ts
+    inmet/     — client.ts (User-Agent de navegador necessário — ver comentário), alerts.ts (filtro por geocode IBGE)
+    ibge/      — client.ts
+  services/
+    feeds.service.ts        — fetchSituationFeeds: combina OSIRIS + INMET num só array
+    inmet.service.ts        — avisos ativos → FeedResult
+    municipality.service.ts — identidade do município → MunicipalityResult
+    snapshot.service.ts     — "O que mudou?": diff em memória entre a consulta atual e a anterior
+  types/index.ts             — NormalizedRecord (com geometry opcional), Provenance multi-plataforma, FeedScope, ChangeSummary
   components/
-    map/          — MapView (Leaflet), LayerToggle
-    dashboard/    — useFeeds (polling), MetricsPanel, FeedStatusList ("Fontes monitoradas"), RegionDossierCard
-    explorer/     — DataExplorer, RecordDetail (proveniência em 2 níveis)
-    CampoGrandeApp.tsx — orquestra mapa + abas (Camadas/Painel/Fontes/Explorar), responsivo, rodapé com créditos
-docs/osiris-api-discovery.md — auditoria completa da API (17 endpoints testados, upstream de cada um, 2 rodadas de teste)
+    map/          — MapView (Leaflet: marcadores de ponto + polígonos GeoJSON reais), LayerToggle
+    dashboard/    — SituacaoAgora (home), RadiusSelector, ChangeSummaryPanel, MetricsPanel, FeedStatusList, modulesConfig (3 módulos)
+    explorer/     — DataExplorer, RecordDetail
+    CampoGrandeApp.tsx — abas (Situação/Camadas/Painel/Fontes/Explorar), responsivo
+docs/
+  osiris-api-discovery.md  — auditoria completa da API OSIRIS
+  external-sources.md      — pesquisa de fontes brasileiras (integradas e descartadas, com motivo)
 ```
 
 ## Como executar
@@ -86,119 +99,108 @@ Abra http://localhost:3000.
 
 ## Variáveis de ambiente
 
-Nenhuma é obrigatória hoje — todo endpoint usado é público. Ver
-`.env.example`:
+Nenhuma é obrigatória — todo endpoint usado (OSIRIS, INMET, IBGE) é
+público. Ver `.env.example`: `OSIRIS_BASE_URL`/`OSIRIS_API_KEY` reservadas
+para o caso de a OSIRIS passar a exigir chave. `.env`/`.env.local` são
+ignorados pelo git.
 
-- `OSIRIS_BASE_URL` — padrão `https://osirisai.live/api`.
-- `OSIRIS_API_KEY` — reservada para o caso de a OSIRIS passar a exigir chave
-  em algum destes endpoints; hoje fica vazia.
+## Os três módulos
 
-`.env` e `.env.local` são ignorados pelo git.
+A home ("Situação agora") organiza tudo em três perguntas, não em uma
+galeria de cards por feed:
 
-## Endpoints usados
+- **Ambiente & Fogo** — `fires`, `weather`, `sentinel`, `air-quality` (OSIRIS) — existe risco ambiental próximo?
+- **Cidade & Mobilidade** — `flights`, `cctv`, `infrastructure` (OSIRIS) — há contexto útil de infraestrutura/mobilidade?
+- **Situação & Alertas** — `inmet-alerts` (INMET) + `gdelt` (OSIRIS) + "O que mudou?" — existe alerta ativo ou mudança recente?
 
-Ver a tabela completa (com valores de `upstream` reais e as duas rodadas de
-teste) em [`docs/osiris-api-discovery.md`](docs/osiris-api-discovery.md).
+Feeds sem relevância local comprovada (terremotos, marítimo, radar,
+conflitos, risco por país) ficam fora dos três módulos — continuam
+auditáveis na aba "Fontes", sem fingir ser "recursos de Campo Grande" que
+na prática nunca têm dado local. Classificação de cada feed (`LOCAL` /
+`GLOBAL_FILTRADO` / `GLOBAL` / `INDISPONIVEL` / `ERRO`) sempre calculada a
+partir do resultado real da chamada, nunca atribuída à mão.
 
-**13 feeds geográficos** (`FeedKey`, com filtro local por raio de 300km,
-exceto `sentinel`, que já aceita `lat`/`lng` e é filtrado por cobertura de
-bbox): `flights`, `satellites`, `weather`, `earthquakes`, `fires`, `cctv`,
-`infrastructure`, `maritime`, `radar`, `gdelt`, `sentinel`, `conflicts`,
-`air-quality`.
+## Raio de busca
 
-**3 feeds de contexto global** (`GlobalFeedKey`, sem coordenadas por
-registro): `space-weather`, `stats`, `country-risk`.
+O raio (50/100/300/600km) é escolhido pelo usuário na home — muda tudo:
+mapa, painel, situação e classificação. A interface nunca diz que a OSIRIS
+fez esse filtro geográfico; diz que **o aplicativo encontrou** N registros
+naquele raio (a maioria dos feeds da OSIRIS não tem filtro geográfico
+próprio — calculamos distância via haversine). Os avisos do INMET usam um
+mecanismo diferente e mais preciso: cada aviso já lista oficialmente os
+municípios que cobre por código IBGE — filtramos por esse código exato, não
+por raio.
 
-**Mais 2 consultas pontuais, fora do sistema de `FeedKey`:** `region-dossier`
-(dossiê para as coordenadas de Campo Grande — ver nota abaixo) e `health`
-(status da API, mostrado no cabeçalho).
+## "O que mudou?"
 
-Cada um recebe uma classificação (`LOCAL` / `GLOBAL_FILTRADO` / `GLOBAL` /
-`INDISPONIVEL` / `ERRO`) visível na aba **Fontes** da aplicação.
+A cada consulta, o servidor compara com a anterior (mesmo raio) e reporta,
+por regras determinísticas: novos registros, queda no total, fonte que
+voltou/parou de responder, nova cobertura Sentinel. Guardado em memória no
+processo do servidor — sem banco de dados (avaliado explicitamente antes de
+adicionar um; ver `src/services/snapshot.service.ts` para a limitação
+conhecida em ambiente serverless).
 
 ## Limitações conhecidas
 
-- A maioria das categorias fica vazia para Campo Grande na maior parte do
-  tempo (ver "Descoberta principal" acima) — isso é uma limitação real da
-  cobertura da OSIRIS, não um bug desta POC. É mostrado na aba "Fontes",
-  nunca escondido.
-- `/api/region-dossier` deu resultados diferentes em duas rodadas de teste
-  no mesmo dia: vazio na primeira, com estado/país/resumo da Wikipedia na
-  segunda (reprodutível 3x seguidas). O resultado parece não ser estável —
-  documentado em detalhe em `docs/osiris-api-discovery.md`. A interface
-  sempre mostra o estado ATUAL, nunca um valor fixo.
-- `/api/air-quality` está vazio no mundo todo (não só para Campo Grande) em
-  todas as tentativas — o schema de estação usado no normalizador é uma
-  extração defensiva best-effort, nunca confirmada contra um dado real.
-- `/api/frontlines` foi testado mas não integrado: devolve polígonos
-  GeoJSON (627KB), não pontos, e cobre só zonas de guerra estrangeiras.
-- Câmeras (`cctv`) e infraestrutura não têm timestamp por registro na
-  origem — a interface mostra apenas quando a informação foi consultada
-  (`fetchedAt`), nunca inventa uma "última atualização" que a OSIRIS não
-  forneceu.
-- Miniaturas de cenas Sentinel vêm como URI `s3://...`, que o navegador não
-  consegue exibir como imagem — mostradas como texto/metadado.
-- Streams de câmeras (`stream_url`/`external_url`) são abertos como link
-  externo, não incorporados via proxy/iframe nesta primeira versão.
-
-## Fontes públicas possíveis para uma próxima etapa (não integradas agora)
-
-Prefeitura de Campo Grande / dados abertos municipais, IBGE, INMET, INPE
-(queimadas oficiais brasileiras), OpenStreetMap (Overpass API para POIs
-locais), dados estaduais de MS. Nenhuma foi integrada nesta primeira
-execução — a tarefa pediu para não misturar fontes automaticamente.
+- A maioria das categorias da OSIRIS fica vazia para Campo Grande na maior
+  parte do tempo — mostrado na aba "Fontes", nunca escondido.
+- `/api/region-dossier` (OSIRIS) deu resultados diferentes em rodadas de
+  teste diferentes no mesmo dia — documentado em detalhe em
+  `docs/osiris-api-discovery.md`. A interface sempre mostra o estado ATUAL.
+- `/api/air-quality` (OSIRIS) está vazio no mundo todo, não só para Campo
+  Grande.
+- INMET `apitempo` (dados horários de estação automática) tem estação real
+  para Campo Grande (A702) mas o endpoint retorna HTTP 204 sempre —
+  documentado em `docs/external-sources.md`, não integrado.
+- INPE Queimadas, SIMGEO (Prefeitura de Campo Grande) e IMASUL foram
+  pesquisados mas não tinham API pública simples o suficiente para integrar
+  sem scraping frágil — ver `docs/external-sources.md`.
+- Miniaturas de cenas Sentinel vêm como URI `s3://...`, não renderizável no
+  navegador.
+- "O que mudou?" não persiste entre invocações separadas de uma função
+  serverless — funciona de forma confiável em `next dev`/`next start`.
 
 ## Privacidade e segurança
 
-- Nenhum endpoint de OSINT individual (whois, IP, Shodan, e-mail, telefone,
-  GitHub, vazamentos, sanções) foi integrado — ver a tabela de endpoints
-  não integrados em `docs/osiris-api-discovery.md` e o motivo de cada um.
+- Nenhum endpoint de OSINT individual foi integrado.
 - Nenhuma funcionalidade de rastreamento de pessoa, reconhecimento facial,
-  busca por residência ou correlação de indivíduos existe nesta aplicação.
-- `/api/geo` (geolocalização de quem chama a API) não foi usado — o foco
-  geográfico é sempre o ponto fixo de Campo Grande, nunca a localização de
-  quem está usando o app; `Permissions-Policy` do Next.js também desativa
+  busca por residência ou correlação de indivíduos.
+- O foco geográfico é sempre o ponto fixo de Campo Grande, nunca a
+  localização de quem usa o app; `Permissions-Policy` desativa
   `geolocation` do navegador.
-- Câmeras públicas exibidas são as mesmas listadas publicamente pela
-  OSIRIS (webcams turísticas/de trânsito de fontes como SkylineWebcams,
-  YouTube Live, DOTs estaduais) — nenhuma câmera de vigilância privada ou
-  residencial.
+- Câmeras públicas só apareceriam quando públicas/legítimas/relevantes —
+  hoje a OSIRIS não lista nenhuma com cobertura real em Campo Grande.
 
 ## Favicon
 
-Ícone "WX" em `src/app/icon.svg` (+ `apple-icon.png` gerado a partir dele
-com `sharp`), usando a convenção de arquivo do Next.js App Router — nenhuma
-configuração de `<head>` manual, nenhum domínio absoluto embutido. Não
-existia nenhum asset de marca "WX" no repositório (nem em
-`bot_wasxtech_finance`) antes desta tarefa; o ícone foi criado do zero.
+Ícone "WX" em `src/app/icon.svg` (+ `apple-icon.png`), convenção nativa do
+Next.js App Router — sem domínio absoluto embutido.
 
-## Créditos e licença
+## Fontes e créditos
 
-POC experimental desenvolvida por Wellington Xavier, usando dados e APIs
-públicas do projeto open source **OSIRIS**
-([osirisai.live](https://osirisai.live) ·
-[github.com/simplifaisoul/osiris](https://github.com/simplifaisoul/osiris),
-MIT). Não copiamos código-fonte da OSIRIS, só consumimos sua API pública —
-ver `/sobre` na aplicação para a explicação completa de proveniência,
-metodologia e por que as obrigações de cópia da licença MIT não se aplicam
-a este uso.
+POC experimental desenvolvida por Wellington Xavier. Dados e integrações
+via **OSIRIS** ([osirisai.live](https://osirisai.live) ·
+[código-fonte](https://github.com/simplifaisoul/osiris), MIT), **INMET**
+(avisos meteorológicos) e **IBGE** (localidades) — e respectivos
+provedores upstream (NASA FIRMS, Element84, OpenSky, IODA/Georgia Tech,
+GDACS, via OSIRIS). Não copiamos código-fonte de nenhum deles, só
+consumimos APIs públicas. Detalhe completo, inclusive por que as
+obrigações de cópia da licença MIT não se aplicam a este uso, em `/sobre`.
 
 ## Publicação futura
 
-Preparado para publicação independente (`Root Directory = osiris_campo_grande`
-em um novo projeto Vercel). Nada foi publicado nem configurado nesta
-execução — nenhuma alteração foi feita no Vercel do FinanceBot nem em
-`finance.wasxtech.com.br`. Um domínio como `osiris.wasxtech.com.br` pode ser
-configurado depois, quando solicitado.
+Preparado para publicação independente (`Root Directory = osiris_campo_grande`).
+Nada foi publicado nesta execução — nenhuma alteração no Vercel do
+FinanceBot nem em `finance.wasxtech.com.br`.
 
 ## Testes
 
 ```bash
-npm test        # vitest — normalização, filtro geográfico, erros de rede/timeout/HTTP, feed vazio
+npm test        # vitest — normalização, filtro geográfico/geocode, "o que mudou", erros de rede/timeout/HTTP, feed vazio
 npm run lint
 npm run typecheck
 npm run build
 ```
 
-Os testes mockam o `OsirisClient` — nenhum deles depende da OSIRIS estar no
-ar (seção 19 do pedido).
+Todas as fontes externas (OSIRIS, INMET, IBGE) são sempre mockadas nos
+testes — nenhum deles depende de rede.

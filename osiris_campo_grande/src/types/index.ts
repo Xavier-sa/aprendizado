@@ -22,6 +22,17 @@ export type FeedKey =
   | "conflicts"
   | "air-quality";
 
+/**
+ * Fontes fora da OSIRIS, adicionadas na segunda fase (observatório de
+ * riscos) — hoje só os avisos ativos do INMET, filtrados para os que
+ * realmente listam Campo Grande (geocode IBGE 5002704) entre os
+ * municípios cobertos. Ver `src/lib/inmet/`.
+ */
+export type ExternalSourceKey = "inmet-alerts";
+
+/** Chave usada por `NormalizedRecord`/`FeedResult` — pode vir da OSIRIS ou de uma fonte externa (hoje só INMET). */
+export type SourceKey = FeedKey | ExternalSourceKey;
+
 /** Feeds sem coordenadas por registro — nunca entram no mapa nem no filtro geográfico, só como contexto da plataforma/mundo. */
 export type GlobalFeedKey = "space-weather" | "stats" | "country-risk";
 
@@ -58,7 +69,7 @@ export interface GeoPoint {
  * próprio — nunca inventamos um.
  */
 export interface Provenance {
-  sourcePlatform: "OSIRIS";
+  sourcePlatform: "OSIRIS" | "INMET" | "IBGE";
   sourceEndpoint: string;
   fetchedAt: string;
   sourceTimestamp?: string;
@@ -71,14 +82,22 @@ export interface Provenance {
  * de dados, independente do feed de origem. `raw` preserva o objeto
  * original da OSIRIS para quem quiser inspecionar o dado bruto.
  */
+/** GeoJSON simplificado — só o suficiente para desenhar o polígono de um aviso no mapa (Leaflet aceita GeoJSON puro). */
+export interface RecordGeometry {
+  type: "Polygon" | "MultiPolygon";
+  coordinates: number[][][] | number[][][][];
+}
+
 export interface NormalizedRecord {
   id: string;
-  feed: FeedKey;
+  feed: SourceKey;
   type: string;
   title: string;
   position: GeoPoint | null;
   /** Distância até o centro de Campo Grande, em km — só quando `position` existir. */
   distanceKm: number | null;
+  /** Só para registros de área (ex.: aviso meteorológico do INMET) — um polígono real, nunca um marcador de ponto inventado para representar uma área. */
+  geometry?: RecordGeometry;
   timestamp: string | null;
   summary: string;
   metadata: Record<string, string | number | boolean | null>;
@@ -87,7 +106,7 @@ export interface NormalizedRecord {
 }
 
 export interface FeedResult {
-  feed: FeedKey;
+  feed: SourceKey;
   label: string;
   status: "ok" | "empty" | "error" | "unavailable";
   scope: FeedScope;
@@ -134,4 +153,45 @@ export interface ApiHealth {
   version: string | null;
   uptimeSeconds: number | null;
   checkedAt: string;
+}
+
+/**
+ * `/api/v1/localidades/municipios/{codigo}` do IBGE — identidade
+ * administrativa real de Campo Grande (não é enriquecimento "sobre o
+ * Brasil" como o `region-dossier` às vezes devolve, é especificamente
+ * sobre o município consultado, pela fonte oficial de códigos
+ * territoriais do Brasil).
+ */
+export interface MunicipalityResult {
+  status: "ok" | "error" | "unavailable";
+  data: {
+    nome: string;
+    microrregiao: string;
+    mesorregiao: string;
+    uf: string;
+    ufSigla: string;
+    regiao: string;
+    regiaoImediata: string;
+  } | null;
+  error?: string;
+  provenance: Provenance;
+}
+
+/**
+ * Uma mudança detectada entre a consulta atual e a anterior (mesmo raio),
+ * por regras determinísticas e documentadas — nunca por um julgamento de
+ * "gravidade" inventado (seção 8 do pedido: "Não utilizar IA para
+ * inventar gravidade"). Ver `src/services/snapshot.service.ts`.
+ */
+export interface ChangeEvent {
+  feed: SourceKey;
+  kind: "new-records" | "fewer-records" | "new-sentinel-coverage" | "source-recovered" | "source-failed";
+  message: string;
+}
+
+export interface ChangeSummary {
+  /** `null` na primeira consulta do processo (sem observação anterior para comparar). */
+  previousCheckedAt: string | null;
+  currentCheckedAt: string;
+  events: ChangeEvent[];
 }

@@ -13,6 +13,7 @@ import { OsirisClient, OsirisError, osirisClient } from "@/lib/osiris/client";
 import { FEED_CONFIG, GLOBAL_FEED_CONFIG, type FeedConfig } from "@/lib/osiris/endpoints";
 import { CAMPO_GRANDE_CENTER, DEFAULT_RADIUS_KM, haversineKm } from "@/lib/osiris/geo";
 import type { PreNormalized } from "@/lib/osiris/normalizers";
+import { fetchInmetAlerts } from "./inmet.service";
 
 function errorMessage(error: unknown): string {
   return error instanceof OsirisError ? error.message : "Erro desconhecido ao consultar a OSIRIS.";
@@ -199,6 +200,22 @@ export async function fetchAllFeeds(
 ): Promise<FeedResult[]> {
   const feeds = Object.keys(FEED_CONFIG) as FeedKey[];
   return Promise.all(feeds.map((feed) => fetchFeed(feed, radiusKm, client)));
+}
+
+/**
+ * Todos os feeds geograficamente relevantes para Campo Grande — os da
+ * OSIRIS (filtrados por raio) MAIS os avisos do INMET (filtrados por
+ * geocode do próprio aviso, não por raio). É o que alimenta a home
+ * "Situação agora" e a aba "Camadas"/"Fontes" — um único ponto que
+ * combina as duas plataformas, para os componentes de UI não precisarem
+ * saber de onde cada feed vem (apenas de `provenance.sourcePlatform`).
+ */
+export async function fetchSituationFeeds(
+  radiusKm: number = DEFAULT_RADIUS_KM,
+  client: OsirisClient = osirisClient,
+): Promise<FeedResult[]> {
+  const [osirisFeeds, inmetAlerts] = await Promise.all([fetchAllFeeds(radiusKm, client), fetchInmetAlerts()]);
+  return [...osirisFeeds, inmetAlerts];
 }
 
 export async function fetchGlobalFeed(

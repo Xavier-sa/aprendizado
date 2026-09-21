@@ -1,12 +1,13 @@
 "use client";
 
-import type { ApiHealth, FeedResult, GlobalFeedResult, RegionDossierResult } from "@/types";
+import type { ApiHealth, FeedResult, GlobalFeedResult, MunicipalityResult, RegionDossierResult } from "@/types";
 import { RegionDossierCard } from "./RegionDossierCard";
 
 interface MetricsPanelProps {
   feeds: FeedResult[];
   globalFeeds: GlobalFeedResult[];
   regionDossier: RegionDossierResult | null;
+  municipality: MunicipalityResult | null;
   health: ApiHealth | null;
   radiusKm: number;
   generatedAt: string | null;
@@ -44,7 +45,7 @@ function HealthBadge({ health }: { health: ApiHealth | null }) {
   );
 }
 
-export function MetricsPanel({ feeds, globalFeeds, regionDossier, health, radiusKm, generatedAt, loading }: MetricsPanelProps) {
+export function MetricsPanel({ feeds, globalFeeds, regionDossier, municipality, health, radiusKm, generatedAt, loading }: MetricsPanelProps) {
   const totalInRegion = feeds.reduce((sum, feed) => sum + feed.totalInRegion, 0);
   const withData = feeds.filter((f) => f.scope === "LOCAL" || f.scope === "GLOBAL_FILTRADO").length;
   const withoutCoverage = feeds.filter((f) => f.scope === "INDISPONIVEL").length;
@@ -72,6 +73,16 @@ export function MetricsPanel({ feeds, globalFeeds, regionDossier, health, radius
           />
         </div>
 
+        {municipality?.status === "ok" && municipality.data && (
+          <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-600">
+            <p className="font-medium text-slate-700">Identidade territorial oficial (IBGE)</p>
+            <p className="mt-1">
+              {municipality.data.nome} · {municipality.data.microrregiao} · {municipality.data.mesorregiao} ·{" "}
+              {municipality.data.uf} ({municipality.data.ufSigla}) · Região {municipality.data.regiao}
+            </p>
+          </div>
+        )}
+
         <div className="mt-3">
           <RegionDossierCard dossier={regionDossier} />
         </div>
@@ -86,14 +97,15 @@ export function MetricsPanel({ feeds, globalFeeds, regionDossier, health, radius
         </p>
         <HealthBadge health={health} />
         <p>
-          Fonte:{" "}
+          Dados e integrações via{" "}
           <a href="https://osirisai.live/docs" target="_blank" rel="noreferrer" className="underline">
-            OSIRIS (osirisai.live)
-          </a>{" "}
-          · projeto open source (MIT) —{" "}
-          <a href="https://github.com/simplifaisoul/osiris" target="_blank" rel="noreferrer" className="underline">
-            repositório
+            OSIRIS
           </a>
+          , INMET e IBGE — e respectivos provedores upstream (ver &ldquo;Fontes e créditos&rdquo; em{" "}
+          <a href="/sobre" className="underline">
+            /sobre
+          </a>
+          ).
         </p>
       </section>
 

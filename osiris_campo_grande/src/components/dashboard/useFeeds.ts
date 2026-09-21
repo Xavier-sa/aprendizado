@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ApiHealth, FeedResult, GeoPoint, GlobalFeedResult, RegionDossierResult } from "@/types";
+import type { ApiHealth, ChangeSummary, FeedResult, GeoPoint, GlobalFeedResult, MunicipalityResult, RegionDossierResult } from "@/types";
 
 interface FeedsResponse {
   center: GeoPoint;
   radiusKm: number;
   generatedAt: string;
   feeds: FeedResult[];
+  changeSummary: ChangeSummary;
 }
 
 interface GlobalFeedsResponse {
@@ -15,13 +16,14 @@ interface GlobalFeedsResponse {
   feeds: GlobalFeedResult[];
   regionDossier: RegionDossierResult;
   health: ApiHealth;
+  municipality: MunicipalityResult;
 }
 
 /**
- * `/api/osiris/feeds` já respeita o TTL da OSIRIS via cache do `fetch` no
- * servidor (45-60s conforme documentado) — o polling aqui só precisa não
- * ser mais agressivo que isso, senão estaríamos batendo na OSIRIS a cada
- * render por nada (seção 17 do pedido original). 60s casa com o TTL mais comum.
+ * `/api/osiris/feeds` já respeita o TTL de cada fonte via cache próprio no
+ * servidor (45-60s OSIRIS, 10min INMET) — o polling aqui só precisa não
+ * ser mais agressivo que isso, senão estaríamos batendo nas fontes a cada
+ * render por nada (seção 18 do pedido). 60s casa com o TTL mais comum.
  */
 const POLL_INTERVAL_MS = 60_000;
 
@@ -29,7 +31,9 @@ export function useFeeds(radiusKm: number) {
   const [feeds, setFeeds] = useState<FeedResult[]>([]);
   const [globalFeeds, setGlobalFeeds] = useState<GlobalFeedResult[]>([]);
   const [regionDossier, setRegionDossier] = useState<RegionDossierResult | null>(null);
+  const [municipality, setMunicipality] = useState<MunicipalityResult | null>(null);
   const [health, setHealth] = useState<ApiHealth | null>(null);
+  const [changeSummary, setChangeSummary] = useState<ChangeSummary | null>(null);
   const [center, setCenter] = useState<GeoPoint | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +61,7 @@ export function useFeeds(radiusKm: number) {
           fetch("/api/osiris/global", { signal: controller.signal }),
         ]);
         if (!feedsRes.ok || !globalRes.ok) {
-          throw new Error("Não foi possível carregar os dados da OSIRIS agora.");
+          throw new Error("Não foi possível carregar os dados agora.");
         }
         const feedsData = (await feedsRes.json()) as FeedsResponse;
         const globalData = (await globalRes.json()) as GlobalFeedsResponse;
@@ -65,9 +69,11 @@ export function useFeeds(radiusKm: number) {
         setFeeds(feedsData.feeds);
         setCenter(feedsData.center);
         setGeneratedAt(feedsData.generatedAt);
+        setChangeSummary(feedsData.changeSummary);
         setGlobalFeeds(globalData.feeds);
         setRegionDossier(globalData.regionDossier);
         setHealth(globalData.health);
+        setMunicipality(globalData.municipality);
         setError(null);
       } catch (err) {
         if (!active || (err instanceof DOMException && err.name === "AbortError")) return;
@@ -86,5 +92,5 @@ export function useFeeds(radiusKm: number) {
     };
   }, [radiusKm]);
 
-  return { feeds, globalFeeds, regionDossier, health, center, generatedAt, loading, error };
+  return { feeds, globalFeeds, regionDossier, municipality, health, changeSummary, center, generatedAt, loading, error };
 }

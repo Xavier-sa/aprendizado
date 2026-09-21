@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { OsirisClient, OsirisError } from "@/lib/osiris/client";
+import { inmetClient } from "@/lib/inmet/client";
 import {
   fetchAllFeeds,
   fetchAllGlobalFeeds,
@@ -7,6 +8,7 @@ import {
   fetchFeed,
   fetchGlobalFeed,
   fetchRegionDossier,
+  fetchSituationFeeds,
 } from "./feeds.service";
 
 function fakeClient() {
@@ -192,6 +194,20 @@ describe("fetchAllFeeds", () => {
     expect(fires?.status).toBe("error");
     const others = results.filter((r) => r.feed !== "fires");
     expect(others.every((r) => r.status === "empty")).toBe(true);
+  });
+});
+
+describe("fetchSituationFeeds", () => {
+  it("combines the OSIRIS feeds with the INMET alerts feed into one array", async () => {
+    const client = fakeClient();
+    vi.spyOn(client, "get").mockResolvedValue({});
+    vi.spyOn(inmetClient, "get").mockResolvedValue({ hoje: [], futuro: [] });
+
+    const results = await fetchSituationFeeds(300, client);
+
+    expect(results).toHaveLength(14); // 13 da OSIRIS + 1 do INMET
+    const inmet = results.find((r) => r.feed === "inmet-alerts");
+    expect(inmet?.provenance.sourcePlatform).toBe("INMET");
   });
 });
 

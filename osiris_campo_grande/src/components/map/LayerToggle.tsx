@@ -1,12 +1,12 @@
 "use client";
 
-import type { FeedKey, FeedResult } from "@/types";
+import type { FeedResult, SourceKey } from "@/types";
 import { LAYER_COLORS } from "./layerColors";
 
 interface LayerToggleProps {
   feeds: FeedResult[];
-  visibleLayers: Set<FeedKey>;
-  onToggle: (feed: FeedKey) => void;
+  visibleLayers: Set<SourceKey>;
+  onToggle: (feed: SourceKey) => void;
 }
 
 const STATUS_LABEL: Record<FeedResult["status"], string> = {

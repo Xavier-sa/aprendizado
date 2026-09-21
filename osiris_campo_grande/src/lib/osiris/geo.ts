@@ -24,6 +24,10 @@ export const CAMPO_GRANDE_CENTER: GeoPoint = { lat: CAMPO_GRANDE.latitude, lng: 
 
 export const DEFAULT_RADIUS_KM: number = CAMPO_GRANDE.defaultRadiusKm;
 
+/** Opções de raio expostas na interface (seção 7 do pedido) — o valor exibido nunca finge que o filtro foi feito pela OSIRIS; é sempre "encontrado pelo aplicativo em até Xkm". */
+export const RADIUS_OPTIONS_KM = [50, 100, 300, 600] as const;
+export type RadiusOptionKm = (typeof RADIUS_OPTIONS_KM)[number];
+
 /** Distância entre dois pontos em km (fórmula de haversine). */
 export function haversineKm(a: GeoPoint, b: GeoPoint): number {
   const R = 6371;

@@ -3,15 +3,16 @@
 import Image from "next/image";
 import { useState } from "react";
 import type { FeedScope } from "@/types";
-import type { CardImage } from "./cardsConfig";
+import type { ModuleImage } from "./modulesConfig";
 import { ScopeBadge } from "./ScopeBadge";
 
 export type CardStatus = "loading" | "ok" | "empty" | "error";
 
 export interface DataImageCardProps {
   title: string;
+  question: string;
   description: string;
-  image: CardImage;
+  image: ModuleImage;
   status: CardStatus;
   /** `null` enquanto `status === "loading"` — nunca mostramos "0" antes da primeira resposta real. */
   count: number | null;
@@ -31,13 +32,13 @@ function isSvg(src: string) {
 }
 
 /**
- * Card reutilizável para a seção "Explore os dados". Não é decorativo: o
- * botão sempre aciona `onAction` (liga a camada correspondente no mapa e
- * troca para a aba "Camadas" — ver `ExploreDataSection.tsx`). Nunca mostra
- * uma imagem quebrada — qualquer falha de carregamento cai num
- * placeholder visual consistente (seção "Estados" do pedido).
+ * Card de módulo reutilizável na home "Situação agora". Não é decorativo:
+ * o botão sempre aciona `onAction` (liga as camadas do módulo no mapa e
+ * troca para a aba "Camadas"). Nunca mostra uma imagem quebrada — qualquer
+ * falha de carregamento cai num placeholder visual consistente (seção
+ * "Estados" do pedido).
  */
-export function DataImageCard({ title, description, image, status, count, scope, actionLabel, onAction }: DataImageCardProps) {
+export function DataImageCard({ title, question, description, image, status, count, scope, actionLabel, onAction }: DataImageCardProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
   return (
@@ -76,8 +77,9 @@ export function DataImageCard({ title, description, image, status, count, scope,
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-2 p-3">
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-3">
         <h3 className="min-w-0 truncate text-sm font-semibold text-slate-900">{title}</h3>
+        <p className="text-xs italic text-slate-500">{question}</p>
         <p className="line-clamp-2 text-xs text-slate-500">{description}</p>
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-1">

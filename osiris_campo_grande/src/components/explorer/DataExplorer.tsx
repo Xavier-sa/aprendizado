@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { FeedKey, FeedResult, NormalizedRecord } from "@/types";
+import type { FeedResult, NormalizedRecord, SourceKey } from "@/types";
 
 interface DataExplorerProps {
   feeds: FeedResult[];
@@ -10,7 +10,7 @@ interface DataExplorerProps {
 }
 
 export function DataExplorer({ feeds, onSelect, selectedId }: DataExplorerProps) {
-  const [filter, setFilter] = useState<FeedKey | "all">("all");
+  const [filter, setFilter] = useState<SourceKey | "all">("all");
   const [search, setSearch] = useState("");
 
   const records = useMemo(() => {
@@ -28,7 +28,7 @@ export function DataExplorer({ feeds, onSelect, selectedId }: DataExplorerProps)
       <div className="flex flex-wrap gap-2">
         <select
           value={filter}
-          onChange={(e) => setFilter(e.target.value as FeedKey | "all")}
+          onChange={(e) => setFilter(e.target.value as SourceKey | "all")}
           className="min-w-0 flex-1 rounded-md border border-slate-300 px-2 py-1.5 text-sm"
         >
           <option value="all">Todas as categorias</option>

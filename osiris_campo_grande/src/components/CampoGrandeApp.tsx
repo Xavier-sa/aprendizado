@@ -3,11 +3,11 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import type { FeedKey, NormalizedRecord } from "@/types";
+import type { NormalizedRecord, SourceKey } from "@/types";
 import { useFeeds } from "@/components/dashboard/useFeeds";
 import { MetricsPanel } from "@/components/dashboard/MetricsPanel";
 import { FeedStatusList } from "@/components/dashboard/FeedStatusList";
-import { ExploreDataSection } from "@/components/dashboard/ExploreDataSection";
+import { SituacaoAgora } from "@/components/dashboard/SituacaoAgora";
 import { LayerToggle } from "@/components/map/LayerToggle";
 import { DataExplorer } from "@/components/explorer/DataExplorer";
 import { RecordDetail } from "@/components/explorer/RecordDetail";
@@ -25,7 +25,7 @@ const MapView = dynamic(() => import("@/components/map/MapView").then((mod) => m
 
 type Tab = "inicio" | "camadas" | "painel" | "fontes" | "explorar";
 
-const ALL_FEED_KEYS: FeedKey[] = [
+const ALL_SOURCE_KEYS: SourceKey[] = [
   "flights",
   "satellites",
   "weather",
@@ -39,17 +39,20 @@ const ALL_FEED_KEYS: FeedKey[] = [
   "sentinel",
   "conflicts",
   "air-quality",
+  "inmet-alerts",
 ];
 
 export function CampoGrandeApp() {
-  const { feeds, globalFeeds, regionDossier, health, center, generatedAt, loading, error } = useFeeds(DEFAULT_RADIUS_KM);
-  const [visibleLayers, setVisibleLayers] = useState<Set<FeedKey>>(() => new Set(ALL_FEED_KEYS));
+  const [radiusKm, setRadiusKm] = useState<number>(DEFAULT_RADIUS_KM);
+  const { feeds, globalFeeds, regionDossier, municipality, health, changeSummary, center, generatedAt, loading, error } =
+    useFeeds(radiusKm);
+  const [visibleLayers, setVisibleLayers] = useState<Set<SourceKey>>(() => new Set(ALL_SOURCE_KEYS));
   const [selectedRecord, setSelectedRecord] = useState<NormalizedRecord | null>(null);
   const [tab, setTab] = useState<Tab>("inicio");
 
   const effectiveCenter = center ?? CAMPO_GRANDE_CENTER;
 
-  const toggleLayer = (feed: FeedKey) => {
+  const toggleLayer = (feed: SourceKey) => {
     setVisibleLayers((prev) => {
       const next = new Set(prev);
       if (next.has(feed)) next.delete(feed);
@@ -63,14 +66,14 @@ export function CampoGrandeApp() {
     setTab("explorar");
   };
 
-  const handleExploreFeeds = (keys: FeedKey[]) => {
+  const handleExploreFeeds = (keys: SourceKey[]) => {
     setVisibleLayers((prev) => new Set([...prev, ...keys]));
     setTab("camadas");
   };
 
   const tabs: { key: Tab; label: string }[] = useMemo(
     () => [
-      { key: "inicio", label: "Início" },
+      { key: "inicio", label: "Situação" },
       { key: "camadas", label: "Camadas" },
       { key: "painel", label: "Painel" },
       { key: "fontes", label: "Fontes" },
@@ -87,18 +90,14 @@ export function CampoGrandeApp() {
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="min-w-0">
             <h1 className="text-lg font-semibold text-slate-900">OSIRIS Campo Grande</h1>
-            <p className="text-xs text-slate-500">
-              Inteligência de dados públicos e georreferenciados para Campo Grande/MS, a partir da{" "}
-              <a href="https://osirisai.live/docs" target="_blank" rel="noreferrer" className="underline">
-                API OSIRIS
-              </a>
-              .
-            </p>
+            <p className="text-xs text-slate-500">Observatório de dados e riscos para Campo Grande/MS e região.</p>
           </div>
           <StatusPill loading={loading} error={error} />
         </div>
         <p className="text-[11px] text-slate-400">
-          {loading ? "Carregando fontes…" : `${feeds.length + globalFeeds.length} fontes consultadas · ${registrosGeorreferenciados} registro(s) georreferenciado(s) na região`}
+          {loading
+            ? "Carregando fontes…"
+            : `${feeds.length + globalFeeds.length} fontes consultadas · ${registrosGeorreferenciados} registro(s) georreferenciado(s) em até ${radiusKm}km`}
         </p>
       </header>
 
@@ -106,7 +105,7 @@ export function CampoGrandeApp() {
         <div className="h-[45dvh] shrink-0 lg:h-auto lg:flex-1">
           <MapView
             center={effectiveCenter}
-            radiusKm={DEFAULT_RADIUS_KM}
+            radiusKm={radiusKm}
             feeds={feeds}
             visibleLayers={visibleLayers}
             onSelectRecord={handleSelect}
@@ -135,9 +134,13 @@ export function CampoGrandeApp() {
 
           <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-3">
             {tab === "inicio" && (
-              <ExploreDataSection
+              <SituacaoAgora
                 feeds={feeds}
                 regionDossier={regionDossier}
+                municipality={municipality}
+                changeSummary={changeSummary}
+                radiusKm={radiusKm}
+                onRadiusChange={setRadiusKm}
                 loading={loading}
                 onExploreFeeds={handleExploreFeeds}
                 onOpenPanel={() => setTab("painel")}
@@ -151,8 +154,9 @@ export function CampoGrandeApp() {
                 feeds={feeds}
                 globalFeeds={globalFeeds}
                 regionDossier={regionDossier}
+                municipality={municipality}
                 health={health}
-                radiusKm={DEFAULT_RADIUS_KM}
+                radiusKm={radiusKm}
                 generatedAt={generatedAt}
                 loading={loading}
               />
@@ -167,11 +171,10 @@ export function CampoGrandeApp() {
           </div>
 
           <footer className="shrink-0 border-t border-slate-200 px-3 py-2 text-center text-[11px] text-slate-400">
-            Dados e integrações via{" "}
-            <a href="https://osirisai.live" target="_blank" rel="noreferrer" className="underline">
-              OSIRIS
-            </a>{" "}
-            e respectivos provedores upstream · <Link href="/sobre" className="underline">Sobre o projeto</Link>
+            Dados e integrações via OSIRIS, INMET e IBGE e respectivos provedores upstream ·{" "}
+            <Link href="/sobre" className="underline">
+              Sobre o projeto
+            </Link>
           </footer>
         </aside>
       </div>

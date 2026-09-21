@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import type { RegionDossierResult } from "@/types";
+import type { MunicipalityResult, RegionDossierResult } from "@/types";
 import { CAMPO_GRANDE } from "@/lib/osiris/geo";
 import { ScopeBadge } from "./ScopeBadge";
 
 interface CampoGrandeHeroCardProps {
   regionDossier: RegionDossierResult | null;
+  municipality: MunicipalityResult | null;
+  radiusKm: number;
   totalRecordsInRegion: number | null;
   onAction: () => void;
 }
@@ -19,19 +21,21 @@ function str(obj: Record<string, unknown> | undefined, key: string): string | nu
 
 /**
  * Card de destaque para Campo Grande/MS. Separação deliberada (pedido
- * explícito) entre duas coisas que não podem se misturar:
+ * explícito) entre coisas que não podem se misturar:
  *
  * 1. "Região consultada" — o que NÓS definimos como área de busca
- *    (`CAMPO_GRANDE`, em src/lib/osiris/geo.ts). Isso é sempre verdadeiro,
- *    independente da OSIRIS responder algo ou não.
- * 2. "Enriquecimento fornecido pela OSIRIS" — o que o endpoint
- *    `/api/region-dossier` de fato devolveu para essas coordenadas. Quando
- *    populado, é conteúdo sobre o PAÍS/ESTADO (Brasil / Mato Grosso do
- *    Sul), nunca especificamente sobre o município — isso é dito de forma
- *    explícita, não escondido atrás de um card genérico "sobre o Brasil"
- *    como se fosse sobre a cidade.
+ *    (`CAMPO_GRANDE` + o raio escolhido pelo usuário). Isso é sempre
+ *    verdadeiro, independente de qualquer fonte externa responder algo.
+ * 2. "Identidade oficial (IBGE)" — hierarquia territorial real do
+ *    município, da fonte oficial de códigos territoriais do Brasil.
+ * 3. "Enriquecimento fornecido pela OSIRIS" — o que `/api/region-dossier`
+ *    de fato devolveu para essas coordenadas. Quando populado, é
+ *    conteúdo sobre o PAÍS/ESTADO (Brasil / Mato Grosso do Sul), nunca
+ *    especificamente sobre o município — isso é dito de forma explícita,
+ *    não escondido atrás de um card genérico "sobre o Brasil" como se
+ *    fosse sobre a cidade.
  */
-export function CampoGrandeHeroCard({ regionDossier, totalRecordsInRegion, onAction }: CampoGrandeHeroCardProps) {
+export function CampoGrandeHeroCard({ regionDossier, municipality, radiusKm, totalRecordsInRegion, onAction }: CampoGrandeHeroCardProps) {
   const [imageFailed, setImageFailed] = useState(false);
 
   const data = regionDossier?.data ?? undefined;
@@ -70,9 +74,15 @@ export function CampoGrandeHeroCard({ regionDossier, totalRecordsInRegion, onAct
         <div className="text-xs text-slate-600">
           <p className="font-medium text-slate-700">Região consultada</p>
           <p>
-            {CAMPO_GRANDE.latitude.toFixed(4)}, {CAMPO_GRANDE.longitude.toFixed(4)} · raio de {CAMPO_GRANDE.defaultRadiusKm} km
-            {totalRecordsInRegion !== null && ` · ${totalRecordsInRegion} registro(s) georreferenciado(s) na região agora`}
+            {CAMPO_GRANDE.latitude.toFixed(4)}, {CAMPO_GRANDE.longitude.toFixed(4)} · raio de {radiusKm} km escolhido nesta sessão
+            {totalRecordsInRegion !== null && ` · ${totalRecordsInRegion} registro(s) encontrado(s) pelo aplicativo nesse raio`}
           </p>
+          {municipality?.status === "ok" && municipality.data && (
+            <p className="mt-0.5 text-slate-500">
+              {municipality.data.nome} · {municipality.data.mesorregiao} · {municipality.data.uf} ({municipality.data.ufSigla}) —
+              identidade oficial (IBGE)
+            </p>
+          )}
         </div>
 
         <div className="rounded-md bg-slate-50 p-2.5 text-xs text-slate-600">

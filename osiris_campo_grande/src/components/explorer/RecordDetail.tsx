@@ -39,7 +39,11 @@ export function RecordDetail({ record, onClose }: RecordDetailProps) {
         <div>
           <dt className="text-xs text-slate-500">Coordenadas</dt>
           <dd className="text-slate-800">
-            {record.position ? `${record.position.lat.toFixed(4)}, ${record.position.lng.toFixed(4)}` : "não disponível"}
+            {record.position
+              ? `${record.position.lat.toFixed(4)}, ${record.position.lng.toFixed(4)}`
+              : record.geometry
+                ? "área (polígono) — ver contorno no mapa"
+                : "não disponível"}
           </dd>
         </div>
         <div>
@@ -65,7 +69,7 @@ export function RecordDetail({ record, onClose }: RecordDetailProps) {
           <p className="break-words">
             Provedor original (upstream): {record.provenance.upstreamSource}{" "}
             <span className="text-slate-400">
-              ({record.provenance.upstreamSourceOrigin === "payload" ? "declarado pela resposta" : "conforme documentação da OSIRIS"})
+              ({record.provenance.upstreamSourceOrigin === "payload" ? "declarado pela resposta" : "conforme documentação da fonte"})
             </span>
           </p>
         )}
