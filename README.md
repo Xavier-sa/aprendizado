@@ -48,3 +48,5 @@ index.html             # entrada da WX Academy
 O playground JavaScript legado usa `eval()` e deve ser usado somente com código de estudo confiável. A persistência é local e pode ser perdida ao limpar os dados do navegador. Ainda não há testes visuais com Playwright nem backend multiusuário.
 
 Leia [a auditoria](docs/AUDITORIA.md), [a arquitetura](docs/ARQUITETURA.md) e [o roadmap](docs/ROADMAP.md) antes de mudanças estruturais.
+
+Consulte também o [histórico de alterações](CHANGELOG.md) e abra `docs/evolucao.html` para visualizar a galeria comparativa das versões 1.0.0 e 2.0.0.

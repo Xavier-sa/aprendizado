@@ -1,5 +1,7 @@
 # Roadmap
 
+Versão atual documentada: **2.0.0**. Próxima evolução funcional sugerida: **2.1.0**.
+
 ## Fase 1 — diagnóstico e estabilização
 
 - [x] Auditoria técnica e pedagógica.

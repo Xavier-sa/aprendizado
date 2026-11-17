@@ -1,0 +1,61 @@
+{
+  "capturedAt": "2026-11-17T02:29:28.431Z",
+  "source": "public-reference",
+  "requestedUrl": "https://cronogramasemanal.wasxtech.com.br/",
+  "views": {
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalUrl": "https://cronogramasemanal.wasxtech.com.br/",
+      "title": "Cronograma de Estudos - Wellington Xavier",
+      "status": 200,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 390
+    },
+    "tablet": {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "finalUrl": "https://cronogramasemanal.wasxtech.com.br/",
+      "title": "Cronograma de Estudos - Wellington Xavier",
+      "status": 200,
+      "consoleErrors": [],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 768
+    },
+    "desktop": {
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "finalUrl": "https://cronogramasemanal.wasxtech.com.br/",
+      "title": "Cronograma de Estudos - Wellington Xavier",
+      "status": 200,
+      "consoleErrors": [],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 1366
+    },
+    "desktop-large": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "finalUrl": "https://cronogramasemanal.wasxtech.com.br/",
+      "title": "Cronograma de Estudos - Wellington Xavier",
+      "status": 200,
+      "consoleErrors": [],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 1920
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { glossary, quiz, schedule, tracks } from "../app/content/fundamentos.js";
 
 const html = readFileSync("index.html", "utf8");
@@ -14,4 +15,10 @@ assert.equal(schedule.length, 7, "O cronograma deve cobrir sete dias");
 assert.ok(glossary.length >= 37, "O glossário inicial está incompleto");
 for (const path of ["app/assets/css/style.css", "app/assets/js/main.js", "app/content/fundamentos.js", "arquivos/JAVASCRIPT.html", "arquivos/SQL.html", "arquivos/github-foundations.html"]) assert.ok(existsSync(path), `Referência ausente: ${path}`);
 for (const item of quiz) { assert.equal(item.options.length, 4); assert.ok(item.answer >= 0 && item.answer < item.options.length); assert.ok(item.explanation.length > 20); }
+const galleryPath = "docs/evolucao.html";
+const gallery = readFileSync(galleryPath, "utf8");
+const imageLinks = [...gallery.matchAll(/<img\s+src="([^"]+)"/g)].map((match) => resolve(dirname(galleryPath), match[1]));
+assert.equal(imageLinks.length, 6, "A galeria deve exibir três capturas por versão");
+for (const image of imageLinks) assert.ok(existsSync(image), `Imagem documental ausente: ${image}`);
+assert.equal(JSON.parse(readFileSync("package.json", "utf8")).version, "2.0.0", "Versão do projeto inconsistente");
 console.log(`Validação concluída: ${tracks.length} trilhas, ${quiz.length} questões, ${glossary.length} termos.`);

@@ -26,3 +26,28 @@ test("menu mobile e glossário são operáveis", async ({ page }) => {
   await expect(page.locator("#glossary-grid .term-card").first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "HTTP Hypertext Transfer Protocol", exact: true })).toBeVisible();
 });
+
+test("progresso, cronograma, quiz e modo escuro funcionam", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Ativar modo escuro" }).click();
+  await expect(page.locator("body")).toHaveClass(/dark/);
+  await page.locator(".day-card select").first().selectOption("complete");
+  await expect(page.locator("#overall-percent")).toHaveText("13%");
+  await page.getByRole("button", { name: "Marcar aula como concluída" }).click();
+  await expect(page.locator("#overall-percent")).toHaveText("25%");
+  await page.locator('#lesson-quiz input[value="1"]').check();
+  await page.getByRole("button", { name: "Responder e continuar" }).click();
+  await expect(page.locator("#quiz-feedback")).toContainText("Correto!");
+  await page.reload();
+  await expect(page.locator("body")).toHaveClass(/dark/);
+  await expect(page.locator(".day-card select").first()).toHaveValue("complete");
+  await expect(page.locator("#overall-percent")).toHaveText("25%");
+});
+
+test("galeria histórica carrega todas as evidências", async ({ page }) => {
+  await page.goto("/docs/evolucao.html");
+  await expect(page).toHaveTitle("Evolução da WX Academy");
+  await expect(page.locator("img")).toHaveCount(6);
+  const images = await page.locator("img").evaluateAll((items) => items.map((item) => ({ complete: item.complete, width: item.naturalWidth })));
+  expect(images.every((item) => item.complete && item.width > 0)).toBeTruthy();
+});

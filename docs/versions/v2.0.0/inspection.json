@@ -1,0 +1,61 @@
+{
+  "capturedAt": "2026-11-17T02:29:32.241Z",
+  "source": "local-commit-7863defb",
+  "requestedUrl": "http://127.0.0.1:4173/",
+  "views": {
+    "mobile": {
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "finalUrl": "http://127.0.0.1:4173/",
+      "title": "WX Academy — Do Zero ao Desenvolvedor",
+      "status": 200,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 390
+    },
+    "tablet": {
+      "viewport": {
+        "width": 768,
+        "height": 1024
+      },
+      "finalUrl": "http://127.0.0.1:4173/",
+      "title": "WX Academy — Do Zero ao Desenvolvedor",
+      "status": 200,
+      "consoleErrors": [],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 768
+    },
+    "desktop": {
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "finalUrl": "http://127.0.0.1:4173/",
+      "title": "WX Academy — Do Zero ao Desenvolvedor",
+      "status": 200,
+      "consoleErrors": [],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 1366
+    },
+    "desktop-large": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "finalUrl": "http://127.0.0.1:4173/",
+      "title": "WX Academy — Do Zero ao Desenvolvedor",
+      "status": 200,
+      "consoleErrors": [],
+      "requestFailures": [],
+      "responseErrors": [],
+      "documentWidth": 1920
+    }
+  }
+}

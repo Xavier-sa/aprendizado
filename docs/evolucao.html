@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evolução da WX Academy</title>
+  <style>
+    :root{--lime:#b7f52a;--ink:#17212b;--muted:#5f6b76;--line:#dfe5dc;--paper:#f4f6f3}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 system-ui,sans-serif}main,header{width:min(1120px,calc(100% - 32px));margin:auto}header{padding:72px 0 36px}h1{font-size:clamp(2.5rem,7vw,5.5rem);line-height:1;letter-spacing:-.06em;margin:.2em 0}h2{font-size:clamp(1.7rem,4vw,2.7rem)}.eyebrow{color:#678f00;font-size:.75rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.notice,.version,.compare{background:#fff;border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,42px);margin:24px 0}.notice{border-left:5px solid var(--lime)}.timeline{border-left:3px solid var(--lime);padding-left:28px}.version{position:relative}.version:before{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:var(--lime);left:-37px;top:40px}.meta{color:var(--muted)}.gallery{display:grid;grid-template-columns:1fr 1fr;gap:18px}.shot{margin:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff}.shot img{display:block;width:100%;height:430px;object-fit:cover;object-position:top}.shot figcaption{padding:12px;font-weight:750}.wide{grid-column:1/-1}.wide img{height:auto;max-height:650px}.changes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.changes div{padding:18px;border-radius:12px;background:#f2f5ed}.compare{overflow:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:14px;border-bottom:1px solid var(--line)}th{background:#edf4dd}code{overflow-wrap:anywhere}footer{padding:40px;text-align:center;color:var(--muted)}@media(max-width:720px){.gallery,.changes{grid-template-columns:1fr}.wide{grid-column:auto}.shot img{height:340px}}
+  </style>
+</head>
+<body>
+  <header><p class="eyebrow">Registro histórico · 2025–2026</p><h1>Evolução da WX Academy</h1><p>Do cronograma semanal a uma base educacional progressiva, preservando funcionalidades e evidências verificáveis.</p></header>
+  <main>
+    <aside class="notice"><strong>Limite histórico:</strong> as capturas V1 foram recuperadas do site publicado em 16/11/2026. Elas representam o estado público encontrado nessa data, não uma fotografia produzida no dia do commit original.</aside>
+    <section class="timeline" aria-label="Linha do tempo">
+      <article class="version">
+        <p class="eyebrow">V1.0.0 · referência original</p><h2>Cronograma semanal</h2><p class="meta">Commit <code>f1eb9e0d</code> · 10/09/2026 · HTML, CSS e JavaScript</p>
+        <p>Sete cartões organizavam disciplinas e tarefas por dia, com quizzes, cores temáticas e ligação ao simulado GitHub Foundations.</p>
+        <div class="gallery"><figure class="shot"><img src="versions/v1.0.0/screenshots/mobile.png" alt="Cronograma original em celular"><figcaption>Mobile · 390×844</figcaption></figure><figure class="shot"><img src="versions/v1.0.0/screenshots/tablet.png" alt="Cronograma original em tablet"><figcaption>Tablet · 768×1024</figcaption></figure><figure class="shot wide"><img src="versions/v1.0.0/screenshots/desktop.png" alt="Cronograma original em desktop"><figcaption>Desktop · 1366×768</figcaption></figure></div>
+      </article>
+      <article class="version">
+        <p class="eyebrow">V2.0.0 · primeira base Academy</p><h2>Do cronograma à plataforma</h2><p class="meta">Commit <code>7863defb</code> · 16/11/2026 · ES Modules, localStorage, Node e Playwright</p>
+        <p>A nova entrada introduz trilhas, aula completa, quiz, glossário, progresso local, tema escuro e navegação responsiva, mantendo os laboratórios anteriores.</p>
+        <div class="gallery"><figure class="shot"><img src="versions/v2.0.0/screenshots/mobile.png" alt="WX Academy em celular"><figcaption>Mobile · 390×844</figcaption></figure><figure class="shot"><img src="versions/v2.0.0/screenshots/tablet.png" alt="WX Academy em tablet"><figcaption>Tablet · 768×1024</figcaption></figure><figure class="shot wide"><img src="versions/v2.0.0/screenshots/desktop.png" alt="WX Academy em desktop"><figcaption>Desktop · 1366×768</figcaption></figure></div>
+      </article>
+    </section>
+    <section class="compare"><p class="eyebrow">Antes e depois</p><h2>Comparação V1 × V2</h2><table><thead><tr><th>Área</th><th>V1.0.0</th><th>V2.0.0</th></tr></thead><tbody><tr><th>Objetivo</th><td>Planejamento semanal</td><td>Aprendizagem progressiva</td></tr><tr><th>Conteúdo</th><td>Tarefas e quizzes</td><td>Trilhas, aula, prática, quiz e glossário</td></tr><tr><th>Estado</th><td>Não persistido</td><td>Progresso no navegador</td></tr><tr><th>Interface</th><td>Cartões responsivos</td><td>Navegação, temas e componentes acessíveis</td></tr><tr><th>Qualidade</th><td>Sem automação</td><td>Testes Node, Playwright e CI</td></tr></tbody></table></section>
+    <section class="version"><p class="eyebrow">Melhorias verificadas</p><h2>O que mudou</h2><div class="changes"><div><strong>Estrutura</strong><br>Conteúdo modular e documentação técnica.</div><div><strong>Experiência</strong><br>Menu mobile, tema escuro e progresso persistente.</div><div><strong>Confiança</strong><br>Nove testes de navegador e quatro capturas por versão.</div></div></section>
+    <section class="version"><p class="eyebrow">Histórico selecionado</p><h2>Commits de referência</h2><ul><li><code>028d6828</code> — ideia da branch cronograma.</li><li><code>08de8cb5</code> — organização inicial em MVC.</li><li><code>98bf08c9</code> — expansão do conteúdo GitHub.</li><li><code>9b16cd8d</code> — responsividade mobile.</li><li><code>f1eb9e0d</code> — estado de referência V1.</li><li><code>7863defb</code> — primeira base WX Academy V2.</li></ul></section>
+  </main>
+  <footer>WX Academy · registro documental · nenhuma publicação realizada nesta etapa</footer>
+</body>
+</html>
