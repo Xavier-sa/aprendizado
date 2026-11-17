@@ -1,6 +1,6 @@
 # Próximos passos
 
-Marco atual: **2.0.0**. Não criar nova versão apenas por ajustes documentais.
+Marco atual: **2.0.1**. Não criar nova versão apenas por ajustes documentais.
 
 1. Revisar manualmente as capturas geradas nas sete resoluções-alvo.
 2. Ampliar o Playwright para os laboratórios legados.

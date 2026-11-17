@@ -51,3 +51,12 @@ test("galeria histórica carrega todas as evidências", async ({ page }) => {
   const images = await page.locator("img").evaluateAll((items) => items.map((item) => ({ complete: item.complete, width: item.naturalWidth })));
   expect(images.every((item) => item.complete && item.width > 0)).toBeTruthy();
 });
+
+test("favicon WX está declarado e acessível", async ({ page, request }) => {
+  await page.goto("/");
+  const href = await page.locator('link[rel="icon"]').getAttribute("href");
+  expect(href).toBe("app/assets/icons/favicon.svg");
+  const response = await request.get(`/${href}`);
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toContain("image/svg+xml");
+});

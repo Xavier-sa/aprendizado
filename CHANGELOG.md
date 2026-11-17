@@ -8,6 +8,17 @@ Este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/). A
 
 - Próxima evolução funcional compatível, sugerida como `2.1.0`.
 
+## [2.0.1] - 2026-11-17
+
+### Corrigido
+
+- Adicionado favicon SVG padrão com a identidade visual WX.
+- Configurado o servidor local para responder SVG com o tipo de conteúdo correto.
+
+### Validação
+
+- Link do favicon validado estruturalmente e por requisição HTTP automatizada.
+
 ## [2.0.0] - 2026-11-16
 
 ### Adicionado

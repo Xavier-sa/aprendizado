@@ -1,5 +1,10 @@
 # Histórico
 
+## 2026-11-17 — Favicon WX 2.0.1
+
+- Adicionado favicon SVG padrão seguindo a identidade visual da plataforma.
+- Incluída validação automática do arquivo e do tipo de conteúdo.
+
 ## 2026-11-16 — Registro histórico e versionamento
 
 - Formalizadas as referências semânticas 1.0.0 e 2.0.0 sem alterar commits antigos.
