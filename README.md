@@ -1,45 +1,50 @@
-# 📚 Central de Estudos & Certificações Web
+# WX Academy — Do Zero ao Desenvolvedor
 
-Repositório dedicado ao planejamento semanal, consolidação de conceitos de engenharia de software e preparação intensiva para certificações internacionais de tecnologia.
+Plataforma educacional estática para aprender programação de forma progressiva, com aulas curtas, prática, quizzes, glossário e acompanhamento local.
 
----
+## Executar localmente
 
-## 🎯 Foco Principal: Certificação GitHub Foundations
+Requer Node.js 20 ou superior.
 
-Este repositório inclui um **Simulador Interativo** voltado para o exame **GitHub Foundations (GH-900)**. O material usa português claro e preserva os termos técnicos em inglês cobrados no ecossistema GitHub:
+```bash
+npm start
+```
 
-* **Questões situacionais:** Treino de interpretação, não apenas memorização.
-* **Feedback pedagógico:** Explica a resposta correta e a pegadinha de cada questão.
-* **Diagnóstico por domínio:** Mostra os assuntos que precisam de reforço.
+Abra `http://localhost:4173`. Não é necessário instalar dependências para executar ou testar.
 
-### Domínios Cobertos pelo Simulador (GH-900, guia de janeiro de 2026)
+## Verificações
 
-| Domínio | Tópico Oficial | Peso no Exame |
-| :---: | :--- | :---: |
-| **01** | Git e GitHub básicos | 25–30% |
-| **02** | Repositórios | 10–15% |
-| **03** | Colaboração | 10–15% |
-| **04** | Práticas modernas | 10–15% |
-| **05** | GitHub Projects | 5–10% |
-| **06** | Privacidade, segurança e administração | 10–15% |
-| **07** | Comunidade GitHub | 5–10% |
+```bash
+npm run check
+npm test
+npm run test:e2e
+```
 
-O simulador oferece 38 questões autorais, modo prova ponderado, revisão rápida,
-treino por domínio, diagnóstico de desempenho e caderno de erros.
-
----
-
-## 🗺️ Mapa do Repositório
+## Estrutura
 
 ```text
-├── index.html                    # Dashboard principal com cronograma semanal
-├── app/
-│   └── assets/
-│       ├── css/style.css         # Estilos globais e componentes visuais
-│       └── js/main.js            # Lógica do cronograma diário
-├── arquivos/
-│   ├── github-foundations.html   # Simulador autoral alinhado ao GH-900
-│   ├── JAVASCRIPT.html           # Playgrounds interativos de JS
-│   ├── SQL.html                  # Simulador de consultas DDL/DML
-│   └── MVC/                      # Treino arcade estilo quiz
-└── CONTRIBUTING.md               # Diretrizes de contribuição e governança
+app/
+  assets/             # CSS e comportamento da plataforma
+  content/            # conteúdo educacional estruturado
+arquivos/             # laboratórios legados preservados
+agents/               # instruções dos agentes Codex
+docs/                 # auditoria, arquitetura e evolução
+scripts/              # servidor local
+tests/                # validações automatizadas
+index.html             # entrada da WX Academy
+```
+
+## Funcionalidades atuais
+
+- Sete trilhas planejadas e primeira aula de fundamentos.
+- Quiz de cinco questões com correção comentada.
+- Cronograma semanal e progresso persistidos em `localStorage`.
+- Glossário pesquisável com 37 termos.
+- Tema claro/escuro, menu mobile e navegação por teclado.
+- Laboratórios de JavaScript, SQL e GitHub Foundations preservados.
+
+## Limitações conhecidas
+
+O playground JavaScript legado usa `eval()` e deve ser usado somente com código de estudo confiável. A persistência é local e pode ser perdida ao limpar os dados do navegador. Ainda não há testes visuais com Playwright nem backend multiusuário.
+
+Leia [a auditoria](docs/AUDITORIA.md), [a arquitetura](docs/ARQUITETURA.md) e [o roadmap](docs/ROADMAP.md) antes de mudanças estruturais.

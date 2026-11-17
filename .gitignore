@@ -1,0 +1,10 @@
+.claude/
+.DS_Store
+Thumbs.db
+node_modules/
+coverage/
+playwright-report/
+test-results/
+*.log
+.env*
+!.env.example

@@ -1,0 +1,19 @@
+{
+  "name": "wx-academy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Plataforma educacional estática e progressiva da WX Academy.",
+  "scripts": {
+    "start": "node scripts/server.mjs",
+    "check": "node --check app/assets/js/main.js && node --check app/content/fundamentos.js",
+    "test": "node tests/validate.mjs",
+    "test:e2e": "playwright test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}

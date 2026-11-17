@@ -1,29 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronograma de Estudos - Wellington Xavier</title>
-    <link rel="stylesheet" href="app\assets\css\style.css">
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="WX Academy — trilhas práticas para aprender programação do zero.">
+  <meta name="theme-color" content="#b7f52a">
+  <title>WX Academy — Do Zero ao Desenvolvedor</title>
+  <link rel="stylesheet" href="app/assets/css/style.css">
 </head>
-
 <body>
-    <h1>Cronograma de Estudos - Wellington Xavier</h1>
-    <div class="cronograma" id="cronograma"></div>
-
-    <div class="footer">
-        <p>Atualizado automaticamente para o ano <span id="ano"></span></p>
-        <p style="margin-top: 8px; font-style: italic; color: #95a5a6;">
-            🚧 Este site está em fase de aprendizado e implementação.
-            Primeiro pratico e ajusto tudo para meu uso pessoal — depois farei o deploy completo para todos poderem
-            acessar.
-            <br>— <strong>Wellington Xavier</strong>
-        </p>
-    </div>
-    <script src="/app/assets/js/main.js"></script> 
-    
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <a class="brand" href="#inicio" aria-label="WX Academy — início"><span class="brand-mark" aria-hidden="true">WX</span><span>Academy<small>Do zero ao desenvolvedor</small></span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-principal">Menu</button>
+    <nav id="menu-principal" class="main-nav" aria-label="Navegação principal"><a href="#trilhas">Trilhas</a><a href="#aula">Aula</a><a href="#cronograma">Cronograma</a><a href="#glossario">Glossário</a><a href="#laboratorio">Laboratório</a></nav>
+    <button id="theme-toggle" class="icon-button" type="button" aria-label="Ativar modo escuro" title="Alternar tema">◐</button>
+  </header>
+  <main id="conteudo">
+    <section id="inicio" class="hero section-shell" aria-labelledby="hero-title">
+      <div class="hero-copy"><p class="eyebrow">WX Academy · aprendizado progressivo</p><h1 id="hero-title">Programação explicada <span>desde o começo.</span></h1><p class="hero-text">Uma rota prática para compreender lógica, ferramentas e desenvolvimento web sem pular fundamentos.</p><div class="hero-actions"><a class="button button-primary" href="#aula">Começar primeira aula</a><a class="button button-secondary" href="#trilhas">Explorar trilhas</a></div><p class="local-note">Seu progresso fica salvo somente neste navegador.</p></div>
+      <aside class="progress-card" aria-labelledby="progress-title"><div class="progress-heading"><div><p class="kicker">Sua jornada</p><h2 id="progress-title">Visão geral</h2></div><strong id="overall-percent">0%</strong></div><div class="progress-track" aria-hidden="true"><span id="overall-bar"></span></div><dl class="stats"><div><dt>Aulas concluídas</dt><dd id="completed-count">0</dd></div><div><dt>Quizzes realizados</dt><dd id="quiz-count">0</dd></div><div><dt>Próximo passo</dt><dd>Algoritmos</dd></div></dl></aside>
+    </section>
+    <section id="trilhas" class="section-shell section-block" aria-labelledby="tracks-title"><div class="section-heading"><div><p class="eyebrow">Mapa de aprendizagem</p><h2 id="tracks-title">Sete níveis, uma direção clara</h2></div><p>Comece pelo essencial. Os níveis avançados ficam disponíveis como mapa, sem bloquear sua prática inicial.</p></div><div id="track-grid" class="track-grid"></div></section>
+    <section id="aula" class="lesson-section section-block" aria-labelledby="lesson-title"><div class="section-shell lesson-layout"><aside class="lesson-index" aria-label="Conteúdo da aula"><p class="kicker">Nível 1 · Fundamentos</p><h2>Primeira aula</h2><nav id="lesson-nav"></nav></aside><article class="lesson-card"><header class="lesson-header"><span class="status-badge">Aula 01</span><p class="eyebrow">Fundamentos absolutos</p><h2 id="lesson-title">O que é programação?</h2><p>Entenda como instruções organizadas transformam um problema em uma solução executável.</p><div class="lesson-meta"><span>⏱ 20 minutos</span><span>◆ Iniciante</span><span>Pré-requisito: nenhum</span></div></header><div id="lesson-content"></div><section class="quiz-panel" aria-labelledby="quiz-title"><div class="quiz-heading"><div><p class="kicker">Verificação rápida</p><h3 id="quiz-title">Quiz de 5 questões</h3></div><span id="quiz-progress">1 de 5</span></div><form id="lesson-quiz"></form><div id="quiz-feedback" class="quiz-feedback" role="status" aria-live="polite"></div></section><footer class="lesson-footer"><button id="complete-lesson" class="button button-primary" type="button">Marcar aula como concluída</button><p>Próximo conteúdo recomendado: <strong>Algoritmos e pseudocódigo</strong></p></footer></article></div></section>
+    <section id="cronograma" class="section-shell section-block" aria-labelledby="schedule-title"><div class="section-heading"><div><p class="eyebrow">Rotina sustentável</p><h2 id="schedule-title">Cronograma semanal</h2></div><p>Altere o status de cada dia conforme avança. As escolhas são persistidas localmente.</p></div><div id="schedule-grid" class="schedule-grid"></div></section>
+    <section id="glossario" class="glossary-section section-block" aria-labelledby="glossary-title"><div class="section-shell"><div class="section-heading"><div><p class="eyebrow">Sem siglas misteriosas</p><h2 id="glossary-title">Glossário de tecnologia</h2></div><label class="search-field"><span>Pesquisar termo</span><input id="glossary-search" type="search" placeholder="Ex.: API, HTTP, Git..." autocomplete="off"></label></div><p id="glossary-result-count" class="result-count" aria-live="polite"></p><div id="glossary-grid" class="glossary-grid"></div></div></section>
+    <section id="laboratorio" class="section-shell section-block" aria-labelledby="lab-title"><div class="section-heading"><div><p class="eyebrow">Pratique fazendo</p><h2 id="lab-title">Laboratórios preservados</h2></div><p>Os simuladores existentes continuam disponíveis enquanto a plataforma evolui.</p></div><div class="lab-grid"><a class="lab-card accent-js" href="arquivos/JAVASCRIPT.html"><span>JS</span><h3>JavaScript interativo</h3><p>Variáveis, funções, arrays, DOM e playground.</p><strong>Abrir laboratório →</strong></a><a class="lab-card accent-sql" href="arquivos/SQL.html"><span>SQL</span><h3>Banco de dados</h3><p>DDL, DML, consultas e simulador guiado.</p><strong>Abrir laboratório →</strong></a><a class="lab-card accent-git" href="arquivos/github-foundations.html"><span>GH</span><h3>GitHub Foundations</h3><p>Simulado autoral por domínios para o GH-900.</p><strong>Abrir simulador →</strong></a></div></section>
+  </main>
+  <footer class="site-footer"><div><span class="brand-mark" aria-hidden="true">WX</span><p><strong>WX Academy</strong><br>Aprender, praticar, evoluir.</p></div><p>Projeto educacional em evolução · <span id="ano"></span> · Wellington Xavier</p></footer>
+  <noscript>Ative o JavaScript para usar quizzes, progresso e pesquisa.</noscript>
+  <script type="module" src="app/assets/js/main.js"></script>
 </body>
-
 </html>
