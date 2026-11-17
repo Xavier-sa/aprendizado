@@ -8,3 +8,6 @@ test-results/
 *.log
 .env*
 !.env.example
+
+# Resíduos locais do FinanceBot não pertencem à branch cronograma.
+/bot_wasxtech_finance/
