@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1018">
+  <title>Meu Desafio Financeiro</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Desafio financeiro</p>
+        <h1>Minha meta de <span id="metaTitulo">R$ {{ "{:,.2f}".format(meta).replace(",", "X").replace(".", ",").replace("X", ".") }}</span></h1>
+        <p class="subtitle">A tabela calcula a quantidade necessária e sempre cobre a meta.</p>
+      </div>
+      <div class="top-actions">
+        <button class="secondary" id="editGoal" type="button">Alterar meta</button>
+        <button class="icon-button" id="themeButton" type="button" aria-label="Alternar brilho">◐</button>
+      </div>
+    </header>
+
+    <section class="summary" aria-label="Resumo">
+      <article>
+        <span>Depositado</span>
+        <strong id="totalDepositado">R$ 0,00</strong>
+      </article>
+      <article>
+        <span>Falta guardar</span>
+        <strong id="restante">R$ 0,00</strong>
+      </article>
+      <article>
+        <span>Concluído</span>
+        <strong id="concluidos">0 / {{ quantidade }}</strong>
+      </article>
+      <div class="progress-track"><div id="progressBar"></div></div>
+    </section>
+
+    <section class="grid-card">
+      <div class="grid-header">
+        <div>
+          <h2>Depósitos</h2>
+          <p>Clique em um valor para registrar ou editar.</p>
+        </div>
+        <div class="filters" aria-label="Filtrar depósitos">
+          <button class="filter active" type="button" data-filter="todos">Todos</button>
+          <button class="filter" type="button" data-filter="pendentes">Pendentes</button>
+          <button class="filter" type="button" data-filter="concluidos">Concluídos</button>
+        </div>
+      </div>
+      <div class="grid" id="depositGrid"></div>
+    </section>
+  </main>
+
+  <dialog id="depositModal">
+    <form id="depositForm" method="dialog">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Depósito</p>
+          <h2 id="modalTitle">Número 1</h2>
+        </div>
+        <button class="icon-button" id="closeModal" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <label>Valor sugerido
+        <input id="valor" name="valor" type="number" min="0.01" step="0.01" required>
+      </label>
+      <label>Banco de destino
+        <input id="banco" name="banco" type="text" placeholder="Ex.: Nubank" required>
+      </label>
+      <label>Método
+        <select id="metodo" name="metodo" required>
+          <option value="Pix">Pix</option>
+          <option value="Depósito bancário">Depósito bancário</option>
+          <option value="TED/Transferência">TED/Transferência</option>
+        </select>
+      </label>
+      <label id="detailsLabel">Chave Pix / dados
+        <input id="detalhes" name="detalhes" type="text" placeholder="CPF, chave, agência ou conta">
+      </label>
+      <label>Data
+        <input id="data" name="data" type="date" required>
+      </label>
+
+      <div class="modal-actions">
+        <button class="danger" id="removeDeposit" type="button">Remover</button>
+        <button class="primary" type="submit">Salvar depósito</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="goalModal">
+    <form id="goalForm" method="dialog">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Objetivo</p>
+          <h2>Defina sua meta</h2>
+        </div>
+        <button class="icon-button" id="closeGoalModal" type="button" aria-label="Fechar">×</button>
+      </div>
+      <p class="form-help">Calcularemos a menor tabela sequencial cuja soma alcance ou ultrapasse esse valor.</p>
+      <label>Valor da meta
+        <input id="goalValue" name="meta" type="number" min="0.01" step="0.01" required>
+      </label>
+      <p class="calculation-preview" id="calculationPreview"></p>
+      <div class="modal-actions">
+        <button class="primary" type="submit">Atualizar tabela</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>window.APP_CONFIG = {{ {"meta": meta, "quantidade": quantidade}|tojson }};</script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

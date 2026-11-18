@@ -1,0 +1,13 @@
+{
+  "meta": 36000.0,
+  "depositos": {
+    "1": {
+      "numero": 1,
+      "valor": 1.0,
+      "banco": "Banco Teste",
+      "metodo": "Depósito bancário",
+      "detalhes": "123456789",
+      "data": "2026-11-18"
+    }
+  }
+}
