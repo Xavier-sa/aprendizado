@@ -4,6 +4,14 @@ Este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/). A
 
 ## [Unreleased]
 
+### Corrigido
+
+- Adicionada versão à URL do CSS principal para invalidar cópias antigas mantidas por navegador ou CDN após uma publicação.
+
+### Validação
+
+- Incluída verificação estrutural da URL versionada da folha de estilos.
+
 ### Planejado
 
 - Próxima evolução funcional compatível, sugerida como `2.1.0`.

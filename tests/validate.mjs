@@ -9,6 +9,7 @@ for (const id of requiredIds) assert.match(html, new RegExp(`id=["']${id}["']`),
 assert.match(html, /lang="pt-BR"/);
 assert.match(html, /<meta name="viewport"/);
 assert.match(html, /class="skip-link"/);
+assert.match(html, /rel="stylesheet" href="app\/assets\/css\/style\.css\?v=2\.0\.1"/, "CSS principal deve invalidar caches de versões anteriores");
 assert.match(html, /rel="icon" href="app\/assets\/icons\/favicon\.svg"/);
 assert.ok(existsSync("app/assets/icons/favicon.svg"), "Favicon WX ausente");
 assert.equal(tracks.length, 7, "O catálogo deve ter sete níveis");

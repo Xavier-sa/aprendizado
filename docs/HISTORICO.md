@@ -1,5 +1,12 @@
 # Histórico
 
+## 2026-11-17 — Correção do CSS publicado
+
+- Confirmado que HTML e CSS publicados respondem com status 200 e tipos de conteúdo corretos.
+- Confirmado que a folha de estilos no servidor é idêntica ao arquivo do repositório.
+- Versionada a URL do CSS principal para evitar que navegador ou CDN reutilize uma cópia anterior.
+- Nenhum deploy foi realizado nesta etapa.
+
 ## 2026-11-17 — Favicon WX 2.0.1
 
 - Adicionado favicon SVG padrão seguindo a identidade visual da plataforma.
