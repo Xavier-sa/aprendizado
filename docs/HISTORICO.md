@@ -1,5 +1,13 @@
 # Histórico
 
+## 2026-11-18 — Consistência dos módulos publicados
+
+- Comparados em bytes o HTML, o CSS e os módulos JavaScript locais e publicados; os quatro arquivos estavam idênticos.
+- Identificado nas capturas que componentes dinâmicos não eram renderizados enquanto conteúdo legado aparecia no cronograma, comportamento compatível com JavaScript antigo mantido em cache.
+- Versionadas as URLs do JavaScript principal e do módulo de conteúdo.
+- Identificado que a hospedagem entregava `.js` como `application/x-javascript`; adicionada configuração Apache para responder `application/javascript` e permitir a execução dos módulos ES.
+- Nenhum deploy foi realizado nesta etapa.
+
 ## 2026-11-17 — Correção do CSS publicado
 
 - Confirmado que HTML e CSS publicados respondem com status 200 e tipos de conteúdo corretos.

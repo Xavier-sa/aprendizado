@@ -7,10 +7,14 @@ Este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/). A
 ### Corrigido
 
 - Adicionada versão à URL do CSS principal para invalidar cópias antigas mantidas por navegador ou CDN após uma publicação.
+- Adicionada versão às URLs do JavaScript principal e do conteúdo para impedir a combinação de HTML novo com módulos antigos em cache.
+- Configurada a hospedagem Apache para entregar arquivos `.js` como `application/javascript`, permitindo a execução dos módulos ES.
 
 ### Validação
 
 - Incluída verificação estrutural da URL versionada da folha de estilos.
+- Comparados em bytes HTML, CSS e módulos locais com os arquivos entregues pela hospedagem.
+- Confirmada em navegador a renderização local de 7 trilhas, 5 seções de aula, 7 dias e 37 termos, sem erros de console.
 
 ### Planejado
 

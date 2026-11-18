@@ -1,0 +1,4 @@
+# ES modules require a JavaScript MIME type in browsers.
+<IfModule mod_mime.c>
+  AddType application/javascript .js
+</IfModule>
