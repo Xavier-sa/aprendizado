@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Diário de Acesso</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333333;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .campo {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555555;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #007bff;
+            outline: 2px solid rgba(0, 123, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            border-radius: 4px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        button:disabled {
+            background-color: #7caa86;
+            cursor: wait;
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+        }
+
+        .sucesso {
+            background-color: #d4edda;
+            color: #155724;
+            display: block !important;
+        }
+
+        .erro {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>Registro de Acesso Diário</h1>
+
+        <form id="formularioAcesso">
+            <div class="campo">
+                <label for="nome">Nome completo:</label>
+                <input type="text" id="nome" required placeholder="Digite o nome completo">
+            </div>
+
+            <div class="campo">
+                <label for="documento">Documento (RG/CPF):</label>
+                <input type="text" id="documento" required placeholder="Digite o documento">
+            </div>
+
+            <div class="campo">
+                <label for="tipoAcesso">Tipo de acesso:</label>
+                <select id="tipoAcesso" required>
+                    <option value="A pé">A pé</option>
+                    <option value="Veículo">Veículo</option>
+                </select>
+            </div>
+
+            <div class="campo" id="campoPlaca" hidden>
+                <label for="placa">Placa do veículo:</label>
+                <input type="text" id="placa" placeholder="Ex.: ABC-1D23">
+            </div>
+
+            <button type="submit" id="botaoRegistrar">Registrar acesso</button>
+        </form>
+
+        <div id="mensagem" role="status" aria-live="polite"></div>
+    </main>
+
+    <script>
+        const selectTipoAcesso = document.getElementById('tipoAcesso');
+        const divCampoPlaca = document.getElementById('campoPlaca');
+        const inputPlaca = document.getElementById('placa');
+        const formulario = document.getElementById('formularioAcesso');
+        const divMensagem = document.getElementById('mensagem');
+        const botaoRegistrar = document.getElementById('botaoRegistrar');
+
+        selectTipoAcesso.addEventListener('change', function () {
+            const acessoComVeiculo = this.value === 'Veículo';
+            divCampoPlaca.hidden = !acessoComVeiculo;
+            inputPlaca.required = acessoComVeiculo;
+
+            if (!acessoComVeiculo) {
+                inputPlaca.value = '';
+            }
+        });
+
+        formulario.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            divMensagem.className = '';
+            divMensagem.textContent = '';
+            botaoRegistrar.disabled = true;
+            botaoRegistrar.textContent = 'Registrando...';
+
+            const dadosFormulario = {
+                nome: document.getElementById('nome').value.trim(),
+                documento: document.getElementById('documento').value.trim(),
+                tipo_acesso: selectTipoAcesso.value,
+                placa: selectTipoAcesso.value === 'Veículo'
+                    ? inputPlaca.value.trim()
+                    : null
+            };
+
+            try {
+                const resposta = await fetch('/api/cadastrar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dadosFormulario)
+                });
+
+                const resultado = await resposta.json();
+
+                if (resposta.ok) {
+                    divMensagem.textContent = resultado.mensagem;
+                    divMensagem.className = 'sucesso';
+                    formulario.reset();
+                    divCampoPlaca.hidden = true;
+                    inputPlaca.required = false;
+                } else {
+                    divMensagem.textContent = resultado.erro || 'Erro ao registrar acesso.';
+                    divMensagem.className = 'erro';
+                }
+            } catch (error) {
+                divMensagem.textContent = 'Erro de conexão com o servidor.';
+                divMensagem.className = 'erro';
+            } finally {
+                botaoRegistrar.disabled = false;
+                botaoRegistrar.textContent = 'Registrar acesso';
+            }
+        });
+    </script>
+</body>
+</html>
