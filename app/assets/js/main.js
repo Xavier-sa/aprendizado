@@ -1,4 +1,5 @@
-import { glossary, lessonSections, quiz, schedule, tracks } from "../../content/fundamentos.js?v=2.0.1-content1";
+import { glossary, lessonSections, quiz, schedule, tracks } from "../../content/fundamentos.js?v=2.0.1-content3";
+import { hasGlossaryVisual, setupGlossaryVisuals } from "./glossary-popover.js?v=2.1.0-glossary1";
 
 const STORAGE_KEY = "wx-academy-progress-v1";
 const state = loadState();
@@ -45,12 +46,54 @@ function finishQuiz() { const form = byId("lesson-quiz"); form.replaceChildren()
 
 function renderSchedule() {
   const grid = byId("schedule-grid"); const values = [["not-started", "Não iniciado"], ["in-progress", "Em andamento"], ["complete", "Concluído"]];
-  schedule.forEach(([day, subject, task, color], index) => { const card = element("article", "day-card"); card.style.setProperty("--day", color); card.append(element("h3", "", day), element("span", "", subject), element("p", "", task)); const label = element("label", "", "Status do estudo"); const select = element("select"); select.setAttribute("aria-label", `Status de ${day}`); values.forEach(([value, text]) => { const option = element("option", "", text); option.value = value; select.append(option); }); select.value = state.schedule[index] || "not-started"; select.onchange = () => { state.schedule[index] = select.value; saveState(); }; label.append(select); card.append(label); grid.append(card); });
+  schedule.forEach(([day, subject, task, color], index) => { const card = element("article", "day-card"); card.id = `study-day-${index}`; card.style.setProperty("--day", color); card.append(element("h3", "", day), element("span", "", subject), element("p", "", task)); const label = element("label", "", "Status do estudo"); const select = element("select"); select.setAttribute("aria-label", `Status de ${day}`); values.forEach(([value, text]) => { const option = element("option", "", text); option.value = value; select.append(option); }); select.value = state.schedule[index] || "not-started"; select.onchange = () => { state.schedule[index] = select.value; saveState(); }; label.append(select); card.append(label); grid.append(card); });
+  renderTodayStudy();
+}
+
+function renderTodayStudy() {
+  const jsDay = new Date().getDay();
+  const scheduleIndex = jsDay === 0 ? 6 : jsDay - 1;
+  const [day, subject, task] = schedule[scheduleIndex];
+  const card = byId(`study-day-${scheduleIndex}`);
+  card.classList.add("is-today");
+  card.setAttribute("aria-current", "date");
+  const notice = byId("today-study");
+  notice.replaceChildren();
+  const copy = element("div");
+  copy.append(element("span", "today-label", "Estudo de hoje"), element("strong", "", `${day}: ${subject}`), element("p", "", task));
+  const link = element("a", "button button-primary", "Ver plano de hoje");
+  link.href = `#${card.id}`;
+  notice.append(copy, link);
+  notice.hidden = false;
+  renderStudyReminder(day, subject, task, card.id);
+}
+
+function renderStudyReminder(day, subject, task, cardId) {
+  const reminder = element("aside", "study-reminder");
+  reminder.id = "study-reminder";
+  reminder.setAttribute("role", "region");
+  reminder.setAttribute("aria-label", "Lembrete do estudo de hoje");
+  reminder.setAttribute("aria-live", "polite");
+  const icon = element("span", "study-reminder-icon", "Hoje");
+  const copy = element("div", "study-reminder-copy");
+  copy.append(element("strong", "", `${day}: ${subject}`), element("p", "", task));
+  const actions = element("div", "study-reminder-actions");
+  const open = element("a", "button study-reminder-open", "Abrir plano");
+  open.href = `#${cardId}`;
+  open.addEventListener("click", () => reminder.remove());
+  const close = element("button", "study-reminder-close", "Fechar lembrete");
+  close.type = "button";
+  close.setAttribute("aria-label", "Fechar lembrete de estudo");
+  close.addEventListener("click", () => reminder.remove());
+  actions.append(open, close);
+  reminder.append(icon, copy, actions);
+  document.body.append(reminder);
 }
 
 function renderGlossary(query = "") {
   const grid = byId("glossary-grid"); const normalized = query.trim().toLocaleLowerCase("pt-BR"); const filtered = glossary.filter((term) => Object.values(term).some((value) => value.toLocaleLowerCase("pt-BR").includes(normalized))); grid.replaceChildren();
-  filtered.forEach((term) => { const card = element("article", "term-card"); const heading = element("h3"); heading.append(element("strong", "", term.acronym), element("span", "", term.name)); card.append(heading, element("p", "", term.description), element("small", "", `Exemplo: ${term.example}`)); grid.append(card); });
+  filtered.forEach((term) => { const card = element("article", "term-card"); const heading = element("h3"); heading.append(element("strong", "", term.acronym), element("span", "", term.name)); if (hasGlossaryVisual(term.acronym)) { const visual = element("button", "term-visual-trigger", "Ver visual"); visual.type = "button"; visual.dataset.visualTerm = term.acronym; visual.setAttribute("aria-label", `Ver explicação visual de ${term.acronym}`); visual.setAttribute("aria-haspopup", "dialog"); visual.setAttribute("aria-controls", "glossary-visual-popover"); visual.setAttribute("aria-expanded", "false"); heading.append(visual); card.classList.add("has-visual"); } card.append(heading, element("p", "", term.description), element("small", "", `Exemplo: ${term.example}`)); grid.append(card); });
+  setupGlossaryVisuals(grid);
   byId("glossary-result-count").textContent = `${filtered.length} ${filtered.length === 1 ? "termo encontrado" : "termos encontrados"}`;
 }
 

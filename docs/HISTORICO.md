@@ -1,5 +1,21 @@
 # Histórico
 
+## 2026-11-19 — Glossário visual interativo
+
+- Registrado o estado anterior do glossário como evidência da versão candidata 2.1.0.
+- Criados quatro diagramas SVG autorais para API, JSON, JWT e CORS.
+- Implementado popover genérico operável por mouse, toque e teclado.
+- Adicionados fechamento com Escape e clique externo, contenção na tela, temas claro/escuro e movimento reduzido.
+- Aprovados 21 testes Playwright; nenhuma release, tag ou publicação foi realizada.
+
+## 2026-11-19 — Recomendação do estudo diário
+
+- Recuperada do histórico a funcionalidade que informava o dia e o tema de estudo por meio de `alert()`.
+- Substituído o alerta intrusivo por um aviso acessível dentro do cronograma.
+- Adicionado lembrete flutuante de alto contraste para tornar a recomendação perceptível antes de chegar ao cronograma.
+- Ampliado o funcionamento de dias úteis para os sete dias e destacado o cartão atual.
+- Preservadas as escolhas de status armazenadas localmente.
+
 ## 2026-11-19 — Fundamentos e visão sofisticada
 
 - Ampliada a primeira aula com uma progressão entre cinco fundamentos da programação e conceitos de engenharia de software.

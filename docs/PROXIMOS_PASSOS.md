@@ -10,5 +10,6 @@ Marco atual: **2.0.1**. Não criar nova versão apenas por ajustes documentais.
 5. Padronizar acessibilidade dos simuladores legados.
 6. Confirmar se a pasta `peso/` pode ser removida ou deve ir para outro repositório.
 7. Definir estratégia de publicação apenas após aprovação explícita.
-8. Planejar a versão 2.1.0 com escopo funcional pequeno e compatível.
+8. Revisar a candidata 2.1.0, cujo escopo inicial compatível é o glossário visual interativo.
 9. Após a próxima publicação autorizada, confirmar as URLs versionadas, o MIME `application/javascript` e a renderização dos componentes no servidor.
+10. Avaliar lembretes opcionais sem interromper a navegação nem solicitar permissão de notificação prematuramente.

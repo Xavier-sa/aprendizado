@@ -6,7 +6,7 @@
   "description": "Plataforma educacional estática e progressiva da WX Academy.",
   "scripts": {
     "start": "node scripts/server.mjs",
-    "check": "node --check app/assets/js/main.js && node --check app/content/fundamentos.js",
+    "check": "node --check app/assets/js/main.js && node --check app/assets/js/glossary-popover.js && node --check app/content/fundamentos.js && node --check app/content/glossary-visuals.js",
     "test": "node tests/validate.mjs",
     "test:e2e": "playwright test"
   },

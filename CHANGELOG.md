@@ -6,6 +6,13 @@ Este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/). A
 
 ### Adicionado
 
+- Glossário visual interativo para API, JSON, JWT e CORS, usando SVGs autorais locais.
+- Popover acessível por hover, toque e teclado, com fechamento por Escape, botão e clique externo.
+- Registro extensível que permite adicionar diagramas sem alterar a lógica do componente.
+- Testes Playwright do glossário visual em temas claro e escuro e larguras de 320 a 1920 px.
+- Recomendação diária integrada ao cronograma, com tema, tarefa e atalho para o cartão atual.
+- Lembrete flutuante de alto contraste exibido ao abrir a página, com ações para acessar o plano ou fechar o aviso.
+- Destaque visual e semântico do dia vigente nos sete dias da semana.
 - Seção de base sólida sobre dados, decisões, repetições, funções e testes.
 - Seção sofisticada sobre abstração, estado, complexidade, concorrência, coesão e acoplamento, com pré-requisitos explícitos.
 - Treze conceitos ao glossário, totalizando 50 termos.

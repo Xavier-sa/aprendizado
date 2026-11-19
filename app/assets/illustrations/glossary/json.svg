@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" role="img" aria-labelledby="title desc">
+  <title id="title">Pares de um objeto JSON</title><desc id="desc">Chaves nome, curso e ativo associadas a valores.</desc>
+  <rect width="420" height="220" rx="18" fill="#f5f7f3"/>
+  <rect x="62" y="24" width="296" height="172" rx="16" fill="#17212b"/>
+  <g font-family="ui-monospace,monospace" font-size="18"><text x="86" y="57" fill="#b7f52a">{</text><text x="108" y="91" fill="#9bd7ff">"nome"</text><text x="185" y="91" fill="#fff">:</text><text x="206" y="91" fill="#ffd48a">"WX"</text><text x="108" y="126" fill="#9bd7ff">"curso"</text><text x="185" y="126" fill="#fff">:</text><text x="206" y="126" fill="#ffd48a">"Programação"</text><text x="108" y="161" fill="#9bd7ff">"ativo"</text><text x="185" y="161" fill="#fff">:</text><text x="206" y="161" fill="#b7f52a">true</text><text x="86" y="187" fill="#b7f52a">}</text></g>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" role="img" aria-labelledby="title desc">
+  <title id="title">Fluxo de uma API</title><desc id="desc">Aplicativo envia requisição e servidor devolve resposta.</desc>
+  <rect width="420" height="220" rx="18" fill="#f5f7f3"/>
+  <g font-family="system-ui,sans-serif" text-anchor="middle">
+    <rect x="22" y="46" width="116" height="128" rx="16" fill="#17212b"/><text x="80" y="98" fill="#fff" font-size="18" font-weight="700">Aplicativo</text><text x="80" y="124" fill="#b9c4ca" font-size="13">cliente</text>
+    <rect x="282" y="46" width="116" height="128" rx="16" fill="#17212b"/><text x="340" y="98" fill="#fff" font-size="18" font-weight="700">Servidor</text><text x="340" y="124" fill="#b9c4ca" font-size="13">dados</text>
+    <path d="M148 78h116l-12-9m12 9-12 9" fill="none" stroke="#75a400" stroke-width="5"/><text x="206" y="64" fill="#587c00" font-size="13" font-weight="700">requisição</text>
+    <path d="M272 143H156l12-9m-12 9 12 9" fill="none" stroke="#2580c4" stroke-width="5"/><text x="211" y="168" fill="#2580c4" font-size="13" font-weight="700">resposta</text>
+  </g>
+</svg>

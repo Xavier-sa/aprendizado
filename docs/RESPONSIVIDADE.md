@@ -15,6 +15,8 @@ npm run test:e2e
 - 7/7 viewports carregaram sem rolagem horizontal não intencional.
 - Menu mobile abriu e comunicou seu estado corretamente.
 - Pesquisa do glossário retornou termos relacionados e o termo exato.
+- Glossário visual validado por hover, toque, foco, Escape e clique externo.
+- Popover verificado em 320, 768 e 1920 px nos modos claro e escuro, sem rolagem horizontal.
 - 8/8 testes Playwright aprovados.
 - Inspeção das capturas de 390×844 e 1366×768 confirmou cartões legíveis, código contido e navegação adaptada.
 

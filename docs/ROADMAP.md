@@ -22,11 +22,14 @@ Versão atual documentada: **2.0.1**. Próxima evolução funcional sugerida: **
 - [x] Primeira aula e quiz de cinco questões.
 - [x] Progressão introdutória para conceitos sofisticados com pré-requisitos.
 - [x] Glossário inicial pesquisável.
+- [x] Primeira coleção do glossário visual: API, JSON, JWT e CORS.
+- [ ] Ampliar diagramas somente quando houver ganho pedagógico verificável.
 - [ ] Aulas de algoritmos, variáveis, condicionais e repetições.
 
 ## Fase 4 — progressão
 
 - [x] Status semanal e progresso local.
+- [x] Recomendação automática do estudo correspondente ao dia atual.
 - [ ] Revisões espaçadas e histórico de resultados.
 - [ ] Exportação e importação JSON.
 

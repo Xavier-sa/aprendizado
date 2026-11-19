@@ -8,8 +8,9 @@ A WX Academy permanece uma aplicação estática modular em HTML, CSS e JavaScri
 
 - `index.html`: estrutura semântica e pontos de montagem.
 - `app/assets/css/`: sistema visual, componentes e breakpoints.
-- `app/assets/js/main.js`: interação, renderização e persistência local.
-- `app/content/`: catálogo e conteúdo educacional versionado.
+- `app/assets/js/`: interação, componentes, renderização e persistência local.
+- `app/assets/illustrations/glossary/`: diagramas SVG autorais usados como apoio pedagógico.
+- `app/content/`: catálogo, conteúdo educacional e registros extensíveis de recursos visuais.
 - `arquivos/`: laboratórios legados preservados.
 - `tests/`: validações executáveis sem navegador.
 - `agents/`: responsabilidades editoriais e técnicas para o Codex.
