@@ -6,6 +6,7 @@ Marco atual: **2.0.1**. Não criar nova versão apenas por ajustes documentais.
 2. Ampliar o Playwright para os laboratórios legados.
 3. Substituir `eval()` do laboratório JavaScript por execução isolada.
 4. Criar as aulas de algoritmos, pseudocódigo, variáveis e condicionais.
+   A Aula 01 agora apresenta esses conceitos; as aulas dedicadas ainda precisam de exercícios e quizzes próprios.
 5. Padronizar acessibilidade dos simuladores legados.
 6. Confirmar se a pasta `peso/` pode ser removida ou deve ir para outro repositório.
 7. Definir estratégia de publicação apenas após aprovação explícita.

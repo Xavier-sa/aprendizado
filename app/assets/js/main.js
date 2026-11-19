@@ -1,4 +1,4 @@
-import { glossary, lessonSections, quiz, schedule, tracks } from "../../content/fundamentos.js?v=2.0.1";
+import { glossary, lessonSections, quiz, schedule, tracks } from "../../content/fundamentos.js?v=2.0.1-content1";
 
 const STORAGE_KEY = "wx-academy-progress-v1";
 const state = loadState();

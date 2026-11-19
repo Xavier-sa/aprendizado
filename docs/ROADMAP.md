@@ -20,6 +20,7 @@ Versão atual documentada: **2.0.1**. Próxima evolução funcional sugerida: **
 
 - [x] Catálogo das sete trilhas.
 - [x] Primeira aula e quiz de cinco questões.
+- [x] Progressão introdutória para conceitos sofisticados com pré-requisitos.
 - [x] Glossário inicial pesquisável.
 - [ ] Aulas de algoritmos, variáveis, condicionais e repetições.
 

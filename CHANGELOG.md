@@ -4,6 +4,12 @@ Este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/). A
 
 ## [Unreleased]
 
+### Adicionado
+
+- Seção de base sólida sobre dados, decisões, repetições, funções e testes.
+- Seção sofisticada sobre abstração, estado, complexidade, concorrência, coesão e acoplamento, com pré-requisitos explícitos.
+- Treze conceitos ao glossário, totalizando 50 termos.
+
 ### Corrigido
 
 - Adicionada versão à URL do CSS principal para invalidar cópias antigas mantidas por navegador ou CDN após uma publicação.

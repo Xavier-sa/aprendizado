@@ -1,5 +1,12 @@
 # Histórico
 
+## 2026-11-19 — Fundamentos e visão sofisticada
+
+- Ampliada a primeira aula com uma progressão entre cinco fundamentos da programação e conceitos de engenharia de software.
+- Declarados os pré-requisitos do conteúdo sofisticado para preservar a clareza para iniciantes.
+- Expandido o glossário de 37 para 50 termos.
+- Versionadas as URLs dos recursos alterados para evitar conteúdo antigo em cache.
+
 ## 2026-11-18 — Consistência dos módulos publicados
 
 - Comparados em bytes o HTML, o CSS e os módulos JavaScript locais e publicados; os quatro arquivos estavam idênticos.

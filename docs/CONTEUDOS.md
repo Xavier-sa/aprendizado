@@ -8,7 +8,8 @@ Toda aula nova deve conter: título e nível; objetivo; pré-requisitos; explica
 
 ## Conteúdo disponível
 
-- Aula 01 — O que é programação? Inclui algoritmo de média, erros comuns, exercício de decisão, desafio de desconto e quiz.
+- Aula 01 — O que é programação? Inclui algoritmo de média, cinco fundamentos da programação, mapa de conceitos sofisticados com pré-requisitos, erros comuns, exercício de decisão, desafio de desconto e quiz.
+- Glossário — 50 termos que percorrem fundamentos, web, arquitetura, qualidade e segurança.
 - Laboratório JavaScript — conteúdo legado de sintaxe, funções, arrays, objetos, DOM e playground.
 - Laboratório SQL — conteúdo legado de conceitos, DDL, DML, SELECT e quiz.
 - GitHub Foundations — simulado legado por domínios.
