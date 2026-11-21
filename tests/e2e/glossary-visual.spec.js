@@ -66,8 +66,10 @@ for (const width of [320, 768, 1920]) {
   }
 }
 
-test("pesquisa preserva termos sem visualização", async ({ page }) => {
+test("pesquisa preserva o termo e oferece diagrama referente ao exemplo", async ({ page }) => {
   await prepareGlossary(page, "HTTP");
   await expect(page.getByRole("heading", { name: "HTTP Hypertext Transfer Protocol", exact: true })).toBeVisible();
-  await expect(page.locator(".term-visual-trigger")).toHaveCount(0);
+  await page.getByRole("button", { name: "Ver explicação visual de HTTP", exact: true }).click();
+  await expect(page.locator("#glossary-visual-popover .glossary-generated-diagram")).toBeVisible();
+  await expect(page.locator("#glossary-visual-popover")).toContainText("O navegador envia uma requisição HTTP");
 });

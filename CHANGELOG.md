@@ -6,7 +6,7 @@ Este projeto segue [Versionamento Semântico](https://semver.org/lang/pt-BR/). A
 
 ### Adicionado
 
-- Glossário visual interativo para API, JSON, JWT e CORS, usando SVGs autorais locais.
+- Glossário visual interativo nos 50 termos, com SVGs detalhados para API, JSON, JWT e CORS e cenas específicas para os demais exemplos.
 - Popover acessível por hover, toque e teclado, com fechamento por Escape, botão e clique externo.
 - Registro extensível que permite adicionar diagramas sem alterar a lógica do componente.
 - Testes Playwright do glossário visual em temas claro e escuro e larguras de 320 a 1920 px.

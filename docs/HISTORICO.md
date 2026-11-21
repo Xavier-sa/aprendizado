@@ -1,9 +1,16 @@
 # Histórico
 
+## 2026-11-20 — Cobertura visual completa do glossário
+
+- Ampliado o registro visual de 4 para 50 termos.
+- Mantidos os quatro SVGs detalhados e adicionadas 46 cenas específicas geradas pelo componente.
+- Cada cena foi vinculada ao exemplo prático do termo, evitando imagens meramente decorativas.
+- Preservados pesquisa, semântica dos títulos, teclado, temas e responsividade.
+
 ## 2026-11-19 — Glossário visual interativo
 
 - Registrado o estado anterior do glossário como evidência da versão candidata 2.1.0.
-- Criados quatro diagramas SVG autorais para API, JSON, JWT e CORS.
+- Criados quatro diagramas SVG detalhados para API, JSON, JWT e CORS e cenas visuais específicas para os outros 46 termos.
 - Implementado popover genérico operável por mouse, toque e teclado.
 - Adicionados fechamento com Escape e clique externo, contenção na tela, temas claro/escuro e movimento reduzido.
 - Aprovados 21 testes Playwright; nenhuma release, tag ou publicação foi realizada.

@@ -10,17 +10,19 @@ Evoluir o glossário com explicações visuais leves e acessíveis, preservando 
 
 - Registro independente de visualizações em `app/content/glossary-visuals.js`.
 - Componente genérico de popover em `app/assets/js/glossary-popover.js`.
-- SVGs autorais e locais para API, JSON, JWT e CORS.
+- SVGs autorais detalhados para API, JSON, JWT e CORS.
+- Cenas SVG pedagógicas geradas pelo mesmo componente para os outros 46 termos, sempre vinculadas ao exemplo prático.
 - Abertura por hover com atraso, toque, clique e foco.
 - Fechamento por Escape, botão ou clique externo.
 - Posicionamento limitado à tela, alternativa lateral no desktop e painel inferior no celular.
 - Respeito a movimento reduzido e suporte aos modos claro e escuro.
-- Termos sem registro visual permanecem com o cartão textual original.
+- Todos os 50 termos possuem explicação visual; o texto original do cartão permanece preservado.
 
 ## Evidências
 
 - [Glossário antes](glossario-antes.png)
 - [Glossário depois](glossario-depois.png)
+- [Diagrama gerado para DNS](glossario-diagrama-dns.png)
 - `npm run check`: aprovado.
 - `npm test`: aprovado.
 - `npm run test:e2e`: 21 testes aprovados em 19/11/2026.

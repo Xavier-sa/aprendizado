@@ -1,5 +1,5 @@
 import { glossary, lessonSections, quiz, schedule, tracks } from "../../content/fundamentos.js?v=2.0.1-content3";
-import { hasGlossaryVisual, setupGlossaryVisuals } from "./glossary-popover.js?v=2.1.0-glossary1";
+import { hasGlossaryVisual, setupGlossaryVisuals } from "./glossary-popover.js?v=2.1.0-glossary2";
 
 const STORAGE_KEY = "wx-academy-progress-v1";
 const state = loadState();
@@ -92,7 +92,7 @@ function renderStudyReminder(day, subject, task, cardId) {
 
 function renderGlossary(query = "") {
   const grid = byId("glossary-grid"); const normalized = query.trim().toLocaleLowerCase("pt-BR"); const filtered = glossary.filter((term) => Object.values(term).some((value) => value.toLocaleLowerCase("pt-BR").includes(normalized))); grid.replaceChildren();
-  filtered.forEach((term) => { const card = element("article", "term-card"); const heading = element("h3"); heading.append(element("strong", "", term.acronym), element("span", "", term.name)); if (hasGlossaryVisual(term.acronym)) { const visual = element("button", "term-visual-trigger", "Ver visual"); visual.type = "button"; visual.dataset.visualTerm = term.acronym; visual.setAttribute("aria-label", `Ver explicação visual de ${term.acronym}`); visual.setAttribute("aria-haspopup", "dialog"); visual.setAttribute("aria-controls", "glossary-visual-popover"); visual.setAttribute("aria-expanded", "false"); heading.append(visual); card.classList.add("has-visual"); } card.append(heading, element("p", "", term.description), element("small", "", `Exemplo: ${term.example}`)); grid.append(card); });
+  filtered.forEach((term) => { const card = element("article", "term-card"); const heading = element("h3"); heading.append(element("strong", "", term.acronym), element("span", "", term.name)); card.append(heading); if (hasGlossaryVisual(term.acronym)) { const visual = element("button", "term-visual-trigger", "Ver visual"); visual.type = "button"; visual.dataset.visualTerm = term.acronym; visual.setAttribute("aria-label", `Ver explicação visual de ${term.acronym}`); visual.setAttribute("aria-haspopup", "dialog"); visual.setAttribute("aria-controls", "glossary-visual-popover"); visual.setAttribute("aria-expanded", "false"); card.append(visual); card.classList.add("has-visual"); } card.append(element("p", "", term.description), element("small", "", `Exemplo: ${term.example}`)); grid.append(card); });
   setupGlossaryVisuals(grid);
   byId("glossary-result-count").textContent = `${filtered.length} ${filtered.length === 1 ? "termo encontrado" : "termos encontrados"}`;
 }
