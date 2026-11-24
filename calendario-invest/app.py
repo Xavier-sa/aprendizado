@@ -202,6 +202,7 @@ def criar_resumo(meta, bancos):
     for chave, item in meta.get("depositos", {}).items():
         if chave.isdigit() and int(chave) <= quantidade:
             deposito = dict(item)
+            deposito.pop("detalhes", None)
             deposito["banco"] = bancos_por_id.get(deposito.get("banco_id"), "Banco removido")
             depositos_visiveis[chave] = deposito
     total = round(sum(float(item.get("valor", 0)) for item in depositos_visiveis.values()), 2)
@@ -239,7 +240,15 @@ def login_obrigatorio(funcao):
 
 @app.before_request
 def proteger_api():
-    if request.path.startswith("/api/") and not session.get("usuario_id"):
+    if not request.path.startswith("/api/"):
+        return
+    usuario_id = session.get("usuario_id")
+    if usuario_id and DATABASE_URL:
+        usuario = buscar_usuario_por_id(usuario_id)
+        if not usuario or not usuario[4]:
+            session.clear()
+            usuario_id = None
+    if not usuario_id:
         return jsonify({"erro": "Faça login para continuar."}), 401
 
 
@@ -265,16 +274,9 @@ def cadastrar_usuario(nome, email, senha):
     usuario_id = str(uuid4())
     with connect(DATABASE_URL, connect_timeout=10) as conexao:
         preparar_banco(conexao)
-        primeiro_usuario = conexao.execute("SELECT NOT EXISTS (SELECT 1 FROM usuarios)").fetchone()[0]
         if conexao.execute("SELECT 1 FROM usuarios WHERE email = %s", (email,)).fetchone():
             return None
         dados = dados_iniciais()
-        if primeiro_usuario:
-            legado = conexao.execute(
-                "SELECT dados FROM calendario_estado WHERE id = 1"
-            ).fetchone()
-            if legado:
-                dados = migrar_dados(legado[0])
         conexao.execute(
             "INSERT INTO usuarios (id, nome, email, senha_hash) VALUES (%s, %s, %s, %s)",
             (usuario_id, nome, email, generate_password_hash(senha)),
@@ -560,7 +562,7 @@ def registrar_deposito(meta_id, numero):
         return jsonify({"erro": "Informe uma data válida."}), 400
     meta.setdefault("depositos", {})[str(numero)] = {
         "numero": numero, "valor": valor, "banco_id": banco_id, "metodo": metodo,
-        "detalhes": str(corpo.get("detalhes", "")).strip(), "data": data_deposito,
+        "data": data_deposito,
     }
     salvar_dados(dados)
     return jsonify({"ok": True, **resposta_completa(dados, meta_id)})

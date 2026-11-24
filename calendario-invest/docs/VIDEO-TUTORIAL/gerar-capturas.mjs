@@ -50,7 +50,6 @@ try {
 
   await page.locator('.deposit[data-numero="1"]').click();
   await page.selectOption('#banco', { label: 'Banco da Meta' });
-  await page.fill('#detalhes', 'Primeiro passo da jornada');
   await capturar('07-registrar-deposito.png');
   await page.click('#depositForm button[type="submit"]');
   await page.waitForFunction(() => document.querySelector('.deposit[data-numero="1"]')?.classList.contains('completed'));

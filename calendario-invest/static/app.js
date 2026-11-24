@@ -53,7 +53,9 @@ function renderizarMetas() {
     botao.type = 'button';
     botao.className = `goal-tab${meta.id === estado.meta.id ? ' active' : ''}`;
     botao.setAttribute('aria-pressed', meta.id === estado.meta.id);
-    botao.innerHTML = `<span>${meta.nome}</span><small>${Math.round((meta.total / meta.meta) * 100)}%</small>`;
+    botao.innerHTML = '<span></span><small></small>';
+    botao.firstElementChild.textContent = meta.nome;
+    botao.lastElementChild.textContent = `${Math.round((meta.total / meta.meta) * 100)}%`;
     botao.addEventListener('click', () => selecionarMeta(meta.id));
     return botao;
   }));
@@ -67,7 +69,11 @@ function renderizarBancos() {
     const item = document.createElement('div');
     item.className = 'bank-item';
     const inicial = banco.nome.trim().charAt(0).toUpperCase();
-    item.innerHTML = `<span class="bank-avatar">${inicial}</span><strong>${banco.nome}</strong><span class="bank-actions"><button class="rename-bank" type="button" aria-label="Renomear ${banco.nome}" title="Renomear">&#9998;</button><button class="remove-bank" type="button" aria-label="Remover ${banco.nome}" title="Remover">&times;</button></span>`;
+    item.innerHTML = '<span class="bank-avatar"></span><strong></strong><span class="bank-actions"><button class="rename-bank" type="button" title="Renomear">&#9998;</button><button class="remove-bank" type="button" title="Remover">&times;</button></span>';
+    item.querySelector('.bank-avatar').textContent = inicial;
+    item.querySelector('strong').textContent = banco.nome;
+    item.querySelector('.rename-bank').setAttribute('aria-label', `Renomear ${banco.nome}`);
+    item.querySelector('.remove-bank').setAttribute('aria-label', `Remover ${banco.nome}`);
     item.querySelector('.rename-bank').addEventListener('click', () => renomearBanco(banco));
     item.querySelector('.remove-bank').addEventListener('click', () => removerBanco(banco));
     return item;
@@ -121,7 +127,6 @@ function abrirDeposito(numero) {
   document.querySelector('#valor').value = item?.valor ?? numero;
   document.querySelector('#banco').value = item?.banco_id || '';
   document.querySelector('#metodo').value = item?.metodo || 'Pix';
-  document.querySelector('#detalhes').value = item?.detalhes || '';
   document.querySelector('#data').value = item?.data || dataLocal();
   document.querySelector('#removeDeposit').hidden = !item;
   depositModal.showModal();
@@ -221,9 +226,6 @@ document.querySelector('#editGoal').addEventListener('click', () => abrirMeta(fa
 document.querySelector('#manageBanks').addEventListener('click', () => banksModal.showModal());
 document.querySelectorAll('[data-open-banks]').forEach((botao) => botao.addEventListener('click', () => banksModal.showModal()));
 document.querySelector('#goalValue').addEventListener('input', atualizarPreviaMeta);
-document.querySelector('#metodo').addEventListener('change', (evento) => {
-  document.querySelector('#detailsLabel').firstChild.textContent = evento.target.value === 'Pix' ? 'Chave Pix / dados' : 'Agência / conta / dados';
-});
 document.querySelectorAll('[data-close]').forEach((botao) => botao.addEventListener('click', () => botao.closest('dialog').close()));
 document.querySelectorAll('dialog').forEach((dialogo) => dialogo.addEventListener('click', (evento) => {
   if (evento.target === dialogo) dialogo.close();
