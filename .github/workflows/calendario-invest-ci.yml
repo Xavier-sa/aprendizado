@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 jobs:
-  validar:
+  testes-e-seguranca:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -50,3 +50,19 @@ jobs:
 
       - name: Validar configuracao da Vercel
         run: python -m json.tool vercel.json > /dev/null
+
+  documentacao-e-privacidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Conferir documentos e campos de coleta
+        shell: bash
+        run: |
+          cd calendario-invest
+          for arquivo in LICENSE.md CONTRIBUTING.md docs/REVISAO-OPERACIONAL.md templates/legal.html templates/rodape.html; do
+            test -s "$arquivo"
+          done
+          if grep -nE 'name="detalhes"|id="detailsLabel"' templates/*.html; then
+            echo "Campo de detalhes bancários reintroduzido"
+            exit 1
+          fi
