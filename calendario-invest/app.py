@@ -7,6 +7,8 @@ from tempfile import NamedTemporaryFile
 from uuid import uuid4
 
 from flask import Flask, jsonify, render_template, request
+from psycopg import connect
+from psycopg.types.json import Jsonb
 
 app = Flask(__name__)
 ARQUIVO_INICIAL = Path(__file__).with_name("depositos.json")
@@ -23,6 +25,7 @@ def caminho_dados(ambiente=None):
 
 
 DATA_FILE = caminho_dados()
+DATABASE_URL = os.environ.get("DATABASE_URL")
 META_PADRAO = 23450
 METODOS_VALIDOS = {"Pix", "Depósito bancário", "TED/Transferência"}
 
@@ -73,7 +76,55 @@ def migrar_dados(dados):
     }], "bancos": bancos}
 
 
+def preparar_banco(conexao):
+    conexao.execute("""
+        CREATE TABLE IF NOT EXISTS calendario_estado (
+            id SMALLINT PRIMARY KEY CHECK (id = 1),
+            dados JSONB NOT NULL,
+            atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """)
+
+
+def dados_semente():
+    if ARQUIVO_INICIAL.exists():
+        try:
+            return migrar_dados(json.loads(ARQUIVO_INICIAL.read_text(encoding="utf-8")))
+        except (json.JSONDecodeError, OSError):
+            pass
+    return dados_iniciais()
+
+
+def carregar_dados_postgres():
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        linha = conexao.execute(
+            "SELECT dados FROM calendario_estado WHERE id = 1"
+        ).fetchone()
+        if linha:
+            return migrar_dados(linha[0])
+        dados = dados_semente()
+        conexao.execute(
+            "INSERT INTO calendario_estado (id, dados) VALUES (1, %s)",
+            (Jsonb(dados),),
+        )
+        return dados
+
+
+def salvar_dados_postgres(dados):
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        conexao.execute("""
+            INSERT INTO calendario_estado (id, dados, atualizado_em)
+            VALUES (1, %s, NOW())
+            ON CONFLICT (id) DO UPDATE
+            SET dados = EXCLUDED.dados, atualizado_em = NOW()
+        """, (Jsonb(dados),))
+
+
 def carregar_dados():
+    if DATABASE_URL:
+        return carregar_dados_postgres()
     if not DATA_FILE.exists():
         if DATA_FILE != ARQUIVO_INICIAL and ARQUIVO_INICIAL.exists():
             try:
@@ -90,6 +141,9 @@ def carregar_dados():
 
 
 def salvar_dados(dados):
+    if DATABASE_URL:
+        salvar_dados_postgres(dados)
+        return
     conteudo = json.dumps(dados, ensure_ascii=False, indent=2)
     with NamedTemporaryFile("w", encoding="utf-8", dir=DATA_FILE.parent, delete=False) as arquivo:
         arquivo.write(conteudo)

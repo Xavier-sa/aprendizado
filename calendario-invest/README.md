@@ -33,17 +33,19 @@ sequencial cuja soma alcança ou ultrapassa o valor informado.
 - CSS3
 - JavaScript sem framework
 - JSON para persistência local
+- PostgreSQL Neon para persistência na Vercel
 
-Em deploys na Vercel, a aplicação usa o diretório temporário gravável da
-função. Para persistência permanente entre instâncias, configure um banco de
-dados ou volume externo e defina `CALENDARIO_DATA_FILE` quando aplicável.
+Em deploys na Vercel, a aplicação usa PostgreSQL Neon por meio de
+`DATABASE_URL`. Sem essa variável, a execução local continua usando o arquivo
+JSON. Consulte [PROJETO.md](docs/PROJETO.md) para conhecer propósito, atores,
+regras, arquitetura e operação.
 
 ## Estrutura
 
 ```text
 calendario-invest/
 ├── app.py                 # Aplicativo Flask e API HTTP
-├── depositos.json         # Meta e depósitos persistidos
+├── depositos.json         # Persistência local e semente inicial
 ├── requirements.txt       # Dependências Python
 ├── static/
 │   ├── app.js             # Interações da interface
@@ -54,6 +56,7 @@ calendario-invest/
 │   └── test_app.py        # Testes da API e dos cálculos
 ├── docs/
 │   ├── ARQUITETURA.md
+│   ├── PROJETO.md
 │   ├── PASSOS.md
 │   └── IMAGENS/
 └── AGENTS.md

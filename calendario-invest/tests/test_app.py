@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
+from unittest.mock import patch
 
 import app as modulo
 
@@ -10,6 +11,8 @@ class CalendarioInvestTestCase(unittest.TestCase):
     def setUp(self):
         self.pasta = TemporaryDirectory()
         self.arquivo_original = modulo.DATA_FILE
+        self.database_url_original = modulo.DATABASE_URL
+        modulo.DATABASE_URL = None
         modulo.DATA_FILE = Path(self.pasta.name) / "depositos.json"
         modulo.DATA_FILE.write_text(
             json.dumps({"meta": 23450, "depositos": {}}), encoding="utf-8"
@@ -18,6 +21,7 @@ class CalendarioInvestTestCase(unittest.TestCase):
 
     def tearDown(self):
         modulo.DATA_FILE = self.arquivo_original
+        modulo.DATABASE_URL = self.database_url_original
         self.pasta.cleanup()
 
     def dados(self):
@@ -35,6 +39,15 @@ class CalendarioInvestTestCase(unittest.TestCase):
     def test_variavel_de_ambiente_define_arquivo_persistente(self):
         caminho = modulo.caminho_dados({"CALENDARIO_DATA_FILE": "dados/teste.json"})
         self.assertEqual(caminho, Path("dados/teste.json"))
+
+    def test_direciona_leitura_e_escrita_para_postgres(self):
+        modulo.DATABASE_URL = "postgresql://exemplo"
+        with patch.object(modulo, "carregar_dados_postgres", return_value={"metas": []}) as ler:
+            self.assertEqual(modulo.carregar_dados(), {"metas": []})
+            ler.assert_called_once_with()
+        with patch.object(modulo, "salvar_dados_postgres") as salvar:
+            modulo.salvar_dados({"metas": []})
+            salvar.assert_called_once_with({"metas": []})
 
     def test_migra_formato_antigo_preservando_deposito_e_banco(self):
         modulo.DATA_FILE.write_text(json.dumps({

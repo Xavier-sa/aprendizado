@@ -6,7 +6,8 @@ O Calendário Invest usa uma arquitetura web pequena com três partes:
 
 1. O Flask entrega a página e expõe a API HTTP.
 2. O JavaScript consome a API e atualiza a interface.
-3. O arquivo `depositos.json` persiste as metas, os bancos e os registros.
+3. O PostgreSQL Neon persiste os dados em produção; `depositos.json` é o
+   fallback para desenvolvimento local e testes.
 
 ## Fluxo principal
 
@@ -82,23 +83,21 @@ nomes de bancos encontrados em cadastros e associa os depósitos aos novos
 identificadores. A migração só é gravada junto com a próxima alteração do
 usuário.
 
-O aplicativo escreve primeiro em um arquivo temporário no mesmo diretório e
-depois usa substituição atômica. Esse fluxo reduz o risco de deixar um JSON
-parcial quando uma gravação falha.
+No modo local, o aplicativo escreve primeiro em um arquivo temporário no mesmo
+diretório e depois usa substituição atômica. Em produção, cada atualização é
+gravada transacionalmente no documento JSONB mantido pelo Neon.
 
 ### Execução na Vercel
 
-Na Vercel, o aplicativo usa `/tmp/calendario-invest-depositos.json`, pois o
-diretório da função é somente leitura. A variável `CALENDARIO_DATA_FILE`
-permite apontar para outro caminho gravável. O armazenamento em `/tmp` evita
-erros nas operações, mas é temporário e pode ser reiniciado pela plataforma.
+Na Vercel, o aplicativo usa PostgreSQL Neon quando `DATABASE_URL` está
+definida. O estado é mantido em JSONB na tabela `calendario_estado`, criada
+automaticamente na primeira execução. O arquivo JSON permanece como fallback
+para desenvolvimento local e testes.
 
 ## Limites atuais
 
-- Os dados pertencem a uma única instalação local.
+- Os dados pertencem a uma única instalação, sem separação por usuário.
 - Não existe autenticação.
-- Não existe banco de dados nem sincronização remota.
+- Não existe sincronização com instituições bancárias.
 - O servidor embutido do Flask serve somente para desenvolvimento.
-- Na Vercel, os dados podem ser reiniciados em uma nova instância enquanto
-  não houver um armazenamento persistente externo.
 
