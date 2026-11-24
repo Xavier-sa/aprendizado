@@ -61,10 +61,13 @@ h1 { font-size:clamp(1.6rem,4vw,2.45rem); margin-bottom:0; }
 .deposit span { font-weight:800; }
 .deposit small { margin-top:3px; color:var(--muted); font-size:.68rem; }
 .deposit:hover { transform:translateY(-2px); border-color:var(--accent); box-shadow:0 8px 18px rgba(0,0,0,.16); }
-.deposit.completed { color:#98a2b3; background:color-mix(in srgb,var(--done) 18%,var(--panel)); border-color:color-mix(in srgb,var(--done) 58%,var(--border)); }
-.deposit.completed small { color:#7f8998; }
-.deposit.completed::after { content:"\00d7"; position:absolute; top:6px; right:7px; color:#a7afbb; font-size:16px; font-weight:700; line-height:1; opacity:.8; }
+.deposit.completed { color:#f1f3f5; background:#333840; border-color:#667085; }
+.deposit.completed small { color:#c5cbd3; }
+.deposit-mark { margin-inline-start:4px; color:#ff8490; line-height:1; }
 .deposit.completed:hover { border-color:#98a2b3; box-shadow:0 8px 18px rgba(0,0,0,.12); }
+.soft-theme .deposit.completed { color:#232933; background:#e0e2e5; border-color:#9299a4; }
+.soft-theme .deposit.completed small { color:#444d5a; }
+.soft-theme .deposit-mark { color:#aa192f; }
 .empty-state { margin-top:18px; padding:38px 20px; border:1px dashed var(--border); border-radius:14px; text-align:center; color:var(--muted); }
 .empty-state strong { display:block; color:var(--text); font-size:1.05rem; }
 .empty-state p { margin:7px auto 15px; max-width:430px; }

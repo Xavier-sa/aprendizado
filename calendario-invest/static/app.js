@@ -98,6 +98,11 @@ function montarTabela() {
     botao.dataset.numero = numero;
     botao.innerHTML = `<span>${numero}</span><small>${moeda.format(numero).replace(',00', '')}</small>`;
     if (item) {
+      const marca = document.createElement('span');
+      marca.className = 'deposit-mark';
+      marca.textContent = '×';
+      marca.setAttribute('aria-hidden', 'true');
+      botao.firstElementChild.appendChild(marca);
       botao.title = `${item.metodo} · ${moeda.format(item.valor)} · ${item.banco}`;
       botao.setAttribute('aria-label', `Depósito ${numero} concluído em ${item.banco}. Editar.`);
     }
