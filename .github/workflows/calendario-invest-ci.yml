@@ -1,0 +1,52 @@
+name: Calendario Invest CI
+
+on:
+  push:
+    branches: [calendario-invest]
+    paths:
+      - "calendario-invest/**"
+      - ".github/workflows/calendario-invest-ci.yml"
+  pull_request:
+    paths:
+      - "calendario-invest/**"
+      - ".github/workflows/calendario-invest-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: calendario-invest
+
+    steps:
+      - name: Baixar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: calendario-invest/requirements.txt
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Instalar dependencias
+        run: python -m pip install -r requirements.txt
+
+      - name: Executar testes
+        run: python -m unittest discover -s tests -v
+
+      - name: Validar sintaxe
+        run: |
+          python -m py_compile app.py
+          node --check static/app.js
+
+      - name: Validar configuracao da Vercel
+        run: python -m json.tool vercel.json > /dev/null

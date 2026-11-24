@@ -86,10 +86,19 @@ O aplicativo escreve primeiro em um arquivo temporário no mesmo diretório e
 depois usa substituição atômica. Esse fluxo reduz o risco de deixar um JSON
 parcial quando uma gravação falha.
 
+### Execução na Vercel
+
+Na Vercel, o aplicativo usa `/tmp/calendario-invest-depositos.json`, pois o
+diretório da função é somente leitura. A variável `CALENDARIO_DATA_FILE`
+permite apontar para outro caminho gravável. O armazenamento em `/tmp` evita
+erros nas operações, mas é temporário e pode ser reiniciado pela plataforma.
+
 ## Limites atuais
 
 - Os dados pertencem a uma única instalação local.
 - Não existe autenticação.
 - Não existe banco de dados nem sincronização remota.
 - O servidor embutido do Flask serve somente para desenvolvimento.
+- Na Vercel, os dados podem ser reiniciados em uma nova instância enquanto
+  não houver um armazenamento persistente externo.
 

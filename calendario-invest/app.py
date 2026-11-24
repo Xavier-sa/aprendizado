@@ -9,7 +9,20 @@ from uuid import uuid4
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
-DATA_FILE = Path(__file__).with_name("depositos.json")
+ARQUIVO_INICIAL = Path(__file__).with_name("depositos.json")
+
+
+def caminho_dados(ambiente=None):
+    """Escolhe um caminho gravável sem quebrar a execução local."""
+    ambiente = ambiente or os.environ
+    if ambiente.get("CALENDARIO_DATA_FILE"):
+        return Path(ambiente["CALENDARIO_DATA_FILE"])
+    if ambiente.get("VERCEL"):
+        return Path("/tmp/calendario-invest-depositos.json")
+    return ARQUIVO_INICIAL
+
+
+DATA_FILE = caminho_dados()
 META_PADRAO = 23450
 METODOS_VALIDOS = {"Pix", "Depósito bancário", "TED/Transferência"}
 
@@ -62,6 +75,13 @@ def migrar_dados(dados):
 
 def carregar_dados():
     if not DATA_FILE.exists():
+        if DATA_FILE != ARQUIVO_INICIAL and ARQUIVO_INICIAL.exists():
+            try:
+                dados = migrar_dados(json.loads(ARQUIVO_INICIAL.read_text(encoding="utf-8")))
+                salvar_dados(dados)
+                return dados
+            except (json.JSONDecodeError, OSError):
+                pass
         return dados_iniciais()
     try:
         return migrar_dados(json.loads(DATA_FILE.read_text(encoding="utf-8")))

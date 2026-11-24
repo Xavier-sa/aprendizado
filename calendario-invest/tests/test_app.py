@@ -28,6 +28,14 @@ class CalendarioInvestTestCase(unittest.TestCase):
         self.assertEqual(modulo.calcular_quantidade(23437), 217)
         self.assertEqual(modulo.calcular_quantidade(23653.01), 218)
 
+    def test_usa_diretorio_temporario_na_vercel(self):
+        caminho = modulo.caminho_dados({"VERCEL": "1"})
+        self.assertEqual(caminho, Path("/tmp/calendario-invest-depositos.json"))
+
+    def test_variavel_de_ambiente_define_arquivo_persistente(self):
+        caminho = modulo.caminho_dados({"CALENDARIO_DATA_FILE": "dados/teste.json"})
+        self.assertEqual(caminho, Path("dados/teste.json"))
+
     def test_migra_formato_antigo_preservando_deposito_e_banco(self):
         modulo.DATA_FILE.write_text(json.dumps({
             "meta": 100,
@@ -52,6 +60,21 @@ class CalendarioInvestTestCase(unittest.TestCase):
         self.assertEqual(len(deposito.get_json()["metas"]), 2)
         primeira = deposito.get_json()["metas"][0]
         self.assertEqual(primeira["concluido"], 0)
+
+    def test_cria_e_atualiza_meta_recalculando_quantidade(self):
+        nova = self.client.post("/api/metas", json={"nome": "Notebook", "valor": 100})
+        self.assertEqual(nova.status_code, 201)
+        meta = nova.get_json()["meta_ativa"]
+        self.assertEqual(meta["quantidade"], 14)
+        self.assertEqual(meta["soma_sugerida"], 105)
+
+        atualizada = self.client.put(
+            f"/api/metas/{meta['id']}", json={"nome": "Notebook", "valor": 106}
+        )
+        self.assertEqual(atualizada.status_code, 200)
+        resumo = atualizada.get_json()["meta_ativa"]
+        self.assertEqual(resumo["quantidade"], 15)
+        self.assertEqual(resumo["soma_sugerida"], 120)
 
     def test_rejeita_banco_duplicado_e_banco_em_uso(self):
         primeira = self.client.post("/api/bancos", json={"nome": "Inter"})

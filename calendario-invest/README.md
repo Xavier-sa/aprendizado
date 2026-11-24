@@ -34,6 +34,10 @@ sequencial cuja soma alcança ou ultrapassa o valor informado.
 - JavaScript sem framework
 - JSON para persistência local
 
+Em deploys na Vercel, a aplicação usa o diretório temporário gravável da
+função. Para persistência permanente entre instâncias, configure um banco de
+dados ou volume externo e defina `CALENDARIO_DATA_FILE` quando aplicável.
+
 ## Estrutura
 
 ```text
