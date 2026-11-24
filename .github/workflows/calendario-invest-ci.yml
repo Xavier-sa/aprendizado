@@ -47,6 +47,7 @@ jobs:
         run: |
           python -m py_compile app.py
           node --check static/app.js
+          node --check static/tutorial.js
 
       - name: Validar configuracao da Vercel
         run: python -m json.tool vercel.json > /dev/null

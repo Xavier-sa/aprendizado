@@ -95,9 +95,8 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 Consulte a [revisão operacional](docs/REVISAO-OPERACIONAL.md), a
 [licença](LICENSE.md) e o [guia de contribuição](CONTRIBUTING.md).
 
-A página inicial apresenta o tutorial antes do login. Selecione **Entrar** para
-acessar sua conta e abrir o painel. Para exibir o vídeo, configure
-`CALENDARIO_TUTORIAL_VIDEO_URL` com a URL HTTPS direta do MP4.
+A página inicial inclui oito capturas clicáveis. Cada etapa abre uma imagem
+ampliada com instruções e navegação. Selecione **Entrar** para acessar sua conta.
 
 1. Selecione **Bancos** e cadastre pelo menos um banco.
 2. Use **Nova meta** para criar um objetivo ou edite a meta inicial.

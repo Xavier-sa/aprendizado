@@ -19,23 +19,56 @@
         <p class="subtitle">Escolha quanto quer guardar. O calendário divide sua meta em depósitos de valores crescentes, e você acompanha o avanço a cada registro.</p>
         <a class="secondary button-link inicio-cta" href="{{ url_for('entrar') }}">{{ 'Abrir meu painel' if session.get('usuario_id') else 'Começar' }}</a>
       </div>
-      <section class="inicio-tutorial" aria-labelledby="tutorial">
-        <h2 id="tutorial">Como funciona</h2>
-        {% if video_url %}
-        <video controls playsinline preload="metadata" aria-label="Tutorial do Calendário Invest">
-          <source src="{{ video_url }}" type="video/mp4">
-          <a href="{{ video_url }}">Abrir vídeo do tutorial</a>
-        </video>
-        {% endif %}
-        <ol>
-          <li>Crie sua conta, cadastre um banco e dê nome e valor à sua meta.</li>
-          <li>Escolha um quadrado com um valor que caiba no seu orçamento.</li>
-          <li>Depois de guardar o dinheiro, registre o depósito e veja quanto falta.</li>
-        </ol>
-        <p class="subtitle">O Calendário Invest acompanha seu progresso. Os depósitos são feitos no seu banco.</p>
-      </section>
+    </section>
+    <section class="inicio-tutorial" aria-labelledby="tutorial">
+      <header class="tutorial-topo">
+        <div>
+          <h2 id="tutorial">Como funciona</h2>
+          <p class="subtitle">Explore as etapas e abra uma captura para ver o que fazer.</p>
+        </div>
+        <div class="tutorial-cabecalho" id="tutorial-controles" hidden>
+          <button class="secondary tutorial-seta" id="tutorial-rolar-anterior" type="button" aria-label="Ver capturas anteriores" aria-controls="tutorial-capturas">←</button>
+          <button class="secondary tutorial-seta" id="tutorial-rolar-proximo" type="button" aria-label="Ver próximas capturas" aria-controls="tutorial-capturas">→</button>
+        </div>
+      </header>
+      <ol class="tutorial-grade" id="tutorial-capturas">
+        {% for arquivo, titulo, instrucao in tutorial %}
+        <li>
+          <a href="{{ url_for('captura_tutorial', arquivo=arquivo) }}" data-instrucao="{{ instrucao }}" aria-haspopup="dialog" aria-label="Abrir etapa {{ loop.index }}: {{ titulo }}">
+            <img src="{{ url_for('captura_tutorial', arquivo=arquivo) }}" alt="" loading="lazy">
+            <span class="tutorial-cartao-texto">
+              <span class="tutorial-passo" aria-hidden="true">{{ '%02d' | format(loop.index) }}</span>
+              <strong class="tutorial-cartao-titulo">{{ titulo }}</strong>
+              <span class="tutorial-ampliar" aria-hidden="true">↗</span>
+            </span>
+          </a>
+        </li>
+        {% endfor %}
+      </ol>
+      <div class="tutorial-status" id="tutorial-status" hidden>
+        <span id="tutorial-faixa"></span>
+        <progress id="tutorial-progresso" aria-label="Posição no tutorial" max="{{ tutorial | length }}" value="1"></progress>
+      </div>
+      <p class="subtitle tutorial-nota">O Calendário Invest acompanha seu progresso. Os depósitos são feitos no seu banco.</p>
     </section>
   </main>
+  <dialog class="tutorial-modal" id="tutorial-modal" aria-labelledby="tutorial-titulo" aria-describedby="tutorial-instrucao">
+    <header class="tutorial-topo tutorial-modal-topo">
+      <div>
+        <p id="tutorial-contador" aria-live="polite"></p>
+        <h2 id="tutorial-titulo"></h2>
+      </div>
+      <form method="dialog"><button class="secondary" autofocus>Fechar</button></form>
+    </header>
+    <p id="tutorial-instrucao"></p>
+    <div class="tutorial-imagem-ampliada"><img id="tutorial-imagem" alt=""></div>
+    <div class="tutorial-cabecalho tutorial-modal-rodape">
+      <button class="secondary" id="tutorial-anterior" type="button">Anterior</button>
+      <button class="secondary tutorial-acao" id="tutorial-proximo" type="button">Próxima etapa →</button>
+      <a class="secondary button-link tutorial-acao" id="tutorial-comecar" href="{{ url_for('entrar') }}" hidden>Começar →</a>
+    </div>
+  </dialog>
+  <script src="{{ url_for('static', filename='tutorial.js') }}" defer></script>
   {% include 'rodape.html' %}
 </body>
 </html>

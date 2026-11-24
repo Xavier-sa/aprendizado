@@ -28,6 +28,16 @@ class CalendarioInvestTestCase(unittest.TestCase):
     def dados(self):
         return self.client.get("/api/dados").get_json()
 
+    def test_home_publica_exibe_oito_capturas(self):
+        visitante = modulo.app.test_client()
+        pagina = visitante.get("/")
+        self.assertEqual(pagina.data.count(b'aria-haspopup="dialog"'), 8)
+        for arquivo, _, _ in modulo.TUTORIAL:
+            with visitante.get(f"/tutorial/capturas/{arquivo}") as captura:
+                self.assertEqual(captura.status_code, 200)
+                self.assertEqual(captura.mimetype, "image/png")
+        self.assertEqual(visitante.get("/tutorial/capturas/outro.png").status_code, 404)
+
     def test_paginas_legais_publicas(self):
         visitante = modulo.app.test_client()
         for caminho, titulo in (("/termos", "Termos de uso"), ("/privacidade", "Privacidade e LGPD")):

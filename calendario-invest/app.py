@@ -7,7 +7,7 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from uuid import uuid4
 
-from flask import Flask, jsonify, redirect, render_template, request, session, url_for
+from flask import Flask, abort, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from psycopg import connect
 from psycopg.types.json import Jsonb
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -418,9 +418,28 @@ def excluir_usuario(usuario_id):
     return redirect(url_for("administrar_usuarios"))
 
 
+TUTORIAL = (
+    ("01-login.png", "Entre na sua conta", "Clique em Entrar e informe seu e-mail e sua senha. Se for a primeira visita, escolha Criar conta."),
+    ("02-cadastro.png", "Crie sua conta", "Preencha seu nome, e-mail e senha. Suas metas ficam separadas das de outras pessoas."),
+    ("03-painel-inicial.png", "Conheça seu painel", "No resumo você acompanha quanto guardou, quanto falta e quantos passos já concluiu."),
+    ("04-banco-cadastrado.png", "Organize onde vai guardar", "Abra Bancos e cadastre um nome para identificar onde você guarda o dinheiro."),
+    ("05-nova-meta.png", "Dê nome e valor à sua meta", "Clique em Nova meta. Informe o objetivo e quanto quer guardar. Confira a prévia e salve."),
+    ("06-meta-transformada-em-passos.png", "Escolha um passo possível", "Cada quadrado representa um valor. Comece por um que caiba no seu orçamento."),
+    ("07-registrar-deposito.png", "Registre o que guardou", "Depois de guardar no seu banco, abra o quadrado, confira valor, banco, método e data e salve. O campo de detalhes exibido na captura antiga foi removido."),
+    ("08-progresso-real.png", "Veja seu progresso", "O quadrado fica marcado como concluído. Confira o novo total guardado e escolha seu próximo passo."),
+)
+
+
+@app.get("/tutorial/capturas/<arquivo>")
+def captura_tutorial(arquivo):
+    if arquivo not in {etapa[0] for etapa in TUTORIAL}:
+        abort(404)
+    return send_from_directory(Path(app.root_path) / "docs/VIDEO-TUTORIAL/capturas", arquivo)
+
+
 @app.get("/")
 def inicio():
-    return render_template("inicio.html", video_url=os.environ.get("CALENDARIO_TUTORIAL_VIDEO_URL"))
+    return render_template("inicio.html", tutorial=TUTORIAL)
 
 
 @app.get("/termos")
