@@ -436,6 +436,11 @@ def index():
     return render_template("index.html", usuario=usuario)
 
 
+@app.get("/apoio")
+def apoio():
+    return render_template("apoio.html", pix_copia_cola=os.getenv("PIX_COPIA_COLA", "").strip())
+
+
 @app.route("/api/dados", methods=["GET"])
 @app.route("/api/depositos", methods=["GET"])
 def listar_dados():

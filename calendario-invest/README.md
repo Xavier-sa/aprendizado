@@ -14,6 +14,8 @@ sequencial cuja soma alcança ou ultrapassa o valor informado.
 - Exibe o total depositado, o valor restante e o progresso.
 - Filtra os itens entre todos, pendentes e concluídos.
 - Alterna entre temas claro e escuro.
+- Abre a página de apoio pelo ícone de coração ao lado do nome do aplicativo.
+  As doações via Pix ainda não estão disponíveis.
 - Salva os dados localmente em JSON com substituição atômica.
 
 ## Capturas da aplicação

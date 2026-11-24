@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apoie o WX Meta</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <script>
+    if (localStorage.getItem('tema-claro') === 'true') document.body.classList.add('soft-theme');
+  </script>
+  <main class="app-shell support-shell">
+    <a class="secondary button-link" href="{{ url_for('index') }}">Voltar ao calendário</a>
+    <section class="support-card" aria-labelledby="support-title">
+      <span class="support-heart" aria-hidden="true">♡</span>
+      <h1 id="support-title">Apoie o WX Meta</h1>
+      <p>Este projeto é gratuito e foi criado para ajudar pessoas a conquistarem seus objetivos.</p>
+      <p>Se puder, ajude a manter essa ideia viva.</p>
+      <figure class="support-qr">
+        <span aria-hidden="true">▦</span>
+        <figcaption>QR Code ilustrativo</figcaption>
+      </figure>
+      <h2>Contribua com qualquer valor</h2>
+      {% if pix_copia_cola %}
+      <label for="pix-code">Pix Copia e Cola</label>
+      <textarea id="pix-code" class="pix-code" rows="3" readonly spellcheck="false">{{ pix_copia_cola }}</textarea>
+      <button class="secondary" id="copy-pix" type="button">Copiar Pix</button>
+      <p id="pix-feedback" role="status">Cole o código na opção Pix Copia e Cola do seu banco.</p>
+      <script src="{{ url_for('static', filename='apoio.js') }}" defer></script>
+      {% else %}
+      <button class="secondary" type="button" disabled>Copiar Pix</button>
+      <p class="support-status">As doações via Pix ainda não estão disponíveis.</p>
+      {% endif %}
+      <p>A contribuição é voluntária e não interfere no acesso às funcionalidades da plataforma.</p>
+      <strong>Grandes sonhos. Pequenos passos.</strong>
+    </section>
+  </main>
+</body>
+</html>
