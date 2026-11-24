@@ -4,6 +4,7 @@ node_modules/
 # Ignorar arquivos de build
 dist/
 build/
+test-results/
 
 # Ignorar arquivos temporários do sistema
 *.log
@@ -13,6 +14,12 @@ Thumbs.db
 
 # Ignorar variáveis de ambiente
 .env
+.env*
+
+# Ignorar metadados locais de deploy e caches Python
+.vercel/
+__pycache__/
+*.py[cod]
 
 # Ignorar configurações do editor
 .vscode/
