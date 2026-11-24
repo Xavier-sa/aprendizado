@@ -1,4 +1,5 @@
-from datetime import date
+from datetime import date, timedelta
+from functools import wraps
 import json
 import math
 import os
@@ -6,11 +7,19 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from uuid import uuid4
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from psycopg import connect
 from psycopg.types.json import Jsonb
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
+app.config.update(
+    SECRET_KEY=os.environ.get("SECRET_KEY", "desenvolvimento-troque-esta-chave"),
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=bool(os.environ.get("VERCEL")),
+    PERMANENT_SESSION_LIFETIME=timedelta(days=30),
+)
 ARQUIVO_INICIAL = Path(__file__).with_name("depositos.json")
 
 
@@ -84,6 +93,22 @@ def preparar_banco(conexao):
             atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )
     """)
+    conexao.execute("""
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id UUID PRIMARY KEY,
+            nome VARCHAR(80) NOT NULL,
+            email VARCHAR(254) NOT NULL UNIQUE,
+            senha_hash TEXT NOT NULL,
+            criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """)
+    conexao.execute("""
+        CREATE TABLE IF NOT EXISTS calendario_estado_usuario (
+            usuario_id UUID PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
+            dados JSONB NOT NULL,
+            atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """)
 
 
 def dados_semente():
@@ -96,30 +121,37 @@ def dados_semente():
 
 
 def carregar_dados_postgres():
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        raise PermissionError("Autenticação necessária.")
     with connect(DATABASE_URL, connect_timeout=10) as conexao:
         preparar_banco(conexao)
         linha = conexao.execute(
-            "SELECT dados FROM calendario_estado WHERE id = 1"
+            "SELECT dados FROM calendario_estado_usuario WHERE usuario_id = %s",
+            (usuario_id,),
         ).fetchone()
         if linha:
             return migrar_dados(linha[0])
-        dados = dados_semente()
+        dados = dados_iniciais()
         conexao.execute(
-            "INSERT INTO calendario_estado (id, dados) VALUES (1, %s)",
-            (Jsonb(dados),),
+            "INSERT INTO calendario_estado_usuario (usuario_id, dados) VALUES (%s, %s)",
+            (usuario_id, Jsonb(dados)),
         )
         return dados
 
 
 def salvar_dados_postgres(dados):
+    usuario_id = session.get("usuario_id")
+    if not usuario_id:
+        raise PermissionError("Autenticação necessária.")
     with connect(DATABASE_URL, connect_timeout=10) as conexao:
         preparar_banco(conexao)
         conexao.execute("""
-            INSERT INTO calendario_estado (id, dados, atualizado_em)
-            VALUES (1, %s, NOW())
-            ON CONFLICT (id) DO UPDATE
+            INSERT INTO calendario_estado_usuario (usuario_id, dados, atualizado_em)
+            VALUES (%s, %s, NOW())
+            ON CONFLICT (usuario_id) DO UPDATE
             SET dados = EXCLUDED.dados, atualizado_em = NOW()
-        """, (Jsonb(dados),))
+        """, (usuario_id, Jsonb(dados)))
 
 
 def carregar_dados():
@@ -194,9 +226,126 @@ def ler_valor_meta(corpo):
     return valor if valor > 0 else None
 
 
+def login_obrigatorio(funcao):
+    @wraps(funcao)
+    def protegida(*args, **kwargs):
+        if not session.get("usuario_id"):
+            return redirect(url_for("entrar"))
+        return funcao(*args, **kwargs)
+    return protegida
+
+
+@app.before_request
+def proteger_api():
+    if request.path.startswith("/api/") and not session.get("usuario_id"):
+        return jsonify({"erro": "Faça login para continuar."}), 401
+
+
+def buscar_usuario_por_email(email):
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        return conexao.execute(
+            "SELECT id, nome, email, senha_hash FROM usuarios WHERE email = %s",
+            (email,),
+        ).fetchone()
+
+
+def buscar_usuario_por_id(usuario_id):
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        return conexao.execute(
+            "SELECT id, nome, email FROM usuarios WHERE id = %s",
+            (usuario_id,),
+        ).fetchone()
+
+
+def cadastrar_usuario(nome, email, senha):
+    usuario_id = str(uuid4())
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        primeiro_usuario = conexao.execute("SELECT NOT EXISTS (SELECT 1 FROM usuarios)").fetchone()[0]
+        if conexao.execute("SELECT 1 FROM usuarios WHERE email = %s", (email,)).fetchone():
+            return None
+        dados = dados_iniciais()
+        if primeiro_usuario:
+            legado = conexao.execute(
+                "SELECT dados FROM calendario_estado WHERE id = 1"
+            ).fetchone()
+            if legado:
+                dados = migrar_dados(legado[0])
+        conexao.execute(
+            "INSERT INTO usuarios (id, nome, email, senha_hash) VALUES (%s, %s, %s, %s)",
+            (usuario_id, nome, email, generate_password_hash(senha)),
+        )
+        conexao.execute(
+            "INSERT INTO calendario_estado_usuario (usuario_id, dados) VALUES (%s, %s)",
+            (usuario_id, Jsonb(dados)),
+        )
+    return usuario_id
+
+
+@app.route("/entrar", methods=["GET", "POST"])
+def entrar():
+    if session.get("usuario_id"):
+        return redirect(url_for("index"))
+    erro = None
+    if request.method == "POST":
+        email = str(request.form.get("email", "")).strip().casefold()
+        senha = str(request.form.get("senha", ""))
+        if not DATABASE_URL:
+            erro = "O banco de dados não está configurado."
+        else:
+            usuario = buscar_usuario_por_email(email)
+            if not usuario or not check_password_hash(usuario[3], senha):
+                erro = "E-mail ou senha incorretos."
+            else:
+                session.clear()
+                session["usuario_id"] = str(usuario[0])
+                session.permanent = True
+                return redirect(url_for("index"))
+    return render_template("auth.html", modo="entrar", erro=erro)
+
+
+@app.route("/cadastro", methods=["GET", "POST"])
+def cadastro():
+    if session.get("usuario_id"):
+        return redirect(url_for("index"))
+    erro = None
+    if request.method == "POST":
+        nome = str(request.form.get("nome", "")).strip()
+        email = str(request.form.get("email", "")).strip().casefold()
+        senha = str(request.form.get("senha", ""))
+        if not nome or len(nome) > 80:
+            erro = "Informe um nome com até 80 caracteres."
+        elif "@" not in email or len(email) > 254:
+            erro = "Informe um e-mail válido."
+        elif len(senha) < 8:
+            erro = "A senha deve ter pelo menos 8 caracteres."
+        elif not DATABASE_URL:
+            erro = "O banco de dados não está configurado."
+        else:
+            usuario_id = cadastrar_usuario(nome, email, senha)
+            if not usuario_id:
+                erro = "Já existe uma conta com este e-mail."
+            else:
+                session.clear()
+                session["usuario_id"] = usuario_id
+                session.permanent = True
+                return redirect(url_for("index"))
+    return render_template("auth.html", modo="cadastro", erro=erro)
+
+
+@app.post("/sair")
+def sair():
+    session.clear()
+    return redirect(url_for("entrar"))
+
+
 @app.route("/")
+@login_obrigatorio
 def index():
-    return render_template("index.html")
+    usuario = buscar_usuario_por_id(session["usuario_id"]) if DATABASE_URL else None
+    return render_template("index.html", usuario=usuario)
 
 
 @app.route("/api/dados", methods=["GET"])

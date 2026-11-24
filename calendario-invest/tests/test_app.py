@@ -17,6 +17,8 @@ class CalendarioInvestTestCase(unittest.TestCase):
             json.dumps({"meta": 23450, "depositos": {}}), encoding="utf-8"
         )
         self.client = modulo.app.test_client()
+        with self.client.session_transaction() as sessao:
+            sessao["usuario_id"] = "00000000-0000-0000-0000-000000000001"
 
     def tearDown(self):
         modulo.DATA_FILE.unlink(missing_ok=True)
@@ -25,6 +27,24 @@ class CalendarioInvestTestCase(unittest.TestCase):
 
     def dados(self):
         return self.client.get("/api/dados").get_json()
+
+    def test_exige_login_na_pagina_e_na_api(self):
+        with self.client.session_transaction() as sessao:
+            sessao.clear()
+        pagina = self.client.get("/")
+        self.assertEqual(pagina.status_code, 302)
+        self.assertTrue(pagina.headers["Location"].endswith("/entrar"))
+        api = self.client.get("/api/dados")
+        self.assertEqual(api.status_code, 401)
+
+    def test_valida_senha_minima_no_cadastro(self):
+        with self.client.session_transaction() as sessao:
+            sessao.clear()
+        resposta = self.client.post("/cadastro", data={
+            "nome": "Pessoa", "email": "pessoa@example.com", "senha": "curta",
+        })
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn("pelo menos 8 caracteres".encode(), resposta.data)
 
     def test_calcula_quantidade_arredondando_para_cima(self):
         self.assertEqual(modulo.calcular_quantidade(23436), 216)

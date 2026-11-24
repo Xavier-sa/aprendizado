@@ -7,6 +7,7 @@ sequencial cuja soma alcança ou ultrapassa o valor informado.
 ## Funcionalidades
 
 - Cria, seleciona, edita e remove várias metas financeiras.
+- Cria contas com e-mail e senha e separa os dados por usuário.
 - Cadastra os bancos usados nos depósitos.
 - Calcula automaticamente a quantidade de depósitos necessários.
 - Registra, edita e remove depósitos separados por meta e banco.

@@ -15,6 +15,7 @@ planejador e registro de depósitos feitos pelo próprio usuário.
 
 ### Pessoa usuária
 
+- cria uma conta e entra com e-mail e senha;
 - cria, seleciona, edita e remove metas;
 - cadastra, renomeia e remove os bancos usados para organizar os depósitos;
 - registra, edita e remove depósitos;
@@ -72,18 +73,20 @@ ações e renderiza os resumos calculados pela API.
 
 ## Persistência
 
-Em produção, o estado é salvo na tabela `calendario_estado`:
+Em produção, contas são salvas em `usuarios` e o estado individual em
+`calendario_estado_usuario`:
 
 | Coluna | Tipo | Finalidade |
 | --- | --- | --- |
-| `id` | `SMALLINT` | Identificador fixo do estado atual. |
+| `usuario_id` | `UUID` | Proprietário e chave do estado. |
 | `dados` | `JSONB` | Metas, bancos, depósitos e meta ativa. |
 | `atualizado_em` | `TIMESTAMPTZ` | Data da última gravação. |
 
 O uso de JSONB preserva o formato da aplicação e permite migrar o conteúdo de
-`depositos.json` sem perder registros. A tabela é criada automaticamente na
-primeira execução. Sem `DATABASE_URL`, a execução local continua usando o
-arquivo JSON para facilitar desenvolvimento e testes.
+`depositos.json` sem perder registros. As tabelas são criadas automaticamente.
+O primeiro cadastro recebe os dados legados; cadastros seguintes começam com
+estado próprio. Sem `DATABASE_URL`, a execução local continua usando o arquivo
+JSON para facilitar desenvolvimento e testes.
 
 ## Ambientes e configuração
 
@@ -100,10 +103,8 @@ use o CLI da Vercel autenticado.
 - Não registrar senhas bancárias, tokens, chaves Pix completas ou dados
   financeiros sensíveis no campo de detalhes.
 - Credenciais do Neon devem permanecer nas variáveis protegidas da Vercel.
-- O sistema ainda não possui autenticação de usuários; portanto, o endereço
-  deve ser tratado como uma instalação de uso controlado.
-- Antes de uso por várias pessoas, implementar autenticação e separar os dados
-  por usuário.
+- Senhas são armazenadas somente como hash seguro do Werkzeug.
+- Sessões usam cookie assinado, `HttpOnly`, `SameSite=Lax` e `Secure` em produção.
 
 ## Operação e qualidade
 
@@ -121,7 +122,7 @@ node --check static/app.js
 
 ## Limitações atuais
 
-- Não há autenticação nem isolamento por pessoa.
+- Não há recuperação de senha nem confirmação de e-mail.
 - O estado completo fica em um único documento JSONB, adequado ao uso atual,
   mas não a alta concorrência.
 - Não existe importação, exportação ou histórico de alterações.

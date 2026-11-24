@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1018">
+  <title>{{ 'Criar conta' if modo == 'cadastro' else 'Entrar' }} · Calendário Invest</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="auth-page">
+  <main class="auth-card">
+    <div class="auth-brand">
+      <img src="/static/favicon.svg" alt="" width="48" height="48">
+      <div><p class="eyebrow">Calendário Invest</p><h1>{{ 'Crie sua conta' if modo == 'cadastro' else 'Bem-vindo' }}</h1></div>
+    </div>
+    <p class="form-help">{{ 'Suas metas e depósitos ficarão separados dos demais usuários.' if modo == 'cadastro' else 'Entre para acessar suas metas financeiras.' }}</p>
+    {% if erro %}<p class="auth-error" role="alert">{{ erro }}</p>{% endif %}
+    <form method="post" class="auth-form">
+      {% if modo == 'cadastro' %}
+      <label>Nome<input name="nome" maxlength="80" autocomplete="name" required value="{{ request.form.get('nome', '') }}"></label>
+      {% endif %}
+      <label>E-mail<input name="email" type="email" maxlength="254" autocomplete="email" required value="{{ request.form.get('email', '') }}"></label>
+      <label>Senha<input name="senha" type="password" minlength="8" autocomplete="{{ 'new-password' if modo == 'cadastro' else 'current-password' }}" required></label>
+      <button class="primary" type="submit">{{ 'Criar conta' if modo == 'cadastro' else 'Entrar' }}</button>
+    </form>
+    {% if modo == 'cadastro' %}
+    <p class="auth-switch">Já tem conta? <a href="/entrar">Entrar</a></p>
+    {% else %}
+    <p class="auth-switch">Ainda não tem conta? <a href="/cadastro">Criar conta</a></p>
+    {% endif %}
+  </main>
+</body>
+</html>

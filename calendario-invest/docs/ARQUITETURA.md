@@ -12,11 +12,12 @@ O Calendário Invest usa uma arquitetura web pequena com três partes:
 ## Fluxo principal
 
 1. O navegador solicita `/`.
-2. O Flask carrega os dados e renderiza `templates/index.html`.
-3. O frontend solicita `GET /api/dados`.
-4. A API calcula o resumo e devolve JSON.
-5. O frontend monta a tabela e apresenta o progresso.
-6. Alterações de meta, banco ou depósito passam pela API antes da gravação.
+2. O Flask exige uma sessão autenticada e identifica o usuário.
+3. O Flask carrega somente os dados desse usuário e renderiza `templates/index.html`.
+4. O frontend solicita `GET /api/dados`.
+5. A API calcula o resumo e devolve JSON.
+6. O frontend monta a tabela e apresenta o progresso.
+7. Alterações de meta, banco ou depósito passam pela API antes da gravação.
 
 ## Cálculo da tabela
 
@@ -39,6 +40,9 @@ objetivo.
 
 | Método | Rota | Finalidade |
 | --- | --- | --- |
+| `GET/POST` | `/entrar` | Autentica uma conta. |
+| `GET/POST` | `/cadastro` | Cria uma conta. |
+| `POST` | `/sair` | Encerra a sessão. |
 | `GET` | `/` | Renderiza a interface. |
 | `GET` | `/api/dados` | Retorna metas, bancos e a meta ativa. |
 | `POST` | `/api/metas` | Cria e seleciona uma meta. |
@@ -91,14 +95,14 @@ gravada transacionalmente no documento JSONB mantido pelo Neon.
 ### Execução na Vercel
 
 Na Vercel, o aplicativo usa PostgreSQL Neon quando `DATABASE_URL` está
-definida. O estado é mantido em JSONB na tabela `calendario_estado`, criada
-automaticamente na primeira execução. O arquivo JSON permanece como fallback
-para desenvolvimento local e testes.
+definida. Contas ficam em `usuarios` e cada estado JSONB fica em
+`calendario_estado_usuario`, ligado ao proprietário por chave estrangeira.
+As tabelas são criadas automaticamente. O arquivo JSON permanece como
+fallback para desenvolvimento local e testes.
 
 ## Limites atuais
 
-- Os dados pertencem a uma única instalação, sem separação por usuário.
-- Não existe autenticação.
+- Não existe recuperação de senha por e-mail.
 - Não existe sincronização com instituições bancárias.
 - O servidor embutido do Flask serve somente para desenvolvimento.
 
