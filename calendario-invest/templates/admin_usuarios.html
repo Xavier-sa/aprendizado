@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1018">
+  <title>Usuários · Calendário Invest</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div><p class="eyebrow">Administração</p><h1>Usuários</h1><p class="subtitle">Gerencie acesso e dados básicos das contas.</p></div>
+      <a class="secondary button-link" href="/">Voltar ao calendário</a>
+    </header>
+    {% if erro %}<p class="auth-error" role="alert">{{ erro }}</p>{% endif %}
+    <div class="users-list">
+      {% for item in usuarios %}
+      <article class="user-card">
+        <form action="/admin/usuarios/{{ item[0] }}/editar" method="post" class="user-edit-form">
+          <label>Nome<input name="nome" maxlength="80" required value="{{ item[1] }}"></label>
+          <label>E-mail<input name="email" type="email" maxlength="254" required value="{{ item[2] }}"></label>
+          <label>Papel<select name="papel" {% if item[0]|string == usuario_id %}disabled{% endif %}><option value="usuario" {% if item[3] == 'usuario' %}selected{% endif %}>Usuário</option><option value="admin" {% if item[3] == 'admin' %}selected{% endif %}>Administrador</option></select>{% if item[0]|string == usuario_id %}<input type="hidden" name="papel" value="admin">{% endif %}</label>
+          <button class="primary" type="submit">Salvar</button>
+        </form>
+        <div class="user-meta"><span class="status {{ 'active' if item[4] else 'inactive' }}">{{ 'Ativo' if item[4] else 'Inativo' }}</span><span>Criado em {{ item[5].strftime('%d/%m/%Y') }}</span></div>
+        <div class="user-actions">
+          <form action="/admin/usuarios/{{ item[0] }}/alternar" method="post"><button class="secondary" type="submit" {% if item[0]|string == usuario_id %}disabled{% endif %}>{{ 'Desativar' if item[4] else 'Ativar' }}</button></form>
+          <form action="/admin/usuarios/{{ item[0] }}/excluir" method="post" onsubmit="return confirm('Excluir esta conta e todos os dados dela?')"><button class="danger" type="submit" {% if item[0]|string == usuario_id %}disabled{% endif %}>Excluir</button></form>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </main>
+</body>
+</html>

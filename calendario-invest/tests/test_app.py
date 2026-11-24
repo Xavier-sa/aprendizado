@@ -46,6 +46,14 @@ class CalendarioInvestTestCase(unittest.TestCase):
         self.assertEqual(resposta.status_code, 200)
         self.assertIn("pelo menos 8 caracteres".encode(), resposta.data)
 
+    def test_usuario_comum_nao_acessa_administracao(self):
+        with patch.object(modulo, "buscar_usuario_por_id", return_value=(
+            "00000000-0000-0000-0000-000000000001", "Pessoa", "pessoa@example.com", "usuario", True
+        )):
+            resposta = self.client.get("/admin/usuarios")
+        self.assertEqual(resposta.status_code, 302)
+        self.assertTrue(resposta.headers["Location"].endswith("/"))
+
     def test_calcula_quantidade_arredondando_para_cima(self):
         self.assertEqual(modulo.calcular_quantidade(23436), 216)
         self.assertEqual(modulo.calcular_quantidade(23437), 217)

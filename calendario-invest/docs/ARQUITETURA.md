@@ -43,6 +43,10 @@ objetivo.
 | `GET/POST` | `/entrar` | Autentica uma conta. |
 | `GET/POST` | `/cadastro` | Cria uma conta. |
 | `POST` | `/sair` | Encerra a sessão. |
+| `GET` | `/admin/usuarios` | Lista contas para administradores. |
+| `POST` | `/admin/usuarios/<id>/editar` | Edita uma conta. |
+| `POST` | `/admin/usuarios/<id>/alternar` | Ativa ou desativa uma conta. |
+| `POST` | `/admin/usuarios/<id>/excluir` | Exclui uma conta e seus dados. |
 | `GET` | `/` | Renderiza a interface. |
 | `GET` | `/api/dados` | Retorna metas, bancos e a meta ativa. |
 | `POST` | `/api/metas` | Cria e seleciona uma meta. |

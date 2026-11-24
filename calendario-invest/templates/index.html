@@ -18,6 +18,7 @@
       </div>
       <div class="top-actions">
         {% if usuario %}<span class="user-name">{{ usuario[1] }}</span>{% endif %}
+        {% if usuario and usuario[3] == 'admin' %}<a class="secondary button-link" href="/admin/usuarios">Usuários</a>{% endif %}
         <button class="secondary" id="manageBanks" type="button">Bancos</button>
         <button class="secondary" id="editGoal" type="button">Editar meta</button>
         <button class="icon-button" id="themeButton" type="button" aria-label="Alternar tema">&#9680;</button>

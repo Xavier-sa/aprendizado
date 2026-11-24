@@ -24,6 +24,9 @@ planejador e registro de depósitos feitos pelo próprio usuário.
 
 ### Administrador técnico
 
+- acessa o painel administrativo de usuários;
+- edita nome, e-mail e papel das contas;
+- ativa, desativa e exclui usuários;
 - mantém o código, o deploy e o domínio;
 - acompanha o CI e os logs da Vercel;
 - administra o banco Neon e suas credenciais;
@@ -98,6 +101,13 @@ disponíveis para manutenção e ferramentas administrativas.
 Arquivos `.env*` nunca devem ser versionados. Para atualizar variáveis locais,
 use o CLI da Vercel autenticado.
 
+Para promover uma conta existente a administradora, execute em um ambiente
+com `DATABASE_URL` configurada:
+
+```bash
+python scripts/promover_admin.py email@example.com
+```
+
 ## Segurança e privacidade
 
 - Não registrar senhas bancárias, tokens, chaves Pix completas ou dados
@@ -105,6 +115,7 @@ use o CLI da Vercel autenticado.
 - Credenciais do Neon devem permanecer nas variáveis protegidas da Vercel.
 - Senhas são armazenadas somente como hash seguro do Werkzeug.
 - Sessões usam cookie assinado, `HttpOnly`, `SameSite=Lax` e `Secure` em produção.
+- Rotas administrativas verificam o papel `admin` no banco a cada acesso.
 
 ## Operação e qualidade
 

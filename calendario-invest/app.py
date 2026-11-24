@@ -102,6 +102,8 @@ def preparar_banco(conexao):
             criado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )
     """)
+    conexao.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS papel VARCHAR(20) NOT NULL DEFAULT 'usuario'")
+    conexao.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS ativo BOOLEAN NOT NULL DEFAULT TRUE")
     conexao.execute("""
         CREATE TABLE IF NOT EXISTS calendario_estado_usuario (
             usuario_id UUID PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -245,7 +247,7 @@ def buscar_usuario_por_email(email):
     with connect(DATABASE_URL, connect_timeout=10) as conexao:
         preparar_banco(conexao)
         return conexao.execute(
-            "SELECT id, nome, email, senha_hash FROM usuarios WHERE email = %s",
+            "SELECT id, nome, email, senha_hash, ativo, papel FROM usuarios WHERE email = %s",
             (email,),
         ).fetchone()
 
@@ -254,7 +256,7 @@ def buscar_usuario_por_id(usuario_id):
     with connect(DATABASE_URL, connect_timeout=10) as conexao:
         preparar_banco(conexao)
         return conexao.execute(
-            "SELECT id, nome, email FROM usuarios WHERE id = %s",
+            "SELECT id, nome, email, papel, ativo FROM usuarios WHERE id = %s",
             (usuario_id,),
         ).fetchone()
 
@@ -284,6 +286,16 @@ def cadastrar_usuario(nome, email, senha):
     return usuario_id
 
 
+def admin_obrigatorio(funcao):
+    @wraps(funcao)
+    def protegida(*args, **kwargs):
+        usuario = buscar_usuario_por_id(session.get("usuario_id")) if session.get("usuario_id") else None
+        if not usuario or usuario[3] != "admin" or not usuario[4]:
+            return redirect(url_for("index"))
+        return funcao(*args, **kwargs)
+    return protegida
+
+
 @app.route("/entrar", methods=["GET", "POST"])
 def entrar():
     if session.get("usuario_id"):
@@ -296,7 +308,7 @@ def entrar():
             erro = "O banco de dados não está configurado."
         else:
             usuario = buscar_usuario_por_email(email)
-            if not usuario or not check_password_hash(usuario[3], senha):
+            if not usuario or not usuario[4] or not check_password_hash(usuario[3], senha):
                 erro = "E-mail ou senha incorretos."
             else:
                 session.clear()
@@ -339,6 +351,69 @@ def cadastro():
 def sair():
     session.clear()
     return redirect(url_for("entrar"))
+
+
+@app.get("/admin/usuarios")
+@login_obrigatorio
+@admin_obrigatorio
+def administrar_usuarios():
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        usuarios = conexao.execute("""
+            SELECT id, nome, email, papel, ativo, criado_em
+            FROM usuarios ORDER BY criado_em
+        """).fetchall()
+    return render_template("admin_usuarios.html", usuarios=usuarios,
+                           usuario_id=session["usuario_id"], erro=request.args.get("erro"))
+
+
+@app.post("/admin/usuarios/<usuario_id>/editar")
+@login_obrigatorio
+@admin_obrigatorio
+def editar_usuario(usuario_id):
+    nome = str(request.form.get("nome", "")).strip()
+    email = str(request.form.get("email", "")).strip().casefold()
+    papel = str(request.form.get("papel", "usuario"))
+    if not nome or len(nome) > 80 or "@" not in email or papel not in {"usuario", "admin"}:
+        return redirect(url_for("administrar_usuarios", erro="Dados inválidos."))
+    if usuario_id == session["usuario_id"]:
+        papel = "admin"
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        duplicado = conexao.execute(
+            "SELECT 1 FROM usuarios WHERE email = %s AND id <> %s", (email, usuario_id)
+        ).fetchone()
+        if duplicado:
+            return redirect(url_for("administrar_usuarios", erro="E-mail já cadastrado."))
+        conexao.execute(
+            "UPDATE usuarios SET nome = %s, email = %s, papel = %s WHERE id = %s",
+            (nome, email, papel, usuario_id),
+        )
+    return redirect(url_for("administrar_usuarios"))
+
+
+@app.post("/admin/usuarios/<usuario_id>/alternar")
+@login_obrigatorio
+@admin_obrigatorio
+def alternar_usuario(usuario_id):
+    if usuario_id == session["usuario_id"]:
+        return redirect(url_for("administrar_usuarios", erro="Você não pode desativar sua própria conta."))
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        conexao.execute("UPDATE usuarios SET ativo = NOT ativo WHERE id = %s", (usuario_id,))
+    return redirect(url_for("administrar_usuarios"))
+
+
+@app.post("/admin/usuarios/<usuario_id>/excluir")
+@login_obrigatorio
+@admin_obrigatorio
+def excluir_usuario(usuario_id):
+    if usuario_id == session["usuario_id"]:
+        return redirect(url_for("administrar_usuarios", erro="Você não pode excluir sua própria conta."))
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        conexao.execute("DELETE FROM usuarios WHERE id = %s", (usuario_id,))
+    return redirect(url_for("administrar_usuarios"))
 
 
 @app.route("/")
