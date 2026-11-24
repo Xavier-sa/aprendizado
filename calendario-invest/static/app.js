@@ -67,8 +67,9 @@ function renderizarBancos() {
     const item = document.createElement('div');
     item.className = 'bank-item';
     const inicial = banco.nome.trim().charAt(0).toUpperCase();
-    item.innerHTML = `<span class="bank-avatar">${inicial}</span><strong>${banco.nome}</strong><button type="button" aria-label="Remover ${banco.nome}">&times;</button>`;
-    item.querySelector('button').addEventListener('click', () => removerBanco(banco));
+    item.innerHTML = `<span class="bank-avatar">${inicial}</span><strong>${banco.nome}</strong><span class="bank-actions"><button class="rename-bank" type="button" aria-label="Renomear ${banco.nome}" title="Renomear">&#9998;</button><button class="remove-bank" type="button" aria-label="Remover ${banco.nome}" title="Remover">&times;</button></span>`;
+    item.querySelector('.rename-bank').addEventListener('click', () => renomearBanco(banco));
+    item.querySelector('.remove-bank').addEventListener('click', () => removerBanco(banco));
     return item;
   }));
   if (!estado.bancos.length) {
@@ -202,6 +203,17 @@ async function removerBanco(banco) {
   if (!confirm(`Remover o banco "${banco.nome}"?`)) return;
   try { aplicarDados(await api(`/api/bancos/${banco.id}`, { method: 'DELETE' })); mostrarToast('Banco removido.'); }
   catch (erro) { mostrarToast(erro.message, true); }
+}
+
+async function renomearBanco(banco) {
+  const nome = prompt('Novo nome do banco:', banco.nome)?.trim();
+  if (!nome || nome === banco.nome) return;
+  try {
+    aplicarDados(await api(`/api/bancos/${banco.id}`, {
+      method: 'PUT', body: JSON.stringify({ nome })
+    }));
+    mostrarToast('Banco renomeado.');
+  } catch (erro) { mostrarToast(erro.message, true); }
 }
 
 document.querySelector('#newGoal').addEventListener('click', () => abrirMeta(true));

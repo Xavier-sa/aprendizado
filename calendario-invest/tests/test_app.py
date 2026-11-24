@@ -1,28 +1,27 @@
 import json
 from pathlib import Path
-from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
+from uuid import uuid4
 
 import app as modulo
 
 
 class CalendarioInvestTestCase(unittest.TestCase):
     def setUp(self):
-        self.pasta = TemporaryDirectory()
         self.arquivo_original = modulo.DATA_FILE
         self.database_url_original = modulo.DATABASE_URL
         modulo.DATABASE_URL = None
-        modulo.DATA_FILE = Path(self.pasta.name) / "depositos.json"
+        modulo.DATA_FILE = Path(__file__).parent / f".depositos-teste-{uuid4().hex}.json"
         modulo.DATA_FILE.write_text(
             json.dumps({"meta": 23450, "depositos": {}}), encoding="utf-8"
         )
         self.client = modulo.app.test_client()
 
     def tearDown(self):
+        modulo.DATA_FILE.unlink(missing_ok=True)
         modulo.DATA_FILE = self.arquivo_original
         modulo.DATABASE_URL = self.database_url_original
-        self.pasta.cleanup()
 
     def dados(self):
         return self.client.get("/api/dados").get_json()
@@ -100,6 +99,18 @@ class CalendarioInvestTestCase(unittest.TestCase):
         })
         remocao = self.client.delete(f"/api/bancos/{banco['id']}")
         self.assertEqual(remocao.status_code, 409)
+
+    def test_renomeia_banco_e_mantem_vinculo_com_deposito(self):
+        banco = self.client.post("/api/bancos", json={"nome": "Nome antigo"}).get_json()["bancos"][0]
+        meta = self.dados()["meta_ativa"]
+        self.client.post(f"/api/metas/{meta['id']}/depositos/1", json={
+            "valor": 1, "banco_id": banco["id"], "metodo": "Pix", "data": "2026-11-24",
+        })
+        resposta = self.client.put(f"/api/bancos/{banco['id']}", json={"nome": "Nome novo"})
+        self.assertEqual(resposta.status_code, 200)
+        dados = resposta.get_json()
+        self.assertEqual(dados["bancos"][0]["nome"], "Nome novo")
+        self.assertEqual(dados["meta_ativa"]["depositos"]["1"]["banco"], "Nome novo")
 
     def test_valida_meta_e_mantem_ao_menos_uma(self):
         invalida = self.client.post("/api/metas", json={"nome": "Inválida", "valor": 0})

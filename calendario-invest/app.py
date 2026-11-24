@@ -278,6 +278,23 @@ def criar_banco():
     return jsonify({"ok": True, **resposta_completa(dados)}), 201
 
 
+@app.route("/api/bancos/<banco_id>", methods=["PUT"])
+def atualizar_banco(banco_id):
+    dados, corpo = carregar_dados(), request.get_json(silent=True) or {}
+    banco = next((item for item in dados["bancos"] if item["id"] == banco_id), None)
+    if not banco:
+        return jsonify({"erro": "Banco não encontrado."}), 404
+    nome = str(corpo.get("nome", "")).strip()
+    if not nome:
+        return jsonify({"erro": "Informe o nome do banco."}), 400
+    if any(item["id"] != banco_id and item["nome"].casefold() == nome.casefold()
+           for item in dados["bancos"]):
+        return jsonify({"erro": "Este banco já está cadastrado."}), 409
+    banco["nome"] = nome
+    salvar_dados(dados)
+    return jsonify({"ok": True, **resposta_completa(dados)})
+
+
 @app.route("/api/bancos/<banco_id>", methods=["DELETE"])
 def remover_banco(banco_id):
     dados = carregar_dados()

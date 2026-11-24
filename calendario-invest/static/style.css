@@ -69,10 +69,12 @@ input:focus,select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba
 .danger { border:1px solid var(--danger); color:var(--danger); background:transparent; }
 .inline-form { display:grid; grid-template-columns:1fr auto; align-items:end; gap:9px; }
 .bank-list { display:grid; gap:8px; max-height:280px; overflow:auto; }
-.bank-item { display:grid; grid-template-columns:36px 1fr 34px; align-items:center; gap:10px; padding:9px; border:1px solid var(--border); border-radius:11px; background:var(--panel-2); }
+.bank-item { display:grid; grid-template-columns:36px 1fr auto; align-items:center; gap:10px; padding:9px; border:1px solid var(--border); border-radius:11px; background:var(--panel-2); }
 .bank-avatar { display:grid; place-items:center; width:36px; height:36px; border-radius:9px; color:#092b1b; background:var(--accent); font-weight:900; }
 .bank-item button { border:0; color:var(--muted); background:transparent; font-size:1.25rem; cursor:pointer; }
-.bank-item button:hover { color:var(--danger); }
+.bank-actions { display:flex; align-items:center; gap:4px; }
+.bank-item .rename-bank:hover { color:var(--accent); }
+.bank-item .remove-bank:hover { color:var(--danger); }
 .list-empty { margin:12px 0; color:var(--muted); text-align:center; }
 .toast { position:fixed; z-index:10; right:20px; bottom:20px; max-width:min(380px,calc(100% - 40px)); padding:12px 16px; border:1px solid var(--accent); border-radius:12px; color:var(--text); background:var(--panel); box-shadow:0 16px 40px rgba(0,0,0,.28); opacity:0; transform:translateY(10px); pointer-events:none; transition:.2s ease; }
 .toast.visible { opacity:1; transform:none; }

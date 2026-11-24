@@ -46,6 +46,7 @@ objetivo.
 | `DELETE` | `/api/metas/<meta_id>` | Remove uma meta, exceto a última. |
 | `POST` | `/api/metas/<meta_id>/selecionar` | Seleciona a meta ativa. |
 | `POST` | `/api/bancos` | Cadastra um banco. |
+| `PUT` | `/api/bancos/<banco_id>` | Renomeia um banco. |
 | `DELETE` | `/api/bancos/<banco_id>` | Remove um banco que não esteja em uso. |
 | `POST` | `/api/metas/<meta_id>/depositos/<numero>` | Cria ou atualiza um depósito. |
 | `DELETE` | `/api/metas/<meta_id>/depositos/<numero>` | Remove um depósito. |

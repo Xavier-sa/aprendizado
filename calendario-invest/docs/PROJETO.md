@@ -16,7 +16,7 @@ planejador e registro de depósitos feitos pelo próprio usuário.
 ### Pessoa usuária
 
 - cria, seleciona, edita e remove metas;
-- cadastra os bancos usados para organizar os depósitos;
+- cadastra, renomeia e remove os bancos usados para organizar os depósitos;
 - registra, edita e remove depósitos;
 - acompanha valor depositado, saldo restante e percentual concluído;
 - alterna filtros e tema visual.
