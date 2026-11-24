@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'Privacidade e LGPD' if privacidade else 'Termos de uso' }} · Calendário Invest</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="app-shell legal">
+    <a href="{{ url_for('inicio') }}">Voltar ao início</a>
+    {% if privacidade %}
+    <h1>Privacidade e LGPD</h1>
+    <p>Tratamos nome, e-mail, hash de senha e dados de sessão para operar sua conta. Metas, bancos cadastrados como rótulos, valores, datas e métodos informados servem para organizar e exibir seu progresso.</p>
+    <p>A aplicação usa Vercel para hospedagem e Neon para armazenamento. Esses serviços podem tratar dados técnicos para operação e segurança. O navegador usa um cookie de sessão e guarda a preferência de tema localmente.</p>
+    <p>CPF, chaves Pix, números de conta, credenciais e comprovantes não são necessários. Evite inseri-los em qualquer campo.</p>
+    <p>Você pode solicitar confirmação de tratamento, acesso, correção, eliminação e exercer os demais direitos aplicáveis pelo <a href="mailto:xavier@wasxtech.com.br">contato do projeto</a>. A verificação de identidade deve ser proporcional ao pedido.</p>
+    <p>Versão para revisão. A identificação formal do controlador, os prazos de retenção e as condições aplicáveis aos fornecedores ainda precisam ser confirmados.</p>
+    {% else %}
+    <h1>Termos de uso</h1>
+    <p>O Calendário Invest ajuda a transformar um objetivo grande em passos pequenos e acompanhar o avanço com registros manuais.</p>
+    <p>O serviço não recebe, guarda, transfere ou investe dinheiro. Também não acessa contas bancárias, executa Pix, confirma pagamentos, recomenda investimentos ou garante que você atingirá sua meta.</p>
+    <p>Os valores são sugestões de organização. Escolha passos que caibam no seu orçamento e confira os movimentos reais diretamente no seu banco. Mantenha a senha da plataforma em sigilo e use apenas sua própria conta.</p>
+    <p>Estes termos preservam os direitos previstos em lei. Para dúvidas sobre o serviço, use o <a href="mailto:xavier@wasxtech.com.br">contato do projeto</a>.</p>
+    <p>Versão para revisão.</p>
+    {% endif %}
+  </main>
+  {% include 'rodape.html' %}
+</body>
+</html>

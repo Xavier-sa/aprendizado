@@ -418,7 +418,18 @@ def excluir_usuario(usuario_id):
     return redirect(url_for("administrar_usuarios"))
 
 
-@app.route("/")
+@app.get("/")
+def inicio():
+    return render_template("inicio.html", video_url=os.environ.get("CALENDARIO_TUTORIAL_VIDEO_URL"))
+
+
+@app.get("/termos")
+@app.get("/privacidade")
+def informacoes_legais():
+    return render_template("legal.html", privacidade=request.path == "/privacidade")
+
+
+@app.get("/painel")
 @login_obrigatorio
 def index():
     usuario = buscar_usuario_por_id(session["usuario_id"]) if DATABASE_URL else None

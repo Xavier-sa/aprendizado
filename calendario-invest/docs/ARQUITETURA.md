@@ -11,7 +11,7 @@ O Calendário Invest usa uma arquitetura web pequena com três partes:
 
 ## Fluxo principal
 
-1. O navegador solicita `/`.
+1. A página pública em `/` apresenta o tutorial e aponta para `/entrar`. O painel autenticado fica em `/painel`.
 2. O Flask exige uma sessão autenticada e identifica o usuário.
 3. O Flask carrega somente os dados desse usuário e renderiza `templates/index.html`.
 4. O frontend solicita `GET /api/dados`.

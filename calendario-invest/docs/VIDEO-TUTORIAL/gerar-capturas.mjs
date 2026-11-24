@@ -29,7 +29,7 @@ try {
   await page.fill('[name="senha"]', senha);
   await capturar('02-cadastro.png');
   await page.click('button[type="submit"]');
-  await page.waitForURL(`${baseUrl}/`);
+  await page.waitForURL(`${baseUrl}/painel`);
   await page.waitForFunction(() => !document.querySelector('#tituloMeta')?.textContent.includes('Carregando'));
   await capturar('03-painel-inicial.png');
 

@@ -12,7 +12,7 @@
   <main class="admin-shell">
     <header class="admin-header">
       <div><p class="eyebrow">Administração</p><h1>Usuários</h1><p class="subtitle">Gerencie acesso e dados básicos das contas.</p></div>
-      <a class="secondary button-link" href="/">Voltar ao calendário</a>
+      <a class="secondary button-link" href="{{ url_for('index') }}">Voltar ao calendário</a>
     </header>
     {% if erro %}<p class="auth-error" role="alert">{{ erro }}</p>{% endif %}
     <div class="users-list">
@@ -33,5 +33,6 @@
       {% endfor %}
     </div>
   </main>
+  {% include 'rodape.html' %}
 </body>
 </html>

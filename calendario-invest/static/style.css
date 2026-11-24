@@ -84,6 +84,19 @@ input:focus,select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba
 .toast.error { border-color:var(--danger); }
 button:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent); outline-offset:2px; }
 [hidden] { display:none!important; }
+.rodape { display:flex; flex-wrap:wrap; gap:12px 24px; border-top:1px solid var(--border); color:var(--muted); padding:18px 0; }
+.rodape nav { display:flex; flex-wrap:wrap; gap:8px 16px; }
+.rodape a,.legal a { color:var(--accent); }
+.legal { max-width:760px; line-height:1.65; }
+.inicio-destaque { display:grid; grid-template-columns:1fr 1fr; gap:clamp(24px,6vw,80px); align-items:center; padding:clamp(24px,7vw,90px) 0; }
+.inicio-destaque h1 { font-size:clamp(2rem,5vw,3.6rem); line-height:1.08; }
+.inicio-destaque p,.inicio-destaque li { line-height:1.55; }
+.inicio-cta { margin-top:20px; background:var(--accent); color:#092b1b; font-weight:800; }
+.inicio-tutorial { background:var(--panel); border:1px solid var(--border); border-radius:20px; padding:clamp(16px,4vw,30px); }
+.inicio-tutorial video { display:block; width:100%; border-radius:12px; background:var(--bg); }
+.inicio-tutorial ol { padding-left:1.35em; }
+.inicio-tutorial li + li { margin-top:8px; }
+@media (max-width:760px) { .inicio-destaque { grid-template-columns:1fr; } }
 @media (max-width:800px) { .grid { grid-template-columns:repeat(8,minmax(42px,1fr)); } }
 @media (max-width:680px) { .topbar { align-items:flex-start; flex-direction:column; } .top-actions { width:100%; } .top-actions .secondary { flex:1; } .grid-header { align-items:start; flex-direction:column; } .filters { justify-content:flex-start; } }
 @media (max-width:520px) { .app-shell { width:min(100% - 20px,1180px); padding-top:20px; } .summary { padding:14px 10px 18px; } .summary article strong { font-size:.88rem; } .progress-track { left:10px; right:10px; } .grid-card { padding:12px; } .grid-header p { display:none; } .grid { grid-template-columns:repeat(5,minmax(48px,1fr)); gap:5px; } .deposit { min-height:54px; } .modal-actions { flex-direction:column-reverse; } .modal-actions button { width:100%; } .inline-form { grid-template-columns:1fr; } }

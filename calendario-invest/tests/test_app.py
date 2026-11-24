@@ -28,10 +28,27 @@ class CalendarioInvestTestCase(unittest.TestCase):
     def dados(self):
         return self.client.get("/api/dados").get_json()
 
+    def test_paginas_legais_publicas(self):
+        visitante = modulo.app.test_client()
+        for caminho, titulo in (("/termos", "Termos de uso"), ("/privacidade", "Privacidade e LGPD")):
+            with self.subTest(caminho=caminho):
+                resposta = visitante.get(caminho)
+                self.assertEqual(resposta.status_code, 200)
+                self.assertIn(titulo.encode(), resposta.data)
+
+    def test_api_rejeita_sessao_de_conta_desativada(self):
+        with patch.object(modulo, "DATABASE_URL", "postgresql://exemplo"), patch.object(
+            modulo, "buscar_usuario_por_id", return_value=("id", "Pessoa", "p@example.com", "usuario", False)
+        ):
+            self.assertEqual(self.client.get("/api/dados").status_code, 401)
+
     def test_exige_login_na_pagina_e_na_api(self):
         with self.client.session_transaction() as sessao:
             sessao.clear()
-        pagina = self.client.get("/")
+        inicio = self.client.get("/")
+        self.assertEqual(inicio.status_code, 200)
+        self.assertIn(b"Como funciona", inicio.data)
+        pagina = self.client.get("/painel")
         self.assertEqual(pagina.status_code, 302)
         self.assertTrue(pagina.headers["Location"].endswith("/entrar"))
         api = self.client.get("/api/dados")
@@ -52,7 +69,7 @@ class CalendarioInvestTestCase(unittest.TestCase):
         )):
             resposta = self.client.get("/admin/usuarios")
         self.assertEqual(resposta.status_code, 302)
-        self.assertTrue(resposta.headers["Location"].endswith("/"))
+        self.assertTrue(resposta.headers["Location"].endswith("/painel"))
 
     def test_calcula_quantidade_arredondando_para_cima(self):
         self.assertEqual(modulo.calcular_quantidade(23436), 216)
@@ -148,7 +165,7 @@ class CalendarioInvestTestCase(unittest.TestCase):
         self.assertEqual(remocao.status_code, 400)
 
     def test_renderiza_pagina_principal(self):
-        resposta = self.client.get("/")
+        resposta = self.client.get("/painel")
         self.assertEqual(resposta.status_code, 200)
         self.assertIn("Calendário Invest".encode(), resposta.data)
 
