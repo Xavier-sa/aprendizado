@@ -1,84 +1,18 @@
-let { meta, quantidade } = window.APP_CONFIG;
-const grid = document.querySelector('#depositGrid');
-const modal = document.querySelector('#depositModal');
-const form = document.querySelector('#depositForm');
-let numeroAtual = null;
-let depositos = {};
-
+const estado = { meta: null, metas: [], bancos: [], numero: null, filtro: 'todos' };
 const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const grid = document.querySelector('#depositGrid');
+const depositModal = document.querySelector('#depositModal');
+const goalModal = document.querySelector('#goalModal');
+const banksModal = document.querySelector('#banksModal');
 
-function montarTabela() {
-  grid.replaceChildren();
-  for (let i = 1; i <= quantidade; i++) {
-  const button = document.createElement('button');
-  button.type = 'button';
-  button.className = 'deposit';
-  button.dataset.numero = i;
-  button.innerHTML = `<span>${i}</span><small>R$ ${i}</small>`;
-  button.addEventListener('click', () => abrirModal(i));
-  grid.appendChild(button);
-  }
-}
-
-montarTabela();
-
-async function carregar() {
-  try {
-    const resposta = await fetch('/api/depositos');
-    if (!resposta.ok) throw new Error();
-    atualizar(await resposta.json());
-  } catch {
-    mostrarToast('Não foi possível carregar os depósitos.', true);
-  }
-}
-
-function atualizar(dados) {
-  const quantidadeMudou = quantidade !== dados.quantidade;
-  meta = Number(dados.meta);
-  quantidade = dados.quantidade;
-  if (quantidadeMudou) montarTabela();
-  const total = Number(dados.total || 0);
-  const percentual = Math.min(100, (total / meta) * 100);
-  depositos = dados.depositos;
-  document.querySelector('#metaTitulo').textContent = moeda.format(meta);
-  document.querySelector('#totalDepositado').textContent = moeda.format(total);
-  document.querySelector('#restante').textContent = moeda.format(dados.restante ?? Math.max(0, meta - total));
-  document.querySelector('#concluidos').textContent = `${dados.concluido} / ${quantidade}`;
-  document.querySelector('#progressBar').style.width = `${percentual}%`;
-  document.querySelector('#progressBar').parentElement.setAttribute('aria-label', `${percentual.toFixed(1)}% da meta`);
-
-  document.querySelectorAll('.deposit').forEach((button) => {
-    const item = depositos[button.dataset.numero];
-    button.classList.toggle('completed', Boolean(item));
-    if (item) button.title = `${item.metodo} — ${moeda.format(item.valor)} — ${item.banco}`;
+async function api(url, opcoes = {}) {
+  const resposta = await fetch(url, {
+    ...opcoes,
+    headers: opcoes.body ? { 'Content-Type': 'application/json', ...opcoes.headers } : opcoes.headers
   });
-}
-
-function calcularQuantidade(valor) {
-  return Math.ceil((Math.sqrt(1 + 8 * valor) - 1) / 2);
-}
-
-function abrirModal(numero) {
-  numeroAtual = numero;
-  document.querySelector('#modalTitle').textContent = `Número ${numero} · R$ ${numero}`;
-  document.querySelector('#valor').value = numero;
-  document.querySelector('#data').value = new Date().toISOString().slice(0, 10);
-
-  const item = depositos[numero];
-  document.querySelector('#banco').value = item?.banco || '';
-  document.querySelector('#metodo').value = item?.metodo || 'Pix';
-  document.querySelector('#detalhes').value = item?.detalhes || '';
-  document.querySelector('#data').value = item?.data || dataLocal();
-  document.querySelector('#valor').value = item?.valor ?? numero;
-  document.querySelector('#removeDeposit').hidden = !item;
-
-  modal.showModal();
-}
-
-function dataLocal() {
-  const agora = new Date();
-  agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
-  return agora.toISOString().slice(0, 10);
+  const dados = await resposta.json();
+  if (!resposta.ok) throw new Error(dados.erro || 'Não foi possível concluir a operação.');
+  return dados;
 }
 
 function mostrarToast(mensagem, erro = false) {
@@ -90,93 +24,207 @@ function mostrarToast(mensagem, erro = false) {
   mostrarToast.timer = setTimeout(() => toast.classList.remove('visible'), 3000);
 }
 
-function fecharModal() {
-  modal.close();
-  form.reset();
+function aplicarDados(dados) {
+  estado.meta = dados.meta_ativa;
+  estado.metas = dados.metas;
+  estado.bancos = dados.bancos;
+  renderizar();
 }
 
-document.querySelector('#closeModal').addEventListener('click', fecharModal);
-modal.addEventListener('click', (event) => {
-  if (event.target === modal) fecharModal();
-});
+function renderizar() {
+  const meta = estado.meta;
+  if (!meta) return;
+  document.querySelector('#tituloMeta').textContent = `${meta.nome} · ${moeda.format(meta.meta)}`;
+  document.querySelector('#totalDepositado').textContent = moeda.format(meta.total);
+  document.querySelector('#restante').textContent = moeda.format(meta.restante);
+  document.querySelector('#concluidos').textContent = `${meta.concluido} / ${meta.quantidade}`;
+  const percentual = Math.min(100, (meta.total / meta.meta) * 100);
+  document.querySelector('#progressBar').style.width = `${percentual}%`;
+  document.querySelector('.progress-track').setAttribute('aria-label', `${percentual.toFixed(1)}% da meta`);
+  renderizarMetas();
+  renderizarBancos();
+  montarTabela();
+}
 
-document.querySelector('#metodo').addEventListener('change', (event) => {
-  document.querySelector('#detailsLabel').firstChild.textContent =
-    event.target.value === 'Pix' ? 'Chave Pix / dados ' : 'Agência / conta / dados ';
-});
+function renderizarMetas() {
+  const tabs = document.querySelector('#goalTabs');
+  tabs.replaceChildren(...estado.metas.map((meta) => {
+    const botao = document.createElement('button');
+    botao.type = 'button';
+    botao.className = `goal-tab${meta.id === estado.meta.id ? ' active' : ''}`;
+    botao.setAttribute('aria-pressed', meta.id === estado.meta.id);
+    botao.innerHTML = `<span>${meta.nome}</span><small>${Math.round((meta.total / meta.meta) * 100)}%</small>`;
+    botao.addEventListener('click', () => selecionarMeta(meta.id));
+    return botao;
+  }));
+}
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const payload = Object.fromEntries(new FormData(form));
-  const resposta = await fetch(`/api/depositos/${numeroAtual}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-  const dados = await resposta.json();
-  if (!resposta.ok) return mostrarToast(dados.erro, true);
-  atualizar(dados);
-  fecharModal();
-  mostrarToast('Depósito salvo com sucesso.');
+function renderizarBancos() {
+  const select = document.querySelector('#banco');
+  select.replaceChildren(new Option('Selecione um banco', ''), ...estado.bancos.map((banco) => new Option(banco.nome, banco.id)));
+  const lista = document.querySelector('#bankList');
+  lista.replaceChildren(...estado.bancos.map((banco) => {
+    const item = document.createElement('div');
+    item.className = 'bank-item';
+    const inicial = banco.nome.trim().charAt(0).toUpperCase();
+    item.innerHTML = `<span class="bank-avatar">${inicial}</span><strong>${banco.nome}</strong><button type="button" aria-label="Remover ${banco.nome}">&times;</button>`;
+    item.querySelector('button').addEventListener('click', () => removerBanco(banco));
+    return item;
+  }));
+  if (!estado.bancos.length) {
+    const vazio = document.createElement('p');
+    vazio.className = 'list-empty';
+    vazio.textContent = 'Nenhum banco cadastrado ainda.';
+    lista.appendChild(vazio);
+  }
+  document.querySelector('#emptyBanks').hidden = estado.bancos.length > 0;
+  grid.hidden = estado.bancos.length === 0;
+}
+
+function montarTabela() {
+  grid.replaceChildren();
+  for (let numero = 1; numero <= estado.meta.quantidade; numero += 1) {
+    const item = estado.meta.depositos[numero];
+    const botao = document.createElement('button');
+    botao.type = 'button';
+    botao.className = `deposit${item ? ' completed' : ''}`;
+    botao.dataset.numero = numero;
+    botao.innerHTML = `<span>${numero}</span><small>${moeda.format(numero).replace(',00', '')}</small>`;
+    if (item) {
+      botao.title = `${item.metodo} · ${moeda.format(item.valor)} · ${item.banco}`;
+      botao.setAttribute('aria-label', `Depósito ${numero} concluído em ${item.banco}. Editar.`);
+    }
+    botao.hidden = estado.filtro === 'pendentes' ? Boolean(item) : estado.filtro === 'concluidos' ? !item : false;
+    botao.addEventListener('click', () => abrirDeposito(numero));
+    grid.appendChild(botao);
+  }
+}
+
+async function selecionarMeta(metaId) {
+  if (metaId === estado.meta.id) return;
+  try { aplicarDados(await api(`/api/metas/${metaId}/selecionar`, { method: 'POST' })); }
+  catch (erro) { mostrarToast(erro.message, true); }
+}
+
+function dataLocal() {
+  const agora = new Date();
+  agora.setMinutes(agora.getMinutes() - agora.getTimezoneOffset());
+  return agora.toISOString().slice(0, 10);
+}
+
+function abrirDeposito(numero) {
+  if (!estado.bancos.length) return banksModal.showModal();
+  estado.numero = numero;
+  const item = estado.meta.depositos[numero];
+  document.querySelector('#modalTitle').textContent = `Número ${numero} · ${moeda.format(numero)}`;
+  document.querySelector('#valor').value = item?.valor ?? numero;
+  document.querySelector('#banco').value = item?.banco_id || '';
+  document.querySelector('#metodo').value = item?.metodo || 'Pix';
+  document.querySelector('#detalhes').value = item?.detalhes || '';
+  document.querySelector('#data').value = item?.data || dataLocal();
+  document.querySelector('#removeDeposit').hidden = !item;
+  depositModal.showModal();
+}
+
+document.querySelector('#depositForm').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  try {
+    const payload = Object.fromEntries(new FormData(evento.currentTarget));
+    aplicarDados(await api(`/api/metas/${estado.meta.id}/depositos/${estado.numero}`, { method: 'POST', body: JSON.stringify(payload) }));
+    depositModal.close();
+    mostrarToast('Depósito salvo com sucesso.');
+  } catch (erro) { mostrarToast(erro.message, true); }
 });
 
 document.querySelector('#removeDeposit').addEventListener('click', async () => {
   if (!confirm('Remover este depósito?')) return;
-  const resposta = await fetch(`/api/depositos/${numeroAtual}`, { method: 'DELETE' });
-  atualizar(await resposta.json());
-  fecharModal();
-  mostrarToast('Depósito removido.');
+  try {
+    aplicarDados(await api(`/api/metas/${estado.meta.id}/depositos/${estado.numero}`, { method: 'DELETE' }));
+    depositModal.close();
+    mostrarToast('Depósito removido.');
+  } catch (erro) { mostrarToast(erro.message, true); }
 });
 
+function abrirMeta(nova) {
+  document.querySelector('#goalForm').reset();
+  document.querySelector('#goalEyebrow').textContent = nova ? 'Nova meta' : 'Editar meta';
+  document.querySelector('#goalModalTitle').textContent = nova ? 'Crie um objetivo' : estado.meta.nome;
+  document.querySelector('#goalName').value = nova ? `Meta ${estado.metas.length + 1}` : estado.meta.nome;
+  document.querySelector('#goalValue').value = nova ? '' : estado.meta.meta;
+  document.querySelector('#removeGoal').hidden = nova || estado.metas.length === 1;
+  goalModal.dataset.mode = nova ? 'create' : 'edit';
+  atualizarPreviaMeta();
+  goalModal.showModal();
+  document.querySelector('#goalName').focus();
+}
+
+function atualizarPreviaMeta() {
+  const valor = Number(document.querySelector('#goalValue').value);
+  const preview = document.querySelector('#calculationPreview');
+  if (valor <= 0) return preview.textContent = '';
+  const total = Math.ceil((Math.sqrt(1 + 8 * valor) - 1) / 2);
+  preview.textContent = `${total} depósitos · tabela cobre ${moeda.format(total * (total + 1) / 2)}`;
+}
+
+document.querySelector('#goalForm').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  const payload = Object.fromEntries(new FormData(evento.currentTarget));
+  const criando = goalModal.dataset.mode === 'create';
+  try {
+    aplicarDados(await api(criando ? '/api/metas' : `/api/metas/${estado.meta.id}`, {
+      method: criando ? 'POST' : 'PUT', body: JSON.stringify(payload)
+    }));
+    goalModal.close();
+    mostrarToast(criando ? 'Nova meta criada.' : 'Meta atualizada.');
+  } catch (erro) { mostrarToast(erro.message, true); }
+});
+
+document.querySelector('#removeGoal').addEventListener('click', async () => {
+  if (!confirm(`Excluir a meta "${estado.meta.nome}" e todos os seus depósitos?`)) return;
+  try {
+    aplicarDados(await api(`/api/metas/${estado.meta.id}`, { method: 'DELETE' }));
+    goalModal.close();
+    mostrarToast('Meta excluída.');
+  } catch (erro) { mostrarToast(erro.message, true); }
+});
+
+document.querySelector('#bankForm').addEventListener('submit', async (evento) => {
+  evento.preventDefault();
+  try {
+    aplicarDados(await api('/api/bancos', { method: 'POST', body: JSON.stringify(Object.fromEntries(new FormData(evento.currentTarget))) }));
+    evento.currentTarget.reset();
+    document.querySelector('#bankName').focus();
+    mostrarToast('Banco cadastrado.');
+  } catch (erro) { mostrarToast(erro.message, true); }
+});
+
+async function removerBanco(banco) {
+  if (!confirm(`Remover o banco "${banco.nome}"?`)) return;
+  try { aplicarDados(await api(`/api/bancos/${banco.id}`, { method: 'DELETE' })); mostrarToast('Banco removido.'); }
+  catch (erro) { mostrarToast(erro.message, true); }
+}
+
+document.querySelector('#newGoal').addEventListener('click', () => abrirMeta(true));
+document.querySelector('#editGoal').addEventListener('click', () => abrirMeta(false));
+document.querySelector('#manageBanks').addEventListener('click', () => banksModal.showModal());
+document.querySelectorAll('[data-open-banks]').forEach((botao) => botao.addEventListener('click', () => banksModal.showModal()));
+document.querySelector('#goalValue').addEventListener('input', atualizarPreviaMeta);
+document.querySelector('#metodo').addEventListener('change', (evento) => {
+  document.querySelector('#detailsLabel').firstChild.textContent = evento.target.value === 'Pix' ? 'Chave Pix / dados' : 'Agência / conta / dados';
+});
+document.querySelectorAll('[data-close]').forEach((botao) => botao.addEventListener('click', () => botao.closest('dialog').close()));
+document.querySelectorAll('dialog').forEach((dialogo) => dialogo.addEventListener('click', (evento) => {
+  if (evento.target === dialogo) dialogo.close();
+}));
+document.querySelectorAll('.filter').forEach((botao) => botao.addEventListener('click', () => {
+  estado.filtro = botao.dataset.filter;
+  document.querySelectorAll('.filter').forEach((item) => item.classList.toggle('active', item === botao));
+  montarTabela();
+}));
 document.querySelector('#themeButton').addEventListener('click', () => {
   document.body.classList.toggle('soft-theme');
   localStorage.setItem('tema-claro', document.body.classList.contains('soft-theme'));
 });
-
-const goalModal = document.querySelector('#goalModal');
-const goalInput = document.querySelector('#goalValue');
-const goalPreview = document.querySelector('#calculationPreview');
-
-function atualizarPreviaMeta() {
-  const valor = Number(goalInput.value);
-  if (valor <= 0) return goalPreview.textContent = '';
-  const total = calcularQuantidade(valor);
-  const soma = total * (total + 1) / 2;
-  goalPreview.textContent = `${total} depósitos • tabela cobre ${moeda.format(soma)}`;
-}
-
-document.querySelector('#editGoal').addEventListener('click', () => {
-  goalInput.value = meta;
-  atualizarPreviaMeta();
-  goalModal.showModal();
-});
-document.querySelector('#closeGoalModal').addEventListener('click', () => goalModal.close());
-goalInput.addEventListener('input', atualizarPreviaMeta);
-document.querySelector('#goalForm').addEventListener('submit', async (event) => {
-  event.preventDefault();
-  const resposta = await fetch('/api/meta', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ meta: goalInput.value })
-  });
-  const dados = await resposta.json();
-  if (!resposta.ok) return mostrarToast(dados.erro, true);
-  atualizar(dados);
-  goalModal.close();
-  mostrarToast(`Meta atualizada: ${quantidade} depósitos necessários.`);
-});
-
-document.querySelectorAll('.filter').forEach((button) => {
-  button.addEventListener('click', () => {
-    document.querySelectorAll('.filter').forEach(item => item.classList.toggle('active', item === button));
-    document.querySelectorAll('.deposit').forEach(item => {
-      const concluido = item.classList.contains('completed');
-      item.hidden = button.dataset.filter === 'pendentes' ? concluido :
-        button.dataset.filter === 'concluidos' ? !concluido : false;
-    });
-  });
-});
-
 if (localStorage.getItem('tema-claro') === 'true') document.body.classList.add('soft-theme');
 
-carregar();
+api('/api/dados').then(aplicarDados).catch((erro) => mostrarToast(erro.message, true));

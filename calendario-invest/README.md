@@ -6,9 +6,10 @@ sequencial cuja soma alcança ou ultrapassa o valor informado.
 
 ## Funcionalidades
 
-- Define e altera a meta financeira.
+- Cria, seleciona, edita e remove várias metas financeiras.
+- Cadastra os bancos usados nos depósitos.
 - Calcula automaticamente a quantidade de depósitos necessários.
-- Registra, edita e remove depósitos.
+- Registra, edita e remove depósitos separados por meta e banco.
 - Exibe o total depositado, o valor restante e o progresso.
 - Filtra os itens entre todos, pendentes e concluídos.
 - Alterna entre temas claro e escuro.
@@ -81,11 +82,15 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 
 ## Como usar
 
-1. Selecione **Alterar meta**.
-2. Informe o valor que deseja guardar.
-3. Confirme em **Atualizar tabela**.
+1. Selecione **Bancos** e cadastre pelo menos um banco.
+2. Use **Nova meta** para criar um objetivo ou edite a meta inicial.
+3. Selecione a meta que deseja acompanhar.
 4. Selecione um valor da tabela para registrar o depósito.
-5. Informe banco, método e data, e selecione **Salvar depósito**.
+5. Escolha o banco, informe o método e a data, e selecione
+   **Salvar depósito**.
+
+Os cartões concluídos ficam em cinza e exibem um pequeno **X**. Selecione
+novamente o cartão para editar ou remover o depósito.
 
 Para uma meta de R$ 23.450,00, a aplicação cria 217 posições. A soma de
 1 até 216 é R$ 23.436,00, portanto a posição 217 é necessária para que
@@ -106,9 +111,14 @@ O projeto foi organizado e documentado em 18 de novembro de 2026 na branch
 [PASSOS.md](docs/PASSOS.md) para conhecer as etapas e
 [ARQUITETURA.md](docs/ARQUITETURA.md) para entender a implementação.
 
+A primeira versão permanece arquivada no commit `0306b84e`. A versão 2
+adiciona várias metas e bancos e migra os dados antigos automaticamente.
+
 ## Melhorias futuras
 
 - Adicionar autenticação para separar os dados de diferentes pessoas.
-- Migrar a persistência para um banco de dados.
+- Permitir renomear bancos cadastrados.
+- Migrar a persistência para um banco de dados quando o uso local deixar de
+  ser suficiente.
 - Permitir exportação e importação do progresso.
 - Adicionar testes automatizados da interface no fluxo de integração.
