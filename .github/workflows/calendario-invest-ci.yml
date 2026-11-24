@@ -100,5 +100,14 @@ jobs:
             exit 1
           fi
           npx --yes vercel@59.23.2 deploy --prod --yes --token "$VERCEL_TOKEN"
-          home="$(curl --fail --silent --show-error --retry 3 --max-time 20 https://meta.wasxtech.com.br/)"
-          grep -Fq 'id="tutorial-capturas"' <<< "$home"
+      - name: Verificar a home publicada
+        run: |
+          for tentativa in {1..8}; do
+            if home="$(curl --fail --silent --show-error --max-time 10 "https://meta.wasxtech.com.br/?ci=${GITHUB_SHA}-${tentativa}")" &&
+               grep -Fq 'id="tutorial-capturas"' <<< "$home"; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::O carrossel não apareceu no domínio de produção."
+          exit 1
