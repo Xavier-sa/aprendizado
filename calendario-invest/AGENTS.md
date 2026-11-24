@@ -5,12 +5,18 @@
 Preserve o Calendário Invest como um aplicativo Flask simples para planejar
 e acompanhar depósitos sequenciais associados a uma meta financeira.
 
+## Agentes por área
+
+Consulte [docs/AGENTES.md](docs/AGENTES.md) para escolher o papel, delimitar o
+escopo e verificar a entrega. Quando o usuário pedir delegação, envie ao
+agente as instruções do papel e os arquivos sob sua responsabilidade.
+
 ## Tecnologias e arquitetura
 
 - Use Python e Flask no backend.
 - Mantenha o frontend em HTML, CSS e JavaScript sem framework.
-- Preserve `depositos.json` como armazenamento local enquanto não houver uma
-  migração explicitamente solicitada.
+- Use PostgreSQL Neon em produção e preserve `depositos.json` como fallback
+  local. Use dados fictícios nos arquivos versionados.
 - Mantenha as regras de negócio e as rotas em `app.py`, a marcação em
   `templates/` e os recursos do navegador em `static/`.
 - Consulte `docs/ARQUITETURA.md` antes de alterar o formato dos dados ou a
