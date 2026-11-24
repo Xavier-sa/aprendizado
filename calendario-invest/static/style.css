@@ -28,7 +28,7 @@ h1 { font-size:clamp(1.6rem,4vw,2.45rem); margin-bottom:0; }
 .support-heart { display:block; font-size:2.5rem; line-height:1; margin-bottom:12px; }
 .support-card h1 { margin-bottom:16px; }
 .support-qr { margin:20px auto; color:var(--muted); }
-.support-qr span { display:grid; place-items:center; width:110px; aspect-ratio:1; margin:0 auto 8px; border:1px dashed var(--border); border-radius:12px; background:var(--panel-2); color:var(--text); font-size:4rem; }
+.support-qr img { display:block; width:min(100%, 232px); height:auto; margin:0 auto 8px; padding:12px; border-radius:12px; background:#fff; }
 .support-card button:disabled { cursor:default; opacity:.65; }
 .pix-code { display:block; width:100%; margin:8px 0 12px; padding:10px; border:1px solid var(--border); border-radius:12px; background:var(--panel-2); color:var(--text); font-size:1rem; resize:vertical; }
 .support-card p { color:var(--muted); line-height:1.5; }

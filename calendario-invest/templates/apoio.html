@@ -18,12 +18,12 @@
       <h1 id="support-title">Apoie o WX Meta</h1>
       <p>Este projeto é gratuito e foi criado para ajudar pessoas a conquistarem seus objetivos.</p>
       <p>Se puder, ajude a manter essa ideia viva.</p>
-      <figure class="support-qr">
-        <span aria-hidden="true">▦</span>
-        <figcaption>QR Code ilustrativo</figcaption>
-      </figure>
       <h2>Contribua com qualquer valor</h2>
       {% if pix_copia_cola %}
+      <figure class="support-qr">
+        <img src="{{ url_for('static', filename='pix-apoio.jpeg') }}" width="256" height="256" alt="QR Code para apoiar o WX Meta via Pix">
+        <figcaption>Escaneie no aplicativo do seu banco.</figcaption>
+      </figure>
       <label for="pix-code">Pix Copia e Cola</label>
       <textarea id="pix-code" class="pix-code" rows="3" readonly spellcheck="false">{{ pix_copia_cola }}</textarea>
       <button class="secondary" id="copy-pix" type="button">Copiar Pix</button>
