@@ -3,9 +3,6 @@ name: Calendario Invest CI
 on:
   push:
     branches: [calendario-invest]
-    paths:
-      - "calendario-invest/**"
-      - ".github/workflows/calendario-invest-ci.yml"
   pull_request:
     paths:
       - "calendario-invest/**"
@@ -48,6 +45,7 @@ jobs:
           python -m py_compile app.py
           node --check static/app.js
           node --check static/tutorial.js
+          node --check static/apoio.js
 
       - name: Validar configuracao da Vercel
         run: python -m json.tool vercel.json > /dev/null
@@ -67,3 +65,40 @@ jobs:
             echo "Campo de detalhes bancários reintroduzido"
             exit 1
           fi
+
+  deploy-vercel:
+    name: Publicar na Vercel
+    if: github.event_name == 'push' && github.ref == 'refs/heads/calendario-invest'
+    needs: [testes-e-seguranca, documentacao-e-privacidade]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: calendario-invest-producao
+      cancel-in-progress: false
+    defaults:
+      run:
+        working-directory: calendario-invest
+    env:
+      VERCEL_ORG_ID: team_t8B9eKBs3gXOyLwxsRhWyAdj
+      VERCEL_PROJECT_ID: prj_M6Mpu8qPzjpKkVeVpkZbUvexNaVd
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Publicar o commit atual
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          remoto="$(git ls-remote --exit-code origin refs/heads/calendario-invest)"
+          if [ "${remoto%%$'\t'*}" != "$GITHUB_SHA" ]; then
+            echo "Já existe um commit mais recente na branch."
+            exit 0
+          fi
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::Configure o secret VERCEL_TOKEN no GitHub Actions."
+            exit 1
+          fi
+          npx --yes vercel@59.23.2 deploy --prod --yes --token "$VERCEL_TOKEN"
+          home="$(curl --fail --silent --show-error --retry 3 --max-time 20 https://meta.wasxtech.com.br/)"
+          grep -Fq 'id="tutorial-capturas"' <<< "$home"

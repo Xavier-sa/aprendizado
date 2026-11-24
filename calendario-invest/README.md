@@ -114,6 +114,16 @@ a tabela nunca fique abaixo da meta.
 
 ## Testes
 
+### Deploy automático
+
+O GitHub Actions valida cada push na branch `calendario-invest`. Se os dois
+jobs de validação passarem, o workflow publica a pasta `calendario-invest` no
+projeto de produção da Vercel e confere o carrossel no domínio público.
+
+Configure `VERCEL_TOKEN` em **Settings → Secrets and variables → Actions** no
+GitHub, com acesso ao projeto da Vercel. As variáveis do aplicativo, inclusive
+`PIX_COPIA_COLA` se a contribuição estiver habilitada, ficam na Vercel.
+
 Execute os testes sem iniciar o servidor:
 
 ```bash
