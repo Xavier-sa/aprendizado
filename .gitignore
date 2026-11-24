@@ -4,6 +4,7 @@ node_modules/
 # Ignorar arquivos de build
 dist/
 build/
+test-results/
 
 # Ignorar arquivos temporários do sistema
 *.log
