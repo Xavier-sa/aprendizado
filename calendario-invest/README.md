@@ -1,22 +1,32 @@
-# Calendário Invest
+# WX Meta · Calendário Invest
 
-Projeto implementado e documentado no repositório `aprendizado`, na branch
-`calendario-invest`.
+O WX Meta ajuda você a transformar uma meta financeira distante em pequenos
+passos que cabem no seu orçamento. Você escolhe quanto quer guardar, o
+calendário sugere uma sequência de valores e cada depósito registrado torna
+o progresso visível.
 
-**Data da implementação:** 18 de novembro de 2026.
-
-O código-fonte, as instruções, a documentação e as capturas de tela estão
-disponíveis na branch indicada.
+Nesta branch `main` fica a documentação de referência do projeto. A branch
+[`calendario-invest`](https://github.com/Xavier-sa/aprendizado/tree/calendario-invest/calendario-invest)
+contém o aplicativo Flask, os testes, o tutorial em vídeo e o workflow que
+publica as atualizações na Vercel.
 
 ## Aplicação publicada
 
-Acesse o projeto em [meta.wasxtech.com.br](https://meta.wasxtech.com.br).
+Abra a [home do WX Meta](https://meta.wasxtech.com.br/) para conhecer o
+tutorial e use **Entrar** para acessar sua conta.
 
-O Calendário Invest transforma objetivos financeiros que parecem distantes em
-uma sequência visual de pequenos depósitos. Cada pessoa possui sua própria
-conta, cadastra metas e bancos e acompanha o progresso passo a passo.
+No painel, você pode criar e editar metas, organizar os bancos onde guarda
+dinheiro e registrar depósitos manualmente. Seus dados ficam separados por
+conta. O resumo mostra quanto você guardou, quanto falta e quais etapas foram
+concluídas. As transferências acontecem no seu banco.
+
+O acesso ao calendário é gratuito. A [página de apoio](https://meta.wasxtech.com.br/apoio)
+oferece contribuição voluntária via Pix.
 
 ## Fluxo visual
+
+As capturas abaixo mostram um exemplo de ponta a ponta com dados fictícios.
+Algumas telas são de uma versão anterior da interface.
 
 ### 1. Acesso à conta
 
@@ -50,8 +60,9 @@ conta, cadastra metas e bancos e acompanha o progresso passo a passo.
 
 ![Primeiro depósito concluído e resumo atualizado](docs/VIDEO-TUTORIAL/capturas/08-progresso-real.png)
 
-## Código-fonte
+## Tutoriais e documentação
 
-O desenvolvimento completo permanece na branch
-[`calendario-invest`](https://github.com/Xavier-sa/aprendizado/tree/calendario-invest/calendario-invest),
-preservada como branch de referência do projeto.
+- [Vídeo do tutorial](https://github.com/Xavier-sa/aprendizado/blob/calendario-invest/calendario-invest/video-tutorial/output/wx-meta-tutorial.mp4)
+- [Prévia da página de apoio](https://github.com/Xavier-sa/aprendizado/blob/calendario-invest/calendario-invest/docs/IMAGENS/apoio-wx-meta.png)
+- [README do aplicativo e instruções de execução](https://github.com/Xavier-sa/aprendizado/blob/calendario-invest/calendario-invest/README.md)
+- [Visão do projeto, atores e regras de negócio](https://github.com/Xavier-sa/aprendizado/blob/calendario-invest/calendario-invest/docs/PROJETO.md)
