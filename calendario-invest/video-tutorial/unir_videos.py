@@ -6,6 +6,11 @@ import tempfile
 from fractions import Fraction
 from pathlib import Path
 
+ORDEM_WX_META = (
+    "f89add8b", "07df15d6", "f412fc21", "92cd00d5",
+    "25dc907f", "2f67932f", "15396874",
+)
+
 
 def executar(*args, cwd=None):
     processo = subprocess.run(args, cwd=cwd, capture_output=True, text=True)
@@ -22,6 +27,9 @@ def descobrir(pasta):
 
 def ordenar(arquivos, ordem):
     if not ordem:
+        por_codigo = {p.stem.rsplit("_", 1)[-1]: p for p in arquivos}
+        if len(arquivos) == len(ORDEM_WX_META) and set(por_codigo) == set(ORDEM_WX_META):
+            return [por_codigo[codigo] for codigo in ORDEM_WX_META]
         raise ValueError("Informe a sequência com --ordem.")
     por_nome = {p.name: p for p in arquivos}
     if len(ordem) != len(set(ordem)):
@@ -86,7 +94,7 @@ def montar(arquivos, cenas, temporaria):
     argumentos = ["ffmpeg", "-nostdin", "-v", "error", "-xerror", "-n"]
     if all(formato_final(c) for c in cenas) and len({assinatura(c) for c in cenas}) == 1:
         for i, arquivo in enumerate(arquivos):
-            (temporaria / f"cena-{i}.mp4").symlink_to(arquivo)
+            (temporaria / f"cena-{i}.mp4").hardlink_to(arquivo)
         (temporaria / "ordem.txt").write_text(
             "".join(f"file cena-{i}.mp4\n" for i in range(len(cenas))), encoding="utf-8")
         executar(*argumentos, "-f", "concat", "-safe", "1", "-i", "ordem.txt",
