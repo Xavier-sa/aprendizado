@@ -15,26 +15,30 @@
     <a class="secondary button-link" href="{{ url_for('index') }}">Voltar ao calendário</a>
     <section class="support-card" aria-labelledby="support-title">
       <span class="support-heart" aria-hidden="true">♡</span>
-      <h1 id="support-title">Apoie o WX Meta</h1>
-      <p>Este projeto é gratuito e foi criado para ajudar pessoas a conquistarem seus objetivos.</p>
-      <p>Se puder, ajude a manter essa ideia viva.</p>
-      <h2>Contribua com qualquer valor</h2>
-      {% if pix_copia_cola %}
-      <figure class="support-qr">
-        <img src="{{ url_for('static', filename='pix-apoio.jpeg') }}" width="256" height="256" alt="QR Code para apoiar o WX Meta via Pix">
-        <figcaption>Escaneie no aplicativo do seu banco.</figcaption>
-      </figure>
-      <label for="pix-code">Pix Copia e Cola</label>
-      <textarea id="pix-code" class="pix-code" rows="3" readonly spellcheck="false">{{ pix_copia_cola }}</textarea>
-      <button class="secondary" id="copy-pix" type="button">Copiar Pix</button>
-      <p id="pix-feedback" role="status">Cole o código na opção Pix Copia e Cola do seu banco.</p>
-      <script src="{{ url_for('static', filename='apoio.js') }}" defer></script>
-      {% else %}
-      <button class="secondary" type="button" disabled>Copiar Pix</button>
-      <p class="support-status">As doações via Pix ainda não estão disponíveis.</p>
-      {% endif %}
-      <p>A contribuição é voluntária e não interfere no acesso às funcionalidades da plataforma.</p>
-      <strong>Grandes sonhos. Pequenos passos.</strong>
+      <p class="eyebrow support-eyebrow">Apoie o WX Meta</p>
+      <h1 id="support-title">O primeiro passo muda o jeito de olhar para a meta</h1>
+      <div class="support-story">
+        <p>Montar uma reserva pode parecer distante quando você só olha para o valor final. Quando a meta vira uma sequência de depósitos, fica mais fácil escolher um valor que cabe hoje e acompanhar o que já conseguiu guardar.</p>
+        <p>Foi para isso que o WX Meta nasceu. Se o calendário te ajudou a dar esse primeiro passo e você quiser apoiar a continuidade do projeto, pode contribuir com qualquer valor.</p>
+      </div>
+      <section class="support-payment" aria-labelledby="support-payment-title">
+        <h2 id="support-payment-title">Contribua pelo Pix</h2>
+        {% if pix_copia_cola %}
+        <figure class="support-qr">
+          <img src="{{ url_for('static', filename='pix-apoio.jpeg') }}" width="256" height="256" alt="QR Code para apoiar o WX Meta via Pix">
+          <figcaption>Escaneie no aplicativo do seu banco.</figcaption>
+        </figure>
+        <label for="pix-code">Pix Copia e Cola</label>
+        <textarea id="pix-code" class="pix-code" rows="3" readonly spellcheck="false">{{ pix_copia_cola }}</textarea>
+        <button class="secondary" id="copy-pix" type="button">Copiar Pix</button>
+        <p id="pix-feedback" role="status">Cole o código na opção Pix Copia e Cola do seu banco.</p>
+        <script src="{{ url_for('static', filename='apoio.js') }}" defer></script>
+        {% else %}
+        <button class="secondary" type="button" disabled>Copiar Pix</button>
+        <p class="support-status">As doações via Pix ainda não estão disponíveis.</p>
+        {% endif %}
+        <p class="support-reassurance">O apoio é voluntário. O acesso ao calendário e às suas funções continua gratuito.</p>
+      </section>
     </section>
   </main>
 </body>

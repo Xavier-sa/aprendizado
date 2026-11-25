@@ -26,7 +26,14 @@ h1 { font-size:clamp(1.6rem,4vw,2.45rem); margin-bottom:0; }
 .support-shell { width:min(720px,calc(100% - 32px)); }
 .support-card { margin-top:18px; padding:clamp(20px,5vw,44px); border:1px solid var(--border); border-radius:18px; background:var(--panel); text-align:center; }
 .support-heart { display:block; font-size:2.5rem; line-height:1; margin-bottom:12px; }
-.support-card h1 { margin-bottom:16px; }
+.support-card h1 { max-width:24ch; margin:0 auto 16px; line-height:1.15; }
+.support-card .support-eyebrow { color:var(--accent); margin-bottom:9px; }
+.soft-theme .support-card .support-eyebrow { color:#087443; }
+.support-story { max-width:52ch; margin-inline:auto; text-align:start; }
+.support-story p:last-child { margin-bottom:0; }
+.support-payment { margin-top:26px; padding:clamp(14px,4vw,24px); border:1px solid var(--border); border-radius:14px; }
+.support-payment h2 { margin:0 0 12px; font-size:1.15rem; }
+.support-payment .support-reassurance { margin:16px 0 0; font-size:.9rem; }
 .support-qr { margin:20px auto; color:var(--muted); }
 .support-qr img { display:block; width:min(100%, 232px); height:auto; margin:0 auto 8px; padding:12px; border-radius:12px; background:#fff; }
 .support-card button:disabled { cursor:default; opacity:.65; }

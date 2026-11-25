@@ -64,6 +64,12 @@ node --check static/app.js
 
 ## Validação antes do commit
 
+- Para cada alteração solicitada, gere uma captura que mostre o resultado.
+  Para mudanças visuais, capture a tela atualizada. Para mudanças internas,
+  capture a verificação relevante, como a saída dos testes ou do CI.
+  Use dados fictícios e exclua credenciais, códigos de pagamento reais e
+  dados pessoais do enquadramento. Indique o caminho da captura na entrega.
+
 1. Execute os testes e as verificações de sintaxe.
 2. Confira `git diff --check`.
 3. Revise `git status --short` para evitar arquivos gerados e segredos.
