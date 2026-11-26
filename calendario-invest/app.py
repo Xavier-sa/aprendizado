@@ -1,11 +1,13 @@
 from datetime import date, timedelta
+from decimal import Decimal, InvalidOperation
 from functools import wraps
 import json
 import math
 import os
+import re
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from flask import Flask, abort, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from psycopg import connect
@@ -37,7 +39,6 @@ DATA_FILE = caminho_dados()
 DATABASE_URL = os.environ.get("DATABASE_URL")
 META_PADRAO = 23450
 METODOS_VALIDOS = {"Pix", "Depósito bancário", "TED/Transferência"}
-
 
 def novo_id(prefixo):
     return f"{prefixo}_{uuid4().hex[:12]}"
@@ -109,6 +110,19 @@ def preparar_banco(conexao):
             usuario_id UUID PRIMARY KEY REFERENCES usuarios(id) ON DELETE CASCADE,
             dados JSONB NOT NULL,
             atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """)
+    conexao.execute("""
+        CREATE TABLE IF NOT EXISTS despesas_admin (
+            id UUID PRIMARY KEY,
+            usuario_id UUID NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+            chave VARCHAR(60) NOT NULL,
+            nome VARCHAR(100) NOT NULL,
+            tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('mensal', 'quitacao', 'avulsa')),
+            valor NUMERIC(12, 2),
+            pago BOOLEAN NOT NULL DEFAULT FALSE,
+            atualizado_em TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            UNIQUE (usuario_id, chave)
         )
     """)
 
@@ -367,6 +381,164 @@ def administrar_usuarios():
         """).fetchall()
     return render_template("admin_usuarios.html", usuarios=usuarios,
                            usuario_id=session["usuario_id"], erro=request.args.get("erro"))
+
+
+@app.get("/admin/despesas")
+@login_obrigatorio
+@admin_obrigatorio
+def despesas_administrador():
+    usuario_id = session["usuario_id"]
+    mes = mes_despesas(request.args.get("mes"))
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_despesas_mensais(conexao)
+        linhas = conexao.execute("""
+            SELECT d.id, d.nome, d.tipo, d.valor,
+                   d.pago AND date_trunc('month', d.atualizado_em AT TIME ZONE 'America/Sao_Paulo')::date = %s,
+                   m.mes, m.dados, d.chave
+            FROM despesas_admin d
+            LEFT JOIN LATERAL (
+                SELECT mes, dados FROM despesas_admin_mes
+                WHERE despesa_id = d.id AND mes <= %s
+                ORDER BY mes DESC LIMIT 1
+            ) m ON TRUE
+            WHERE d.usuario_id = %s
+            ORDER BY d.nome
+        """, (mes, mes, usuario_id)).fetchall()
+    despesas = []
+    for id_, nome, tipo, valor, pago, mes_registro, dados, chave in linhas:
+        if dados is None:
+            if chave.startswith("caderno-"):
+                continue
+            dados = dict(nome=nome, fixa=tipo == "mensal",
+                         valor=str(valor) if valor is not None else "",
+                         valor_pago=str(valor) if pago and valor is not None else "")
+        elif mes_registro != mes:
+            if not dados["fixa"]:
+                continue
+            dados = {campo: dados[campo] for campo in ("nome", "descricao", "fixa", "valor")}
+        despesas.append(dict(dados, id=id_, situacao=situacao_despesa(dados),
+                             valor_exibido=moeda_despesa(Decimal(dados["valor"])) if dados["valor"] else "Valor a informar"))
+    anterior = (mes - timedelta(days=1)).replace(day=1) if mes != date.min else None
+    seguinte = (mes + timedelta(days=32)).replace(day=1) if mes < date(9999, 12, 1) else None
+    meses = ("Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto",
+             "Setembro", "Outubro", "Novembro", "Dezembro")
+    return render_template("admin_despesas.html", despesas=despesas,
+                           titulo_mes=f"{meses[mes.month - 1]} de {mes.year}",
+                           anterior=anterior.isoformat()[:7] if anterior else None,
+                           seguinte=seguinte.isoformat()[:7] if seguinte else None,
+                           resumo=resumo_despesas(despesas),
+                           mes=mes, campos_valor=CAMPOS_VALOR, erro=request.args.get("erro"))
+
+
+CAMPOS_VALOR = (
+    ("valor", "Valor previsto"), ("valor_pago", "Valor pago"),
+    ("valor_atrasado", "Valor atrasado"), ("valor_antecipado", "Valor antecipado"),
+    ("desconto", "Desconto"),
+)
+
+
+def moeda_despesa(valor):
+    return "R$ " + f"{valor:,.2f}".translate(str.maketrans(",.", ".,"))
+
+
+def saldo_despesa(dados):
+    previsto = Decimal(dados["valor"] or "0")
+    pago = Decimal(dados.get("valor_pago") or "0")
+    desconto = Decimal(dados.get("desconto") or "0")
+    return max(Decimal(0), previsto - pago - desconto)
+
+
+def situacao_despesa(dados):
+    if not dados["valor"]:
+        return "sem-valor"
+    if saldo_despesa(dados) == 0:
+        return "paga"
+    if Decimal(dados.get("valor_atrasado") or "0") > 0:
+        return "atrasada"
+    if Decimal(dados.get("valor_pago") or "0") > 0:
+        return "parcial"
+    return "a-pagar"
+
+
+def resumo_despesas(despesas):
+    def total(campo):
+        return moeda_despesa(sum(Decimal(item.get(campo) or "0") for item in despesas))
+
+    return dict(previsto=total("valor"), pago=total("valor_pago"),
+                restante=moeda_despesa(sum(saldo_despesa(item) for item in despesas if item["valor"])),
+                pendentes=sum(not item["valor"] for item in despesas),
+                atrasado=total("valor_atrasado"), antecipado=total("valor_antecipado"),
+                desconto=total("desconto"))
+
+
+def mes_despesas(texto):
+    try:
+        return date.fromisoformat(f"{texto}-01")
+    except ValueError:
+        return date.today().replace(day=1)
+
+
+def preparar_despesas_mensais(conexao):
+    preparar_banco(conexao)
+    conexao.execute("""
+        CREATE TABLE IF NOT EXISTS despesas_admin_mes (
+            despesa_id UUID NOT NULL REFERENCES despesas_admin(id) ON DELETE CASCADE,
+            mes DATE NOT NULL CHECK (EXTRACT(DAY FROM mes) = 1),
+            dados JSONB NOT NULL,
+            PRIMARY KEY (despesa_id, mes)
+        )
+    """)
+
+
+def ler_valor_despesa(texto):
+    texto = texto.strip()
+    if not texto:
+        return ""
+    if re.fullmatch(r"[0-9]{1,3}(?:\.[0-9]{3}){1,3}(?:,[0-9]{1,2})?", texto):
+        texto = texto.replace(".", "")
+    if not re.fullmatch(r"[0-9]{1,10}(?:[,.][0-9]{1,2})?", texto):
+        raise ValueError
+    return str(Decimal(texto.replace(",", ".")).quantize(Decimal("0.01")))
+
+
+@app.post("/admin/despesas/nova", defaults={"despesa_id": None})
+@app.post("/admin/despesas/<despesa_id>/editar")
+@login_obrigatorio
+@admin_obrigatorio
+def editar_despesa_administrador(despesa_id):
+    mes = mes_despesas(request.form.get("mes"))
+    destino = dict(mes=mes.strftime("%Y-%m"))
+    try:
+        editar = despesa_id is not None
+        despesa_id = str(UUID(despesa_id)) if editar else str(uuid4())
+    except ValueError:
+        return redirect(url_for("despesas_administrador", **destino, erro="Despesa não encontrada."))
+    dados = {campo: request.form.get(campo, "").strip()
+             for campo in ("nome", "descricao", "banco_pagamento", "banco_sobra")}
+    if not dados["nome"] or any(len(dados[campo]) > limite for campo, limite in
+                               (("nome", 100), ("descricao", 500), ("banco_pagamento", 100), ("banco_sobra", 100))):
+        return redirect(url_for("despesas_administrador", **destino, erro="Confira o nome e o tamanho dos textos."))
+    dados["fixa"] = request.form.get("recorrencia") == "fixa"
+    try:
+        dados.update({campo: ler_valor_despesa(request.form.get(campo, "")) for campo, _ in CAMPOS_VALOR})
+    except (ValueError, InvalidOperation):
+        return redirect(url_for("despesas_administrador", **destino, erro="Informe valores válidos com até duas casas decimais."))
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_despesas_mensais(conexao)
+        if not editar:
+            conexao.execute("""
+                INSERT INTO despesas_admin (id, usuario_id, chave, nome, tipo)
+                VALUES (%s, %s, %s, %s, 'avulsa')
+            """, (despesa_id, session["usuario_id"], f"caderno-{despesa_id}", dados["nome"]))
+        resultado = conexao.execute("""
+            INSERT INTO despesas_admin_mes (despesa_id, mes, dados)
+            SELECT id, %s, %s FROM despesas_admin
+            WHERE id = %s AND usuario_id = %s
+            ON CONFLICT (despesa_id, mes) DO UPDATE SET dados = EXCLUDED.dados
+        """, (mes, Jsonb(dados), despesa_id, session["usuario_id"]))
+        if resultado.rowcount != 1:
+            return redirect(url_for("despesas_administrador", **destino, erro="Despesa não encontrada."))
+    return redirect(url_for("despesas_administrador", **destino))
 
 
 @app.post("/admin/usuarios/<usuario_id>/editar")

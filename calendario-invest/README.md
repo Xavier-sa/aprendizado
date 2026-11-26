@@ -8,6 +8,8 @@ sequencial cuja soma alcança ou ultrapassa o valor informado.
 
 - Cria, seleciona, edita e remove várias metas financeiras.
 - Cria contas com e-mail e senha e separa os dados por usuário.
+- Mantém uma lista privada de despesas para cada conta administradora, com
+  valores pendentes editáveis e controle de quitação.
 - Cadastra os bancos usados nos depósitos.
 - Calcula automaticamente a quantidade de depósitos necessários.
 - Registra, edita e remove depósitos separados por meta e banco.
@@ -91,6 +93,11 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 `Ctrl+C`.
 
 ## Como usar
+
+Na conta administradora, abra **Despesas** para acessar o caderno mensal.
+Use as setas para trocar de mês, busque pelo nome e abra uma linha para editar
+ou registrar o total pago no mês. Veja a evolução e as capturas em
+[Caderno de despesas](docs/CADERNO-DESPESAS.md).
 
 A **Árvore Financeira** acompanha a meta ativa. Abra o modal pelo botão ao lado
 de **Nova meta**. Cada posição de depósito

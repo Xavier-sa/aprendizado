@@ -50,6 +50,8 @@ objetivo.
 | `GET/POST` | `/cadastro` | Cria uma conta. |
 | `POST` | `/sair` | Encerra a sessão. |
 | `GET` | `/admin/usuarios` | Lista contas para administradores. |
+| `GET` | `/admin/despesas` | Lista as despesas privadas da conta administradora atual. |
+| `POST` | `/admin/despesas/<id>/editar` | Atualiza valor e situação de uma despesa da própria conta administradora. |
 | `POST` | `/admin/usuarios/<id>/editar` | Edita uma conta. |
 | `POST` | `/admin/usuarios/<id>/alternar` | Ativa ou desativa uma conta. |
 | `POST` | `/admin/usuarios/<id>/excluir` | Exclui uma conta e seus dados. |
@@ -109,6 +111,11 @@ definida. Contas ficam em `usuarios` e cada estado JSONB fica em
 `calendario_estado_usuario`, ligado ao proprietário por chave estrangeira.
 As tabelas são criadas automaticamente. O arquivo JSON permanece como
 fallback para desenvolvimento local e testes.
+
+As despesas pessoais administrativas ficam na tabela relacional
+`despesas_admin`, separadas pelo `usuario_id`. As duas rotas usam a validação
+de sessão e de papel `admin`, e a atualização também filtra pelo proprietário;
+por isso uma conta comum não recebe nem altera esses valores.
 
 ## Limites atuais
 

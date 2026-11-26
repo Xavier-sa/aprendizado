@@ -1,0 +1,137 @@
+{% macro dinheiro(campo, titulo, item) %}
+  <label>{{ titulo }}<input name="{{ campo }}" inputmode="decimal" placeholder="0,00" value="{{ item.get(campo, '')|replace('.', ',') }}"></label>
+{% endmacro %}
+{% macro formulario(item, novo=false) %}
+  <form class="caderno-form" method="post" action="{{ url_for('editar_despesa_administrador', despesa_id=item.get('id')) }}">
+    <input type="hidden" name="mes" value="{{ mes.isoformat()[:7] }}">
+    <fieldset>
+      <legend>Identificação</legend>
+      <div class="caderno-campos">
+        <label>Nome da despesa<input name="nome" maxlength="100" required value="{{ item.get('nome', '') }}"></label>
+        <label>Repetir todos os meses?<select name="recorrencia">
+          <option value="fixa" {% if item.get('fixa') %}selected{% endif %}>Todo mês</option>
+          <option value="esporadica" {% if not item.get('fixa') %}selected{% endif %}>Somente neste mês</option>
+        </select></label>
+        <label class="caderno-largo">Observação <span>(opcional)</span><textarea name="descricao" maxlength="500" rows="2">{{ item.get('descricao', '') }}</textarea></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Pagamento</legend>
+      <div class="caderno-campos">
+        {{ dinheiro('valor', 'Quanto devo pagar?', item) }}
+        {{ dinheiro('valor_pago', 'Quanto paguei?', item) }}
+        <label>Por onde paguei?<input name="banco_pagamento" maxlength="100" value="{{ item.get('banco_pagamento', '') }}"></label>
+      </div>
+    </fieldset>
+    <details class="caderno-adicional">
+      <summary>Informações adicionais</summary>
+      <div class="caderno-campos">
+        {{ dinheiro('valor_atrasado', 'Valor atrasado', item) }}
+        {{ dinheiro('valor_antecipado', 'Valor antecipado', item) }}
+        {{ dinheiro('desconto', 'Desconto recebido', item) }}
+        <label>Onde guardei a economia?<input name="banco_sobra" maxlength="100" value="{{ item.get('banco_sobra', '') }}"></label>
+      </div>
+    </details>
+    <div class="caderno-acoes">
+      <button class="primary" type="submit">{{ 'Cadastrar despesa' if novo else 'Salvar alterações' }}</button>
+      {% if not novo %}<button class="secondary caderno-pagar" type="button" hidden>Registrar pagamento</button>{% endif %}
+      <button class="secondary caderno-cancelar" type="button" hidden>Cancelar</button>
+    </div>
+  </form>
+{% endmacro %}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1f4f8">
+  <title>Meu caderno de despesas · Calendário Invest</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='caderno-despesas.css') }}">
+  <script defer src="{{ url_for('static', filename='caderno-despesas.js') }}"></script>
+</head>
+<body class="pagina-despesas">
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div><h1>Meu caderno de despesas</h1><p class="subtitle">Organize suas contas e acompanhe seus pagamentos.</p></div>
+      <div class="admin-links">
+        <a class="secondary button-link" href="{{ url_for('administrar_usuarios') }}">Usuários</a>
+        <a class="secondary button-link" href="{{ url_for('index') }}">Voltar ao calendário</a>
+      </div>
+    </header>
+    {% if erro %}<p class="auth-error" role="alert">{{ erro }}</p>{% endif %}
+    <nav class="caderno-mes" aria-label="Navegação mensal">
+      {% if anterior %}<a class="icon-button button-link" href="{{ url_for('despesas_administrador', mes=anterior) }}" aria-label="Mês anterior">‹</a>{% else %}<span></span>{% endif %}
+      <h2>{{ titulo_mes }}</h2>
+      {% if seguinte %}<a class="icon-button button-link" href="{{ url_for('despesas_administrador', mes=seguinte) }}" aria-label="Próximo mês">›</a>{% else %}<span></span>{% endif %}
+    </nav>
+    <details class="caderno-escolher">
+      <summary>Escolher outro mês</summary>
+      <form method="get"><label>Mês e ano<input type="month" name="mes" value="{{ mes.isoformat()[:7] }}" required></label><button class="secondary" type="submit">Abrir</button></form>
+    </details>
+    <section aria-label="Resumo financeiro">
+      <dl class="caderno-resumo">
+        <div><dt>Total previsto</dt><dd>{{ resumo.previsto }}</dd></div>
+        <div><dt>Total pago</dt><dd>{{ resumo.pago }}</dd></div>
+        <div><dt>Falta pagar</dt><dd>{{ resumo.restante }}</dd></div>
+        <div><dt>Despesas sem valor informado</dt><dd>{{ resumo.pendentes }}</dd></div>
+      </dl>
+      {% if resumo.pendentes %}<p class="form-help">Os totais consideram os valores já informados.</p>{% endif %}
+      <details class="caderno-adicional caderno-totais">
+        <summary>Atrasos, antecipações e descontos</summary>
+        <dl><div><dt>Atrasado</dt><dd>{{ resumo.atrasado }}</dd></div><div><dt>Antecipado</dt><dd>{{ resumo.antecipado }}</dd></div><div><dt>Descontos</dt><dd>{{ resumo.desconto }}</dd></div></dl>
+      </details>
+    </section>
+    <section class="caderno-lista" aria-labelledby="titulo-lista">
+      <h2 id="titulo-lista">Despesas do mês</h2>
+      <details class="caderno-nova">
+        <summary>+ Nova despesa</summary>
+        {{ formulario({}, true) }}
+      </details>
+      {% set situacoes = {'paga': 'Pago', 'parcial': 'Pago parcialmente', 'atrasada': 'Atrasado', 'a-pagar': 'A pagar', 'sem-valor': 'Valor a informar'} %}
+      <div class="caderno-filtros" hidden>
+        <label>Buscar despesa<input id="busca-despesa" type="search" placeholder="Digite o nome"></label>
+        <label>Situação<select id="filtro-despesa">
+          <option value="">Todas</option>
+          <option value="a-pagar">A pagar</option>
+          <option value="paga">Pagas</option>
+          <option value="parcial">Pagas parcialmente</option>
+          <option value="atrasada">Atrasadas</option>
+          <option value="sem-valor">Sem valor informado</option>
+        </select></label>
+      </div>
+      <p id="caderno-resultado" class="form-help" role="status" hidden></p>
+      <div class="caderno-itens">
+        {% for item in despesas %}
+        <details class="caderno-item" data-situacao="{{ item.situacao }}">
+          <summary>
+            <span class="caderno-marca {{ item.situacao }}" aria-hidden="true">{{ '✓' if item.situacao == 'paga' else '•' if item.situacao == 'parcial' else '!' if item.situacao == 'atrasada' else '○' }}</span>
+            <span class="caderno-nome">{{ item.nome }}</span>
+            <span class="caderno-valor">{{ item.valor_exibido }}</span>
+            {% if item.situacao != 'sem-valor' %}<span class="caderno-situacao {{ item.situacao }}">{{ situacoes[item.situacao] }}</span>{% endif %}
+            <span class="caderno-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          {{ formulario(item) }}
+        </details>
+        {% else %}
+        <p>Nenhuma despesa neste mês.</p>
+        {% endfor %}
+      </div>
+    </section>
+    <dialog id="confirmar-pagamento" aria-labelledby="titulo-confirmar">
+      <form method="dialog">
+        <h2 id="titulo-confirmar">Registrar pagamento</h2>
+        <p id="despesa-confirmada"></p>
+        <label>Total pago neste mês (R$)<input id="pagamento-confirmado" inputmode="decimal" required autofocus></label>
+        <p id="pagamento-erro" class="auth-error" role="alert" hidden>Informe um valor maior que zero com até duas casas decimais.</p>
+        <div class="caderno-acoes">
+          <button class="primary" value="confirmar">Confirmar pagamento</button>
+          <button class="secondary" type="button" id="fechar-pagamento">Cancelar</button>
+        </div>
+      </form>
+    </dialog>
+  </main>
+  {% include 'rodape.html' %}
+</body>
+</html>

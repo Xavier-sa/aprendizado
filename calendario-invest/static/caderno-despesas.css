@@ -1,0 +1,86 @@
+.pagina-despesas {
+  --bg:#f1f4f8;
+  --panel:#fff;
+  --panel-2:#f4f7fa;
+  --text:#182b40;
+  --muted:#43566c;
+  --accent:#245685;
+  --border:#97a9bc;
+  --danger:#a02234;
+  background:var(--bg);
+  color-scheme:light;
+}
+.pagina-despesas .primary { background:var(--accent); color:#fff; }
+.pagina-despesas :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.pagina-despesas [hidden] { display:none; }
+.pagina-despesas summary { cursor:pointer; }
+.pagina-despesas textarea {
+  width:100%;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:var(--panel-2);
+  color:var(--text);
+  font:inherit;
+  resize:vertical;
+}
+.caderno-mes { display:flex; justify-content:center; align-items:center; gap:16px; }
+.caderno-mes h2 { margin:0; text-align:center; font-size:clamp(1.05rem,4vw,1.5rem); }
+.caderno-escolher { margin:12px auto 24px; text-align:center; }
+.caderno-escolher form { display:flex; flex-wrap:wrap; justify-content:center; align-items:end; gap:10px; margin-top:10px; }
+.caderno-resumo { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:8px; }
+.caderno-resumo > div { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px; }
+.caderno-resumo dt,.caderno-totais dt { color:var(--muted); font-size:.85rem; }
+.caderno-resumo dd,.caderno-totais dd { margin:5px 0 0; font-weight:700; font-variant-numeric:tabular-nums; }
+.caderno-resumo dd { font-size:clamp(.9rem,2vw,1.3rem); overflow-wrap:anywhere; }
+.caderno-totais dl { display:flex; flex-wrap:wrap; gap:12px 28px; }
+.caderno-lista { margin-top:28px; }
+.caderno-lista h2 { margin-bottom:12px; }
+.caderno-nova > summary { color:var(--accent); font-weight:700; padding:10px 0; }
+.caderno-filtros { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:12px; margin:12px 0; }
+.caderno-itens { background:var(--panel); border:1px solid var(--border); border-radius:12px; }
+.caderno-itens > p { margin:0; padding:16px; }
+.caderno-item + .caderno-item { border-top:1px solid var(--border); }
+.caderno-item > summary {
+  display:grid;
+  grid-template-columns:24px minmax(0,1fr) minmax(120px,auto) minmax(150px,auto) 16px;
+  grid-template-areas:"marca nome valor situacao seta";
+  align-items:center;
+  gap:8px 12px;
+  padding:12px 14px;
+  min-height:48px;
+  list-style:none;
+}
+.caderno-item > summary::-webkit-details-marker { display:none; }
+.caderno-item > summary:hover,.caderno-item[open] > summary { background:var(--panel-2); }
+.caderno-marca { grid-area:marca; text-align:center; font-size:1.2rem; }
+.caderno-nome { grid-area:nome; font-weight:650; overflow-wrap:anywhere; }
+.caderno-valor { grid-area:valor; text-align:right; font-variant-numeric:tabular-nums; }
+.caderno-situacao { grid-area:situacao; font-size:.85rem; }
+.caderno-chevron { grid-area:seta; text-align:center; transition:transform .15s ease; }
+.caderno-item[open] .caderno-chevron { transform:rotate(180deg); }
+.caderno-item .paga { color:#17613b; }
+.caderno-item .parcial { color:#795200; }
+.caderno-item .atrasada { color:var(--danger); }
+.caderno-item .a-pagar,.caderno-item .sem-valor,.caderno-item[data-situacao="sem-valor"] .caderno-valor { color:var(--muted); }
+.caderno-form { padding:16px; border-top:1px solid var(--border); }
+.caderno-form fieldset { min-width:0; border:0; margin:0 0 16px; padding:0; }
+.caderno-form legend { font-weight:700; margin-bottom:8px; }
+.caderno-campos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.caderno-campos label { min-width:0; }
+.caderno-campos label span { color:var(--muted); }
+.caderno-largo { grid-column:1/-1; }
+.caderno-adicional > summary { padding:8px 0; }
+.caderno-acoes { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.caderno-acoes button { min-height:42px; padding:0 12px; border-radius:8px; cursor:pointer; }
+#confirmar-pagamento { width:min(420px,calc(100% - 24px)); }
+@media (max-width:640px) {
+  .caderno-resumo,.caderno-filtros { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .caderno-item > summary {
+    grid-template-columns:20px minmax(0,1fr) 16px;
+    grid-template-areas:"marca nome seta" ". valor ." ". situacao .";
+    gap:3px 8px;
+  }
+  .caderno-valor { text-align:left; }
+  .caderno-campos { grid-template-columns:1fr; }
+}

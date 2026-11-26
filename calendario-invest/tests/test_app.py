@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from uuid import uuid4
 
 import app as modulo
@@ -81,10 +81,91 @@ class CalendarioInvestTestCase(unittest.TestCase):
         self.assertEqual(resposta.status_code, 302)
         self.assertTrue(resposta.headers["Location"].endswith("/painel"))
 
+    def test_modelo_de_despesas_fica_vinculado_ao_administrador(self):
+        class ConexaoFalsa:
+            def __init__(self):
+                self.comandos = []
+
+            def execute(self, comando):
+                self.comandos.append(comando)
+
+        conexao = ConexaoFalsa()
+        modulo.preparar_banco(conexao)
+        esquema = " ".join(conexao.comandos)
+        self.assertIn("CREATE TABLE IF NOT EXISTS despesas_admin", esquema)
+        self.assertIn("usuario_id UUID NOT NULL REFERENCES usuarios(id)", esquema)
+        self.assertIn("valor NUMERIC(12, 2)", esquema)
+        self.assertIn("pago BOOLEAN NOT NULL DEFAULT FALSE", esquema)
+
+        with patch.object(modulo, "buscar_usuario_por_id", return_value=(
+            "00000000-0000-0000-0000-000000000001", "Pessoa", "pessoa@example.com", "usuario", True
+        )):
+            resposta = self.client.get("/admin/despesas")
+        self.assertEqual(resposta.status_code, 302)
+        self.assertTrue(resposta.headers["Location"].endswith("/painel"))
+
     def test_calcula_quantidade_arredondando_para_cima(self):
         self.assertEqual(modulo.calcular_quantidade(23436), 216)
         self.assertEqual(modulo.calcular_quantidade(23437), 217)
         self.assertEqual(modulo.calcular_quantidade(23653.01), 218)
+
+    def test_resumo_caderno_separa_desconto_pagamento_parcial_e_valor_desconhecido(self):
+        despesas = [
+            dict(valor="5200.00", valor_pago="100.00", desconto="50.00"),
+            dict(valor="", valor_pago="20.00"),
+            dict(valor="0.00", valor_pago=""),
+            dict(valor="100.00", valor_atrasado="100.00"),
+        ]
+        self.assertEqual([modulo.situacao_despesa(item) for item in despesas],
+                         ["parcial", "sem-valor", "paga", "atrasada"])
+        resumo = modulo.resumo_despesas(despesas)
+        self.assertEqual((resumo["previsto"], resumo["pago"], resumo["restante"], resumo["pendentes"]),
+                         ("R$ 5.300,00", "R$ 120,00", "R$ 5.150,00", 1))
+        self.assertEqual(modulo.ler_valor_despesa("5.200,00"), "5200.00")
+
+    def test_caderno_exibe_mes_e_carrega_apenas_dados_previstos_das_fixas(self):
+        from datetime import date
+
+        conexao = MagicMock()
+        conexao.execute.return_value.fetchall.return_value = [
+            ("fixa", "Nome antigo", "mensal", None, False, date(2026, 11, 1),
+             dict(nome="Aula de música", descricao="", fixa=True, valor="5200.00",
+                  valor_pago="180.00", desconto="25.00"), "fixa"),
+            ("unica", "Compra única", "avulsa", None, False, date(2026, 11, 1),
+             dict(nome="Compra única", descricao="", fixa=False, valor="100.00"), "caderno-unica"),
+        ]
+        with patch.object(modulo, "buscar_usuario_por_id", return_value=("id", "Admin", "", "admin", True)), \
+             patch.object(modulo, "connect") as conectar:
+            conectar.return_value.__enter__.return_value = conexao
+            resposta = self.client.get("/admin/despesas?mes=2026-12")
+        pagina = resposta.get_data(as_text=True)
+        self.assertEqual(resposta.status_code, 200)
+        self.assertIn("Dezembro de 2026", pagina)
+        self.assertIn("Aula de música", pagina)
+        self.assertIn("R$ 5.200,00", pagina)
+        self.assertNotIn("Compra única", pagina)
+        self.assertNotIn("180,00", pagina)
+        self.assertNotIn("25,00", pagina)
+
+    def test_caderno_cadastra_e_edita_no_mes_vinculado_ao_admin(self):
+        conexao = MagicMock()
+        conexao.execute.return_value.rowcount = 1
+        existente = str(uuid4())
+        formulario = dict(mes="2026-12", nome="Feira", recorrencia="esporadica",
+                          valor="1.200,00", valor_pago="100,00", desconto="25,00")
+        with patch.object(modulo, "buscar_usuario_por_id", return_value=("id", "Admin", "", "admin", True)), \
+             patch.object(modulo, "connect") as conectar:
+            conectar.return_value.__enter__.return_value = conexao
+            for rota in ("/admin/despesas/nova", f"/admin/despesas/{existente}/editar"):
+                self.assertTrue(self.client.post(rota, data=formulario).location.endswith("?mes=2026-12"))
+        comandos = conexao.execute.call_args_list
+        self.assertEqual(sum("INSERT INTO despesas_admin (" in c.args[0] for c in comandos), 1)
+        gravacoes = [c.args[1] for c in comandos if "INSERT INTO despesas_admin_mes" in c.args[0]]
+        self.assertEqual(len(gravacoes), 2)
+        self.assertEqual(gravacoes[-1][2:], (existente, "00000000-0000-0000-0000-000000000001"))
+        self.assertEqual(gravacoes[-1][1].obj["valor_pago"], "100.00")
+        self.assertEqual(gravacoes[-1][1].obj["desconto"], "25.00")
+        self.assertFalse(gravacoes[-1][1].obj["fixa"])
 
     def test_usa_diretorio_temporario_na_vercel(self):
         caminho = modulo.caminho_dados({"VERCEL": "1"})
