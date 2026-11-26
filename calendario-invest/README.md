@@ -92,6 +92,9 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 
 ## Como usar
 
+Na seção **Depósitos**, clique em **Imprimir lista** para imprimir a lista
+completa da meta ativa em A4 paisagem ou salvá-la como PDF pelo navegador.
+
 Consulte a [revisão operacional](docs/REVISAO-OPERACIONAL.md), a
 [licença](LICENSE.md) e o [guia de contribuição](CONTRIBUTING.md).
 

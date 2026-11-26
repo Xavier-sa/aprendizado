@@ -1,6 +1,7 @@
 const estado = { meta: null, metas: [], bancos: [], numero: null, filtro: 'todos' };
 const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const grid = document.querySelector('#depositGrid');
+const imprimirMeta = document.querySelector('#printGoal');
 const depositModal = document.querySelector('#depositModal');
 const goalModal = document.querySelector('#goalModal');
 const banksModal = document.querySelector('#banksModal');
@@ -28,6 +29,7 @@ function aplicarDados(dados) {
   estado.meta = dados.meta_ativa;
   estado.metas = dados.metas;
   estado.bancos = dados.bancos;
+  imprimirMeta.disabled = !estado.meta;
   renderizar();
 }
 
@@ -247,3 +249,4 @@ document.querySelector('#themeButton').addEventListener('click', () => {
 if (localStorage.getItem('tema-claro') === 'true') document.body.classList.add('soft-theme');
 
 api('/api/dados').then(aplicarDados).catch((erro) => mostrarToast(erro.message, true));
+imprimirMeta.addEventListener('click', () => window.print());

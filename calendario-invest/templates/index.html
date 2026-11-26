@@ -8,8 +8,8 @@
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-  <main class="app-shell painel">
+<body class="painel">
+  <main class="app-shell">
     <header class="topbar">
       <div>
         <div class="brand-row">
@@ -48,6 +48,7 @@
           <button class="filter active" type="button" data-filter="todos">Todos</button>
           <button class="filter" type="button" data-filter="pendentes">Pendentes</button>
           <button class="filter" type="button" data-filter="concluidos">Concluídos</button>
+          <button class="secondary" id="printGoal" type="button" disabled>Imprimir lista</button>
         </div>
       </div>
       <div class="empty-state" id="emptyBanks" hidden>
