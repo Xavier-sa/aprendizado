@@ -2,6 +2,9 @@
 
 Comece por [Fonologia e ortografia oficial](01-fonologia-e-ortografia.md).
 
+Para o concurso da UFMS organizado pela FAPEC, acompanhe seu avanço no
+[checklist de Português](CHECKLIST-UFMS-FAPEC.md).
+
 ## Roteiro de estudo
 
 1. Fonologia e ortografia oficial

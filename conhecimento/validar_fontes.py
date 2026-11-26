@@ -8,6 +8,8 @@ from urllib.parse import urlsplit
 RAIZ = Path(__file__).resolve().parent
 DOMINIOS = {
     "concurso.fapec.org",
+    "portal.concurso.fundacaofapec.org.br",
+    "boletimoficial.ufms.br",
     "portal.mec.gov.br",
     "site.seduc.se.gov.br",
     "www.planalto.gov.br",
