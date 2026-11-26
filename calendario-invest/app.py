@@ -38,7 +38,7 @@ def caminho_dados(ambiente=None):
 DATA_FILE = caminho_dados()
 DATABASE_URL = os.environ.get("DATABASE_URL")
 META_PADRAO = 23450
-METODOS_VALIDOS = {"Pix", "Depósito bancário", "TED/Transferência"}
+METODOS_VALIDOS = {"Pix", "Depósito bancário", "TED/Transferência", "Simulação"}
 
 def novo_id(prefixo):
     return f"{prefixo}_{uuid4().hex[:12]}"
@@ -312,10 +312,17 @@ def admin_obrigatorio(funcao):
     return protegida
 
 
+def destino_autenticacao():
+    acao = request.args.get("acao")
+    if acao in {"salvar", "imprimir"}:
+        return url_for("simular", acao=acao)
+    return url_for("index")
+
+
 @app.route("/entrar", methods=["GET", "POST"])
 def entrar():
     if session.get("usuario_id"):
-        return redirect(url_for("index"))
+        return redirect(destino_autenticacao())
     erro = None
     if request.method == "POST":
         email = str(request.form.get("email", "")).strip().casefold()
@@ -330,14 +337,14 @@ def entrar():
                 session.clear()
                 session["usuario_id"] = str(usuario[0])
                 session.permanent = True
-                return redirect(url_for("index"))
+                return redirect(destino_autenticacao())
     return render_template("auth.html", modo="entrar", erro=erro)
 
 
 @app.route("/cadastro", methods=["GET", "POST"])
 def cadastro():
     if session.get("usuario_id"):
-        return redirect(url_for("index"))
+        return redirect(destino_autenticacao())
     erro = None
     if request.method == "POST":
         nome = str(request.form.get("nome", "")).strip()
@@ -359,7 +366,7 @@ def cadastro():
                 session.clear()
                 session["usuario_id"] = usuario_id
                 session.permanent = True
-                return redirect(url_for("index"))
+                return redirect(destino_autenticacao())
     return render_template("auth.html", modo="cadastro", erro=erro)
 
 
@@ -625,6 +632,74 @@ def informacoes_legais():
 def index():
     usuario = buscar_usuario_por_id(session["usuario_id"]) if DATABASE_URL else None
     return render_template("index.html", usuario=usuario)
+
+
+@app.get("/simular")
+def simular():
+    usuario_id = session.get("usuario_id")
+    usuario = buscar_usuario_por_id(usuario_id) if usuario_id and DATABASE_URL else None
+    autenticado = bool(usuario and usuario[4])
+    if usuario_id and DATABASE_URL and not autenticado:
+        session.clear()
+    resposta = app.make_response(render_template("index.html", simulacao=True, autenticado=autenticado))
+    resposta.headers["Cache-Control"] = "private, no-store"
+    return resposta
+
+
+def validar_simulacao(corpo):
+    if not isinstance(corpo, dict):
+        raise ValueError
+    id_ = "sim_" + UUID(corpo.get("id", "")).hex
+    nome = corpo.get("nome")
+    if type(corpo.get("valor")) not in (int, float):
+        raise ValueError
+    valor = ler_valor_meta(corpo)
+    if not isinstance(nome, str) or not 0 < len(nome.strip()) <= 60 or not valor or valor > 1000000:
+        raise ValueError
+    marcados = corpo.get("marcados")
+    if not isinstance(marcados, list) or len(marcados) > calcular_quantidade(valor):
+        raise ValueError
+    if any(type(numero) is not int or not 1 <= numero <= calcular_quantidade(valor) for numero in marcados):
+        raise ValueError
+    return id_, nome.strip(), valor, sorted(set(marcados))
+
+
+@app.post("/api/simulacoes")
+def importar_simulacao():
+    try:
+        id_, nome, valor, marcados = validar_simulacao(request.get_json(silent=True))
+    except (ValueError, TypeError, AttributeError, OverflowError):
+        return jsonify(erro="Revise a meta e os depósitos da simulação."), 400
+    if not DATABASE_URL:
+        return jsonify(erro="O banco de dados não está configurado."), 503
+    usuario_id = session["usuario_id"]
+    with connect(DATABASE_URL, connect_timeout=10) as conexao:
+        preparar_banco(conexao)
+        linha = conexao.execute("""
+            SELECT dados FROM calendario_estado_usuario WHERE usuario_id = %s FOR UPDATE
+        """, (usuario_id,)).fetchone()
+        if not linha:
+            return jsonify(erro="Abra Minhas metas e tente novamente."), 409
+        dados = migrar_dados(linha[0])
+        importadas = dados.setdefault("simulacoes_importadas", [])
+        if id_ not in importadas and not buscar_meta(dados, id_):
+            banco_id = None
+            if marcados:
+                banco = next((b for b in dados["bancos"] if b["nome"] == "Simulação"), None)
+                if banco is None:
+                    banco = {"id": novo_id("banco"), "nome": "Simulação"}
+                    dados["bancos"].append(banco)
+                banco_id = banco["id"]
+            depositos = {str(n): {"numero": n, "valor": n, "banco_id": banco_id,
+                                  "metodo": "Simulação", "data": date.today().isoformat()} for n in marcados}
+            dados["metas"].append({"id": id_, "nome": nome, "valor": valor, "depositos": depositos})
+            importadas.append(id_)
+            dados["meta_ativa_id"] = id_
+            conexao.execute("""
+                UPDATE calendario_estado_usuario SET dados = %s, atualizado_em = NOW()
+                WHERE usuario_id = %s
+            """, (Jsonb(dados), usuario_id))
+    return jsonify(ok=True)
 
 
 @app.get("/apoio")

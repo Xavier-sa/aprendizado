@@ -25,10 +25,11 @@
       <button class="primary" type="submit">{{ 'Criar conta' if modo == 'cadastro' else 'Entrar' }}</button>
     </form>
     {% if modo == 'cadastro' %}
-    <p class="auth-switch">Já tem conta? <a href="/entrar">Entrar</a></p>
+    <p class="auth-switch">Já tem conta? <a href="{{ url_for('entrar', acao=request.args.get('acao')) }}">Entrar</a></p>
     {% else %}
-    <p class="auth-switch">Ainda não tem conta? <a href="/cadastro">Criar conta</a></p>
+    <p class="auth-switch">Ainda não tem conta? <a href="{{ url_for('cadastro', acao=request.args.get('acao')) }}">Criar conta</a></p>
     {% endif %}
+    {% if request.args.get('acao') in ('salvar', 'imprimir') %}<p class="auth-switch"><a href="{{ url_for('simular') }}">Continuar simulando</a></p>{% endif %}
   </main>
   {% include 'rodape.html' %}
 </body>

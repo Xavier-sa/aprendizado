@@ -17,7 +17,7 @@
       <div>
         <h1>Uma meta distante começa com um passo possível</h1>
         <p class="subtitle">Escolha quanto quer guardar. O calendário divide sua meta em depósitos de valores crescentes, e você acompanha o avanço a cada registro.</p>
-        <a class="secondary button-link inicio-cta" href="{{ url_for('entrar') }}">{{ 'Abrir meu painel' if session.get('usuario_id') else 'Começar' }}</a>
+        <a class="secondary button-link inicio-cta" href="{{ url_for('index' if session.get('usuario_id') else 'simular') }}">{{ 'Abrir meu painel' if session.get('usuario_id') else 'Experimentar sem conta' }}</a>
       </div>
     </section>
     <section class="inicio-tutorial" aria-labelledby="tutorial">
@@ -65,7 +65,7 @@
     <div class="tutorial-cabecalho tutorial-modal-rodape">
       <button class="secondary" id="tutorial-anterior" type="button">Anterior</button>
       <button class="secondary tutorial-acao" id="tutorial-proximo" type="button">Próxima etapa →</button>
-      <a class="secondary button-link tutorial-acao" id="tutorial-comecar" href="{{ url_for('entrar') }}" hidden>Começar →</a>
+      <a class="secondary button-link tutorial-acao" id="tutorial-comecar" href="{{ url_for('simular') }}" hidden>Experimentar sem conta →</a>
     </div>
   </dialog>
   <script src="{{ url_for('static', filename='tutorial.js') }}" defer></script>

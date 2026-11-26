@@ -7,6 +7,50 @@ const arvoreModal = document.querySelector('#arvoreModal');
 const depositModal = document.querySelector('#depositModal');
 const goalModal = document.querySelector('#goalModal');
 const banksModal = document.querySelector('#banksModal');
+const modoSimulacao = document.body.classList.contains('simulacao');
+const visitante = document.body.classList.contains('visitante');
+const chaveSimulacao = 'calendario-simulacao-v1';
+let simulacao;
+
+function lerSimulacao() {
+  try {
+    const dados = JSON.parse(sessionStorage.getItem(chaveSimulacao));
+    if (dados && /^[\da-f-]{36}$/i.test(dados.id) && typeof dados.nome === 'string' &&
+        dados.valor > 0 && dados.valor <= 1000000 && Array.isArray(dados.marcados)) return dados;
+  } catch {}
+  return { id: crypto.randomUUID(), nome: 'Minha primeira meta', valor: 100, marcados: [] };
+}
+
+function renderizarSimulacao() {
+  try { sessionStorage.setItem(chaveSimulacao, JSON.stringify(simulacao)); }
+  catch { mostrarToast('A simulação pode ser perdida ao sair da página.', true); }
+  const { id, nome, valor, marcados } = simulacao;
+  const quantidade = Math.ceil((Math.sqrt(1 + 8 * valor) - 1) / 2);
+  const depositos = Object.fromEntries(marcados.map((n) => [n, { valor: n, metodo: 'Simulação' }]));
+  const total = marcados.reduce((soma, n) => soma + n, 0);
+  const meta = { id, nome, meta: valor, quantidade, depositos, total, concluido: marcados.length,
+    restante: Math.max(0, valor - total) };
+  aplicarDados({ meta_ativa: meta, metas: [], bancos: [] });
+}
+
+function abrirAcaoSimulacao(acao) {
+  const imprimir = acao === 'imprimir';
+  const dialogo = document.querySelector('#simulationDialog');
+  const confirmar = document.querySelector('#simulationConfirm');
+  const suffix = '?acao=' + acao;
+  dialogo.dataset.acao = acao;
+  document.querySelector('#simulationTitle').textContent = imprimir ? 'Sua meta está pronta!' : 'Salve sua evolução';
+  document.querySelector('#simulationMessage').textContent = imprimir
+    ? (visitante ? 'Entre ou crie uma conta gratuita para imprimir seu calendário financeiro.' : 'Sua simulação está pronta para imprimir.')
+    : (visitante ? 'Entre ou crie uma conta gratuita para salvar sua meta e continuar de onde parou.' : 'Salvar esta meta e os depósitos marcados como simulação na sua conta?');
+  document.querySelector('#simulationError').textContent = '';
+  document.querySelector('#simulationAuth').hidden = !visitante;
+  document.querySelector('#simulationSignup').href = '/cadastro' + suffix;
+  document.querySelector('#simulationLogin').href = '/entrar' + suffix;
+  confirmar.hidden = visitante;
+  confirmar.textContent = imprimir ? 'Imprimir agora' : 'Salvar minha meta';
+  dialogo.showModal();
+}
 
 async function api(url, opcoes = {}) {
   const resposta = await fetch(url, {
@@ -91,8 +135,8 @@ function renderizarBancos() {
     vazio.textContent = 'Nenhum banco cadastrado ainda.';
     lista.appendChild(vazio);
   }
-  document.querySelector('#emptyBanks').hidden = estado.bancos.length > 0;
-  grid.hidden = estado.bancos.length === 0;
+  document.querySelector('#emptyBanks').hidden = modoSimulacao || estado.bancos.length > 0;
+  grid.hidden = !modoSimulacao && estado.bancos.length === 0;
 }
 
 function montarTabela() {
@@ -104,14 +148,20 @@ function montarTabela() {
     botao.className = `deposit${item ? ' completed' : ''}`;
     botao.dataset.numero = numero;
     botao.innerHTML = `<span>${numero}</span><small>${moeda.format(numero).replace(',00', '')}</small>`;
+    if (modoSimulacao) {
+      botao.setAttribute('aria-label', `Simular depósito de ${moeda.format(numero)}`);
+      botao.setAttribute('aria-pressed', Boolean(item));
+    }
     if (item) {
       const marca = document.createElement('span');
       marca.className = 'deposit-mark';
       marca.textContent = '×';
       marca.setAttribute('aria-hidden', 'true');
       botao.firstElementChild.appendChild(marca);
-      botao.title = `${item.metodo} · ${moeda.format(item.valor)} · ${item.banco}`;
-      botao.setAttribute('aria-label', `Depósito ${numero} concluído em ${item.banco}. Editar.`);
+      if (!modoSimulacao) {
+        botao.title = `${item.metodo} · ${moeda.format(item.valor)} · ${item.banco}`;
+        botao.setAttribute('aria-label', `Depósito ${numero} concluído em ${item.banco}. Editar.`);
+      }
     }
     botao.hidden = estado.filtro === 'pendentes' ? Boolean(item) : estado.filtro === 'concluidos' ? !item : false;
     botao.addEventListener('click', () => abrirDeposito(numero));
@@ -132,6 +182,14 @@ function dataLocal() {
 }
 
 function abrirDeposito(numero) {
+  if (modoSimulacao) {
+    const marcados = simulacao.marcados;
+    simulacao.marcados = marcados.includes(numero) ? marcados.filter((n) => n !== numero) : [...marcados, numero];
+    renderizarSimulacao();
+    const botao = grid.querySelector(`[data-numero="${numero}"]:not([hidden])`);
+    (botao || document.querySelector('.filter.active')).focus();
+    return;
+  }
   if (!estado.bancos.length) return banksModal.showModal();
   estado.numero = numero;
   const item = estado.meta.depositos[numero];
@@ -187,6 +245,16 @@ function atualizarPreviaMeta() {
 document.querySelector('#goalForm').addEventListener('submit', async (evento) => {
   evento.preventDefault();
   const payload = Object.fromEntries(new FormData(evento.currentTarget));
+  if (modoSimulacao) {
+    const valor = Number(payload.valor);
+    const nome = payload.nome.trim();
+    if (!nome || !(valor > 0 && valor <= 1000000)) return mostrarToast('Informe um nome e um valor válido.', true);
+    const quantidade = Math.ceil((Math.sqrt(1 + 8 * valor) - 1) / 2);
+    Object.assign(simulacao, { nome, valor, marcados: simulacao.marcados.filter((n) => n <= quantidade) });
+    renderizarSimulacao();
+    goalModal.close();
+    return;
+  }
   const criando = goalModal.dataset.mode === 'create';
   try {
     aplicarDados(await api(criando ? '/api/metas' : `/api/metas/${estado.meta.id}`, {
@@ -255,5 +323,36 @@ document.querySelector('#themeButton').addEventListener('click', () => {
 });
 if (localStorage.getItem('tema-claro') === 'true') document.body.classList.add('soft-theme');
 
-api('/api/dados').then(aplicarDados).catch((erro) => mostrarToast(erro.message, true));
-imprimirMeta.addEventListener('click', () => window.print());
+if (modoSimulacao) {
+  simulacao = lerSimulacao();
+  renderizarSimulacao();
+  document.querySelector('#saveSimulation').addEventListener('click', () => abrirAcaoSimulacao('salvar'));
+  imprimirMeta.addEventListener('click', () => abrirAcaoSimulacao('imprimir'));
+  document.querySelector('#simulationConfirm').addEventListener('click', async (evento) => {
+    const botao = evento.currentTarget;
+    const dialogo = botao.closest('dialog');
+    if (dialogo.dataset.acao === 'imprimir') {
+      dialogo.close();
+      window.print();
+      return;
+    }
+    botao.disabled = true;
+    try {
+      await api('/api/simulacoes', { method: 'POST', body: JSON.stringify(simulacao) });
+      try { sessionStorage.removeItem(chaveSimulacao); } catch {}
+      location.assign('/painel?simulacao=salva');
+    } catch (erro) {
+      document.querySelector('#simulationError').textContent = erro.message;
+    } finally {
+      botao.disabled = false;
+    }
+  });
+  const url = new URL(location.href);
+  const acao = url.searchParams.get('acao');
+  if (!visitante && ['salvar', 'imprimir'].includes(acao)) abrirAcaoSimulacao(acao);
+} else {
+  api('/api/dados').then(aplicarDados).then(() => {
+    if (new URL(location.href).searchParams.get('simulacao') === 'salva') mostrarToast('Simulação salva na sua conta.');
+  }).catch((erro) => mostrarToast(erro.message, true));
+  imprimirMeta.addEventListener('click', () => window.print());
+}

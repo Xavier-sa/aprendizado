@@ -260,6 +260,43 @@ class CalendarioInvestTestCase(unittest.TestCase):
         self.assertEqual(resposta.status_code, 200)
         self.assertIn("Calendário Invest".encode(), resposta.data)
 
+    def test_simulacao_publica_e_importacao_privada(self):
+        visitante = modulo.app.test_client()
+        self.assertIn(b"Experimentar sem conta", visitante.get("/").data)
+        pagina = visitante.get("/simular")
+        self.assertEqual(pagina.status_code, 200)
+        self.assertIn(b"simulacao visitante", pagina.data)
+        self.assertEqual(visitante.post("/api/simulacoes", json={}).status_code, 401)
+
+    def test_login_e_cadastro_retornam_para_a_acao_escolhida(self):
+        linha = ("id", "Pessoa", "pessoa@example.com", modulo.generate_password_hash("exemplo123"), True)
+        dados = dict(nome="Pessoa", email=linha[2], senha="exemplo123")
+        with patch.object(modulo, "DATABASE_URL", "postgresql://exemplo"), \
+             patch.object(modulo, "buscar_usuario_por_email", return_value=linha), \
+             patch.object(modulo, "cadastrar_usuario", return_value="id"):
+            for rota, acao in (("entrar", "imprimir"), ("cadastro", "salvar")):
+                visitante = modulo.app.test_client()
+                resposta = visitante.post(f"/{rota}?acao={acao}", data=dados)
+                self.assertEqual(resposta.location, f"/simular?acao={acao}")
+
+    def test_importa_simulacao_uma_vez_e_preserva_meta_existente(self):
+        dados = modulo.dados_iniciais()
+        conexao = MagicMock()
+        conexao.execute.return_value.fetchone.return_value = (dados,)
+        corpo = dict(id=str(uuid4()), nome="Reserva de teste", valor=100, marcados=[1, 3])
+        with patch.object(modulo, "DATABASE_URL", "postgresql://exemplo"), \
+             patch.object(modulo, "buscar_usuario_por_id", return_value=("id", "Pessoa", "", "usuario", True)), \
+             patch.object(modulo, "connect") as conectar:
+            conectar.return_value.__enter__.return_value = conexao
+            for _ in range(2):
+                self.assertEqual(self.client.post("/api/simulacoes", json=corpo).status_code, 200)
+            self.assertEqual(self.client.post("/api/simulacoes", json=dict(corpo, marcados=[99])).status_code, 400)
+        self.assertEqual(len(dados["metas"]), 2)
+        self.assertEqual(dados["metas"][0]["nome"], "Meta 1")
+        self.assertEqual(list(dados["metas"][1]["depositos"]), ["1", "3"])
+        self.assertEqual(sum("UPDATE calendario_estado_usuario" in c.args[0]
+                             for c in conexao.execute.call_args_list), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

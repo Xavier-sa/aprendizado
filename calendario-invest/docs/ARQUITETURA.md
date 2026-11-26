@@ -47,6 +47,8 @@ objetivo.
 | Método | Rota | Finalidade |
 | --- | --- | --- |
 | `GET/POST` | `/entrar` | Autentica uma conta. |
+| `GET` | `/simular` | Abre o calendário de simulação público. |
+| `POST` | `/api/simulacoes` | Salva a simulação como uma nova meta na conta autenticada. |
 | `GET/POST` | `/cadastro` | Cria uma conta. |
 | `POST` | `/sair` | Encerra a sessão. |
 | `GET` | `/admin/usuarios` | Lista contas para administradores. |

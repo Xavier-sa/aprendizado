@@ -94,6 +94,11 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 
 ## Como usar
 
+Na página inicial, selecione **Experimentar sem conta**. Edite a meta de
+exemplo e toque nos valores para simular depósitos. A simulação fica na
+aba atual. Entre ou crie uma conta quando quiser salvar a meta ou usar
+o botão de impressão. Consulte o [fluxo de acesso público](docs/ACESSO-PUBLICO.md).
+
 Na conta administradora, abra **Despesas** para acessar o caderno mensal.
 Use as setas para trocar de mês, busque pelo nome e abra uma linha para editar
 ou registrar o total pago no mês. Veja a evolução e as capturas em

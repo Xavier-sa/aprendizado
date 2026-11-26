@@ -8,7 +8,7 @@
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body class="painel">
+<body class="painel{% if simulacao %} simulacao{% if not autenticado %} visitante{% endif %}{% endif %}">
   <main class="app-shell">
     <header class="topbar">
       <div>
@@ -17,28 +17,32 @@
           <a class="icon-button button-link support-link" href="{{ url_for('apoio') }}" aria-label="Apoie o WX Meta" title="Apoie o WX Meta"><span aria-hidden="true">♡</span></a>
         </div>
         <h1 id="tituloMeta">Carregando sua meta...</h1>
-        <p class="subtitle">Transforme objetivos em pequenos depósitos sequenciais.</p>
+        <p class="subtitle">{% if simulacao %}Toque nos valores para simular depósitos. A simulação fica nesta aba.{% else %}Transforme objetivos em pequenos depósitos sequenciais.{% endif %}</p>
       </div>
       <div class="top-actions">
         {% if usuario %}<span class="user-name">{{ usuario[1] }}</span>{% endif %}
         {% if usuario and usuario[3] == 'admin' %}<a class="secondary button-link" href="/admin/despesas">Despesas</a><a class="secondary button-link" href="/admin/usuarios">Usuários</a>{% endif %}
-        <button class="secondary" id="manageBanks" type="button">Bancos</button>
+        <button class="secondary" id="manageBanks" type="button" {% if simulacao %}hidden{% endif %}>Bancos</button>
         <button class="secondary" id="editGoal" type="button">Editar meta</button>
         <button class="icon-button" id="themeButton" type="button" aria-label="Alternar tema">&#9680;</button>
-        <form action="/sair" method="post"><button class="secondary" type="submit">Sair</button></form>
+        {% if simulacao %}
+          {% if autenticado %}<a class="secondary button-link" href="{{ url_for('index') }}">Minhas metas</a>{% else %}<a class="secondary button-link" href="{{ url_for('entrar', acao='salvar') }}">Entrar</a>{% endif %}
+        {% endif %}
+        {% if not simulacao or autenticado %}<form action="/sair" method="post"><button class="secondary" type="submit">Sair</button></form>{% endif %}
       </div>
     </header>
 
     <section class="goal-switcher" aria-label="Suas metas">
       <div class="goal-tabs" id="goalTabs"></div>
       <div class="goal-actions">
-        <button class="new-goal" id="newGoal" type="button"><span>+</span> Nova meta</button>
+        <button class="new-goal" id="newGoal" type="button"{% if simulacao %} hidden{% endif %}><span>+</span> Nova meta</button>
+        {% if simulacao %}<button class="new-goal" id="saveSimulation" type="button">Salvar na minha conta</button>{% endif %}
         <button class="new-goal" id="openTree" type="button" aria-haspopup="dialog" disabled>Árvore Financeira</button>
       </div>
     </section>
 
     <section class="summary" aria-label="Resumo da meta ativa">
-      <article><span>Depositado</span><strong id="totalDepositado">R$ 0,00</strong></article>
+      <article><span>{{ 'Total simulado' if simulacao else 'Depositado' }}</span><strong id="totalDepositado">R$ 0,00</strong></article>
       <article><span>Falta guardar</span><strong id="restante">R$ 0,00</strong></article>
       <article><span>Concluído</span><strong id="concluidos">0 / 0</strong></article>
       <div class="progress-track"><div id="progressBar"></div></div>
@@ -46,7 +50,7 @@
 
     <section class="grid-card">
       <div class="grid-header">
-        <div><h2>Depósitos</h2><p>Selecione um valor para registrar ou editar.</p></div>
+        <div><h2>{{ 'Depósitos simulados' if simulacao else 'Depósitos' }}</h2><p>{{ 'Toque para marcar ou desmarcar.' if simulacao else 'Selecione um valor para registrar ou editar.' }}</p></div>
         <div class="filters" aria-label="Filtrar depósitos">
           <button class="filter active" type="button" data-filter="todos">Todos</button>
           <button class="filter" type="button" data-filter="pendentes">Pendentes</button>
@@ -63,6 +67,22 @@
       <div class="grid" id="depositGrid"></div>
     </section>
   </main>
+  {% if simulacao %}
+  <p id="aviso-impressao-simulacao">Entre na sua conta para imprimir pelo Calendário Invest.</p>
+  <dialog id="simulationDialog" aria-labelledby="simulationTitle">
+    <div class="modal-header"><h2 id="simulationTitle"></h2><button class="icon-button close" type="button" data-close aria-label="Fechar">&times;</button></div>
+    <p id="simulationMessage"></p>
+    <div class="modal-actions" id="simulationAuth" hidden>
+      <a class="secondary button-link" id="simulationSignup">Criar conta gratuita</a>
+      <a class="secondary button-link" id="simulationLogin">Já tenho uma conta</a>
+    </div>
+    <div class="modal-actions">
+      <button class="secondary" type="button" data-close>Continuar simulando</button>
+      <button class="primary" type="button" id="simulationConfirm" hidden>Confirmar</button>
+    </div>
+    <p id="simulationError" role="alert"></p>
+  </dialog>
+  {% endif %}
   {% include 'componentes/arvore_financeira.html' %}
 
   <dialog id="depositModal">
@@ -70,7 +90,7 @@
       <div class="modal-header"><div><p class="eyebrow">Depósito</p><h2 id="modalTitle">Número 1</h2></div><button class="icon-button close" type="button" data-close aria-label="Fechar">&times;</button></div>
       <label>Valor<input id="valor" name="valor" type="number" min="0.01" step="0.01" required></label>
       <label>Banco de destino<select id="banco" name="banco_id" required></select></label>
-      <label>Método<select id="metodo" name="metodo" required><option>Pix</option><option>Depósito bancário</option><option>TED/Transferência</option></select></label>
+      <label>Método<select id="metodo" name="metodo" required><option>Pix</option><option>Depósito bancário</option><option>TED/Transferência</option><option>Simulação</option></select></label>
       <label>Data<input id="data" name="data" type="date" required></label>
       <div class="modal-actions"><button class="danger" id="removeDeposit" type="button">Remover</button><button class="primary" type="submit">Salvar depósito</button></div>
     </form>
@@ -80,9 +100,9 @@
     <form id="goalForm">
       <div class="modal-header"><div><p class="eyebrow" id="goalEyebrow">Nova meta</p><h2 id="goalModalTitle">Crie um objetivo</h2></div><button class="icon-button close" type="button" data-close aria-label="Fechar">&times;</button></div>
       <label>Nome da meta<input id="goalName" name="nome" maxlength="60" placeholder="Ex.: Reserva de emergência" required></label>
-      <label>Valor da meta<input id="goalValue" name="valor" type="number" min="0.01" step="0.01" required></label>
+      <label>Valor da meta<input id="goalValue" name="valor" type="number" min="0.01" step="0.01" {% if simulacao %}max="1000000"{% endif %} required></label>
       <p class="calculation-preview" id="calculationPreview"></p>
-      <div class="modal-actions split"><button class="danger" id="removeGoal" type="button">Excluir meta</button><button class="primary" type="submit">Salvar meta</button></div>
+      <div class="modal-actions split"><button class="danger" id="removeGoal" type="button">Excluir meta</button><button class="primary" type="submit">{{ 'Atualizar simulação' if simulacao else 'Salvar meta' }}</button></div>
     </form>
   </dialog>
 
