@@ -94,6 +94,8 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 
 Na seção **Depósitos**, clique em **Imprimir lista** para imprimir a lista
 completa da meta ativa em A4 paisagem ou salvá-la como PDF pelo navegador.
+De 121 a 288 depósitos, a impressão usa uma grade compacta para caber em uma
+folha. Listas maiores podem ocupar mais páginas.
 
 Consulte a [revisão operacional](docs/REVISAO-OPERACIONAL.md), a
 [licença](LICENSE.md) e o [guia de contribuição](CONTRIBUTING.md).

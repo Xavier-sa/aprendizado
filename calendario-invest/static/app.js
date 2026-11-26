@@ -36,6 +36,7 @@ function aplicarDados(dados) {
 function renderizar() {
   const meta = estado.meta;
   if (!meta) return;
+  grid.classList.toggle('impressao-compacta', meta.quantidade > 120 && meta.quantidade <= 288);
   document.querySelector('#tituloMeta').textContent = `${meta.nome} · ${moeda.format(meta.meta)}`;
   document.querySelector('#totalDepositado').textContent = moeda.format(meta.total);
   document.querySelector('#restante').textContent = moeda.format(meta.restante);
