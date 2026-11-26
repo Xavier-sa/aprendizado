@@ -1,0 +1,20 @@
+name: Fontes dos materiais de estudo
+
+on:
+  push:
+    branches: [conhecimento-basico/portugues]
+  pull_request:
+    paths:
+      - "conhecimento/**"
+      - ".github/workflows/conhecimento-fontes.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validar-fontes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar referências
+        run: python3 conhecimento/validar_fontes.py
