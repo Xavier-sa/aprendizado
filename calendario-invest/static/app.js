@@ -2,6 +2,8 @@ const estado = { meta: null, metas: [], bancos: [], numero: null, filtro: 'todos
 const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const grid = document.querySelector('#depositGrid');
 const imprimirMeta = document.querySelector('#printGoal');
+const abrirArvore = document.querySelector('#openTree');
+const arvoreModal = document.querySelector('#arvoreModal');
 const depositModal = document.querySelector('#depositModal');
 const goalModal = document.querySelector('#goalModal');
 const banksModal = document.querySelector('#banksModal');
@@ -29,7 +31,9 @@ function aplicarDados(dados) {
   estado.meta = dados.meta_ativa;
   estado.metas = dados.metas;
   estado.bancos = dados.bancos;
+  atualizarArvore(document.querySelector('#arvoreFinanceira'), estado.meta, moeda);
   imprimirMeta.disabled = !estado.meta;
+  abrirArvore.disabled = !estado.meta;
   renderizar();
 }
 
@@ -230,6 +234,8 @@ async function renomearBanco(banco) {
 }
 
 document.querySelector('#newGoal').addEventListener('click', () => abrirMeta(true));
+abrirArvore.addEventListener('click', () => arvoreModal.showModal());
+arvoreModal.addEventListener('close', () => abrirArvore.focus());
 document.querySelector('#editGoal').addEventListener('click', () => abrirMeta(false));
 document.querySelector('#manageBanks').addEventListener('click', () => banksModal.showModal());
 document.querySelectorAll('[data-open-banks]').forEach((botao) => botao.addEventListener('click', () => banksModal.showModal()));

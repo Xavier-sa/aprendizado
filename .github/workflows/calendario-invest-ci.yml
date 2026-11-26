@@ -46,6 +46,7 @@ jobs:
           node --check static/app.js
           node --check static/tutorial.js
           node --check static/apoio.js
+          node --test tests/arvore-financeira.test.js
 
       - name: Validar configuracao da Vercel
         run: python -m json.tool vercel.json > /dev/null

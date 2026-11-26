@@ -31,7 +31,10 @@
 
     <section class="goal-switcher" aria-label="Suas metas">
       <div class="goal-tabs" id="goalTabs"></div>
-      <button class="new-goal" id="newGoal" type="button"><span>+</span> Nova meta</button>
+      <div class="goal-actions">
+        <button class="new-goal" id="newGoal" type="button"><span>+</span> Nova meta</button>
+        <button class="new-goal" id="openTree" type="button" aria-haspopup="dialog" disabled>Árvore Financeira</button>
+      </div>
     </section>
 
     <section class="summary" aria-label="Resumo da meta ativa">
@@ -60,6 +63,7 @@
       <div class="grid" id="depositGrid"></div>
     </section>
   </main>
+  {% include 'componentes/arvore_financeira.html' %}
 
   <dialog id="depositModal">
     <form id="depositForm">
@@ -92,6 +96,7 @@
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="{{ url_for('static', filename='arvore-financeira.js') }}"></script>
   <script src="/static/app.js"></script>
   {% include 'rodape.html' %}
 </body>

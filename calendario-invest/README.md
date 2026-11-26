@@ -92,6 +92,12 @@ Acesse `http://127.0.0.1:5000` no navegador. Encerre o servidor com
 
 ## Como usar
 
+A **Árvore Financeira** acompanha a meta ativa. Abra o modal pelo botão ao lado
+de **Nova meta**. Cada posição de depósito
+registrada ganha uma folha. O valor guardado determina o crescimento e as etapas
+da semente aos frutos dourados. A árvore se recompõe a partir dos registros da
+meta quando você recarrega o painel, edita ou remove um depósito.
+
 Na seção **Depósitos**, clique em **Imprimir lista** para imprimir a lista
 completa da meta ativa em A4 paisagem ou salvá-la como PDF pelo navegador.
 De 121 a 288 depósitos, a impressão usa uma grade compacta para caber em uma

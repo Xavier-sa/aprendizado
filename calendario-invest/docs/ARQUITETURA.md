@@ -21,6 +21,12 @@ O Calendário Invest usa uma arquitetura web pequena com três partes:
 
 ## Cálculo da tabela
 
+A Árvore Financeira usa `meta_ativa.total`, `meta_ativa.meta` e as chaves de
+`meta_ativa.depositos` para calcular a estrutura, a etapa e as folhas. Cada
+posição possui uma chave única e o servidor atualiza a posição ao editar
+um depósito. A árvore é reconstruída no carregamento do painel e após cada
+operação, sem estado adicional no banco. O componente fica oculto na impressão.
+
 A quantidade é o menor inteiro `n` cuja soma sequencial alcança a meta:
 
 ```text

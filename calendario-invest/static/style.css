@@ -44,8 +44,11 @@ h1 { font-size:clamp(1.6rem,4vw,2.45rem); margin-bottom:0; }
 .pix-code { display:block; width:100%; margin:8px 0 12px; padding:10px; border:1px solid var(--border); border-radius:12px; background:var(--panel-2); color:var(--text); font-size:1rem; resize:vertical; }
 .support-card p { color:var(--muted); line-height:1.5; }
 .support-card .support-status { margin:16px 0; padding:14px; border-radius:12px; background:var(--panel-2); color:var(--text); }
-.goal-switcher { display:flex; align-items:stretch; gap:8px; margin-bottom:12px; overflow-x:auto; scrollbar-width:thin; padding-bottom:4px; }
-.goal-tabs { display:flex; gap:8px; }
+.goal-switcher { display:flex; flex-wrap:wrap; align-items:stretch; gap:8px; margin-bottom:12px; padding-bottom:4px; }
+.goal-tabs { display:flex; gap:8px; min-width:0; overflow-x:auto; scrollbar-width:thin; }
+.goal-tabs:empty { display:none; }
+.goal-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.goal-actions button { min-height:42px; }
 .goal-tab,.new-goal { min-width:max-content; border:1px solid var(--border); border-radius:12px; color:var(--muted); background:var(--panel); cursor:pointer; }
 .goal-tab { display:flex; align-items:center; gap:10px; padding:9px 13px; }
 .goal-tab span { color:var(--text); font-weight:700; }
@@ -203,9 +206,62 @@ button:disabled,select:disabled { opacity:.5; cursor:not-allowed; }
 @media (max-width:760px) { .admin-header { align-items:flex-start; flex-direction:column; } .user-edit-form { grid-template-columns:1fr; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
 
+@property --arvore-angulo {
+  syntax:"<angle>";
+  inherits:false;
+  initial-value:0deg;
+}
+.arvore-modal {
+  width:min(760px,calc(100% - 24px));
+  --arvore-brilho:#b6ef75;
+  border:2px solid transparent;
+  background:linear-gradient(#101b1a,#101b1a) padding-box,
+    conic-gradient(from var(--arvore-angulo),#294137 0% 74%,var(--arvore-brilho) 88%,#294137 100%) border-box;
+}
+.arvore-modal:has([data-completa="true"]) { --arvore-brilho:#ffd36a; }
+.arvore-modal[open] { animation:arvore-contorno 6s linear infinite; }
+@keyframes arvore-contorno { to { --arvore-angulo:360deg; } }
+.arvore-fechar { position:absolute; top:10px; right:10px; z-index:1; }
+.arvore-financeira {
+  padding:48px clamp(16px,4vw,32px) 24px;
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:center;
+  gap:16px; border:1px solid #294137; border-radius:18px; color:#edf7ed;
+  background:radial-gradient(ellipse at 75% 60%,#1b3629,#101b1a 68%);
+}
+.arvore-resumo h2 { margin:0; }
+.arvore-etapa { color:#b6ef75; margin:8px 0 16px; }
+.arvore-resumo dl { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:0; }
+.arvore-resumo dt { color:#a9bcb1; font-size:.85rem; }
+.arvore-resumo dd { margin:4px 0 0; font-weight:700; overflow-wrap:anywhere; }
+.arvore-cena { display:block; width:100%; max-width:360px; justify-self:center; }
+.arvore-planta { transform-origin:160px 216px; transform:scale(var(--crescimento, .01)); transition:transform .7s ease; }
+.arvore-financeira[data-etapa="0"] .arvore-planta { visibility:hidden; }
+.arvore-galhos { fill:none; stroke:url(#arvoreMadeira); stroke-linecap:round; }
+.arvore-galhos path,.arvore-copa { transition:opacity .6s ease; }
+.arvore-financeira:is([data-etapa="1"],[data-etapa="2"]) .arvore-galhos path:nth-child(n+2),
+.arvore-financeira[data-etapa="3"] .arvore-galhos path:nth-child(n+3) { opacity:0; }
+.arvore-copa { opacity:0; }
+.arvore-financeira:is([data-etapa="4"],[data-etapa="5"],[data-etapa="6"]) .arvore-copa { opacity:.7; }
+.arvore-folha { fill:#a7eb6a; transform-box:fill-box; transform-origin:center; animation:arvore-brotar .6s ease both; }
+.arvore-folha:nth-child(3n) { fill:#6ec85f; }
+.arvore-fruto { fill:#c4d976; animation:arvore-brotar .6s ease both; transform-box:fill-box; transform-origin:center; }
+.arvore-financeira[data-completa="true"] .arvore-fruto { fill:url(#arvoreOuro); filter:drop-shadow(0 0 4px #ffd36a); }
+.arvore-celebracao .arvore-fruto { animation:arvore-celebrar .85s ease both; }
+@keyframes arvore-brotar { from { opacity:0; transform:scale(.15) rotate(-28deg); } }
+@keyframes arvore-celebrar { 40% { transform:scale(1.45); filter:drop-shadow(0 0 6px #ffd36a); } }
+@media (max-width:560px) {
+  .arvore-financeira { grid-template-columns:minmax(0,1fr); }
+  .arvore-cena { max-width:280px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .arvore-modal[open] { animation:none; }
+  .arvore-financeira * { animation:none !important; transition:none !important; }
+}
+
 @page { size:A4 landscape; margin:12mm; }
 
 @media print {
+  .arvore-financeira { display:none !important; }
   body.painel { min-height:0; color:#111; background:#fff; }
   .painel .app-shell { width:100%; padding:0; }
   .painel :is(.top-actions,.goal-switcher,.support-link,.subtitle,.filters,.grid-header p,.progress-track,.empty-state,dialog,.toast,footer) { display:none !important; }

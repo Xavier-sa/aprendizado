@@ -1,0 +1,53 @@
+<dialog id="arvoreModal" class="arvore-modal" aria-labelledby="arvoreTitulo">
+  <button class="icon-button close arvore-fechar" type="button" data-close aria-label="Fechar árvore" autofocus>&times;</button>
+  <section id="arvoreFinanceira" class="arvore-financeira" hidden>
+  <div class="arvore-resumo">
+    <h2 id="arvoreTitulo">Árvore Financeira</h2>
+    <p class="arvore-etapa" data-arvore-etapa aria-live="polite"></p>
+    <dl>
+      <div><dt>Guardado</dt><dd data-arvore-total></dd></div>
+      <div><dt>Meta</dt><dd data-arvore-meta></dd></div>
+      <div><dt>Depósitos</dt><dd data-arvore-depositos></dd></div>
+      <div><dt>Progresso</dt><dd data-arvore-percentual></dd></div>
+    </dl>
+  </div>
+  <svg class="arvore-cena" viewBox="0 0 320 240" aria-hidden="true">
+    <defs>
+      <radialGradient id="arvoreAurora">
+        <stop stop-color="#3c8364" stop-opacity=".55"/>
+        <stop offset="1" stop-color="#3c8364" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="arvoreMadeira">
+        <stop stop-color="#35533c"/>
+        <stop offset=".55" stop-color="#76945b"/>
+        <stop offset="1" stop-color="#aa9861"/>
+      </linearGradient>
+      <radialGradient id="arvoreOuro" cx=".38" cy=".34">
+        <stop stop-color="#fff9cb"/>
+        <stop offset=".55" stop-color="#ffe579"/>
+        <stop offset="1" stop-color="#efa537"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="160" cy="123" rx="151" ry="113" fill="url(#arvoreAurora)"/>
+    <ellipse cx="160" cy="218" rx="118" ry="13" fill="#192b22"/>
+    <path d="M51 216h218" stroke="#42704b" stroke-linecap="round"/>
+    <ellipse data-arvore-semente cx="160" cy="220" rx="7" ry="4" fill="#d8b879"/>
+    <g class="arvore-planta">
+      <g class="arvore-copa" fill="#427d3e">
+        <ellipse cx="157" cy="70" rx="41" ry="32"/>
+        <ellipse cx="109" cy="99" rx="36" ry="27"/>
+        <ellipse cx="204" cy="89" rx="39" ry="30"/>
+        <ellipse cx="160" cy="109" rx="45" ry="27"/>
+      </g>
+      <g class="arvore-galhos">
+        <path d="M154 216C130 190 196 179 163 151S132 117 160 82" stroke-width="12"/>
+        <path d="M169 164C144 126 109 156 90 108M154 145C180 123 222 146 230 97" stroke-width="6"/>
+        <path d="M146 127C115 114 132 94 111 72M153 104Q198 99 201 62M111 137Q77 138 65 117M209 126Q245 135 257 111" stroke-width="3.5"/>
+        <path d="M160 85Q140 67 152 43M155 89Q168 57 181 48M155 215Q137 215 121 220M158 214Q177 214 193 220" stroke-width="3"/>
+      </g>
+      <g data-arvore-folhas></g>
+      <g data-arvore-frutos></g>
+    </g>
+  </svg>
+</section>
+</dialog>
