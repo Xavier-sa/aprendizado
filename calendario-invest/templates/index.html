@@ -48,7 +48,7 @@
           <button class="filter active" type="button" data-filter="todos">Todos</button>
           <button class="filter" type="button" data-filter="pendentes">Pendentes</button>
           <button class="filter" type="button" data-filter="concluidos">Concluídos</button>
-          <button class="secondary" id="printGoal" type="button" disabled>Imprimir lista</button>
+          {% include 'componentes/botao_imprimir.html' %}
         </div>
       </div>
       <div class="empty-state" id="emptyBanks" hidden>

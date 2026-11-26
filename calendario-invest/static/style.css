@@ -65,6 +65,23 @@ h1 { font-size:clamp(1.6rem,4vw,2.45rem); margin-bottom:0; }
 .grid-header h2 { margin:0; }
 .grid-header p,.form-help { color:var(--muted); margin:5px 0 0; }
 .filters { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+
+/* Trocar a cor do botão de impressão, ajuste --cor-imprimir. */
+.botao-imprimir {
+  --cor-imprimir:#5eead4;
+  min-height:44px;
+  padding:0 16px;
+  border:1px solid #0f766e;
+  border-radius:12px;
+  background:var(--cor-imprimir);
+  color:#102a23;
+  font-weight:800;
+  cursor:pointer;
+}
+.botao-imprimir:enabled:hover {
+  background:color-mix(in srgb,var(--cor-imprimir) 85%,#fff);
+}
+.botao-imprimir:focus-visible { outline-color:#0f766e; }
 .filter { border:1px solid var(--border); border-radius:999px; padding:7px 11px; color:var(--muted); background:transparent; cursor:pointer; }
 .filter:hover,.filter.active { color:#092b1b; border-color:var(--accent); background:var(--accent); }
 .grid { display:grid; grid-template-columns:repeat(12,minmax(44px,1fr)); gap:7px; margin-top:16px; }
