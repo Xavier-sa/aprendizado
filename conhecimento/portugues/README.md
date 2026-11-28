@@ -2,6 +2,8 @@
 
 Comece por [Fonologia e ortografia oficial](01-fonologia-e-ortografia.md).
 
+Pratique também com os [exercícios comentados de morfologia](02-morfologia-exercicios.md).
+
 Para o concurso da UFMS organizado pela FAPEC, acompanhe seu avanço no
 [checklist de Português](CHECKLIST-UFMS-FAPEC.md).
 

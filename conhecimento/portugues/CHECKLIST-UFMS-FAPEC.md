@@ -17,8 +17,10 @@ palavra em outra classe gramatical. Registre as respostas no formato
 - [ ] **3. Estrutura e formação das palavras.** Radical, afixos e flexão. Derivação prefixal, sufixal, parassintética, regressiva e imprópria. Composição por justaposição e aglutinação.
   - [ ] Responder às três questões finais.
   - [ ] Corrigir as respostas e justificar cada classificação.
+  - [x] Resolver a questão sobre vogal temática e desinência de gênero.
 - [ ] **4. Semântica.** Sinônimos, antônimos, polissemia, parônimos, homônimos, formas variantes e sentidos próprio e figurado.
 - [ ] **5. Classes de palavras: nomes e pronomes.** Substantivos, adjetivos, artigos, numerais e pronomes. Identificação, flexão e emprego.
+  - [x] Resolver a questão sobre substantivos concretos e abstratos.
 - [ ] **6. Verbos e colocação pronominal.** Emprego de tempos e modos, flexão verbal, próclise, mesóclise e ênclise.
 - [ ] **7. Classes de palavras invariáveis.** Advérbios, preposições, conjunções e interjeições.
 - [ ] **8. Sintaxe da oração.** Termos essenciais, integrantes e acessórios. Diferenciar aposto e vocativo.
